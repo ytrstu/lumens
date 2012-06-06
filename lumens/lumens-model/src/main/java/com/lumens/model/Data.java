@@ -22,7 +22,11 @@ public interface Data
 
   public Data addChild(Data data);
 
+  public Data addArrayItem();
+
   public Data getParent();
+
+  public Data getChild(String name);
 
   public List<Data> getChildren();
 
@@ -62,11 +66,15 @@ public interface Data
 
   public double getDouble();
 
-  public byte[] getBytes();
+  public byte[] getBinary();
 
   public String getString();
 
   public Date getDate();
+
+  public boolean isArray();
+
+  public boolean isArrayItem();
 
   public boolean isShort();
 
@@ -78,7 +86,7 @@ public interface Data
 
   public boolean isDouble();
 
-  public boolean isBytes();
+  public boolean isBinary();
 
   public boolean isDate();
 

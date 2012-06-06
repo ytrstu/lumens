@@ -31,7 +31,7 @@ public class NodeFormat implements Format
     this.name = name;
   }
 
-  public NodeFormat(String name,  Form form, Type type)
+  public NodeFormat(String name, Form form, Type type)
   {
     this.name = name;
     this.form = form;
@@ -115,5 +115,23 @@ public class NodeFormat implements Format
   public void setParent(Format parent)
   {
     this.parent = parent;
+  }
+
+  @Override
+  public boolean isField()
+  {
+    return form == Form.FIELD;
+  }
+
+  @Override
+  public boolean isStructure()
+  {
+    return form == Form.STRUCT;
+  }
+
+  @Override
+  public boolean isArray()
+  {
+    return form == Form.ARRAY;
   }
 }

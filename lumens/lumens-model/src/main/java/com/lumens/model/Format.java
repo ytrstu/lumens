@@ -30,9 +30,9 @@ public interface Format
   public enum Form
   {
     NONE,
-    ATTRIBUTE,
-    STRUCTRUE,
-    COLLECTION
+    FIELD,
+    STRUCT,
+    ARRAY
   }
   public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
   public static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
@@ -61,4 +61,10 @@ public interface Format
   public Format getChild(String name);
 
   public List<Format> getChildren();
+
+  public boolean isField();
+
+  public boolean isStructure();
+
+  public boolean isArray();
 }
