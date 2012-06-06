@@ -44,5 +44,6 @@ public class ModelTest
     Data personData = new NodeData(person);
     Data nameData = personData.addChild(new NodeData(person.getChild("name")));
     nameData.setValue("James wang");
+    assertEquals("James wang", nameData.getString());
   }
 }

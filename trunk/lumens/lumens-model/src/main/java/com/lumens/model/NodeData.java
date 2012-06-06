@@ -5,7 +5,6 @@
 package com.lumens.model;
 
 import com.lumens.model.Format.Type;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.Constants;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +22,7 @@ public class NodeData implements Data
   protected List<Data> arrayItems;
   protected Format format;
   protected Object value;
+  private Data parent;
 
   public NodeData(Format format)
   {
@@ -53,15 +53,22 @@ public class NodeData implements Data
     {
       throw new IllegalArgumentException("Duplicate child \"" + format.getName() + "\"");
     }
+    data.setParent(this);
     children.put(name, data);
     childrenList.add(data);
     return data;
   }
 
   @Override
+  public void setParent(Data parent)
+  {
+    this.parent = parent;
+  }
+
+  @Override
   public Data getParent()
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return parent;
   }
 
   @Override
@@ -139,11 +146,11 @@ public class NodeData implements Data
   @Override
   public void setValue(String value)
   {
-    if (format.getType() == Type.STRING)
+    if (format.getType() != Type.STRING)
     {
-      this.value = value;
+      throw new IllegalArgumentException("Error, data type is not string !");
     }
-    throw new IllegalArgumentException("Error, data type is not string !");
+    this.value = value;
   }
 
   @Override
@@ -185,12 +192,64 @@ public class NodeData implements Data
   @Override
   public String getString()
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (format.getType() != Type.STRING)
+    {
+      throw new RuntimeException("The value type is not string");
+    }
+    return (String) value;
   }
 
   @Override
   public Date getDate()
   {
     throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public boolean isShort()
+  {
+    return format.getType() == Type.SHORT;
+  }
+
+  @Override
+  public boolean isInt()
+  {
+    return format.getType() == Type.INT;
+  }
+
+  @Override
+  public boolean isLong()
+  {
+    return format.getType() == Type.LONG;
+  }
+
+  @Override
+  public boolean isFloat()
+  {
+    return format.getType() == Type.FLOAT;
+  }
+
+  @Override
+  public boolean isDouble()
+  {
+    return format.getType() == Type.DOUBLE;
+  }
+
+  @Override
+  public boolean isBytes()
+  {
+    return format.getType() == Type.BINARY;
+  }
+
+  @Override
+  public boolean isDate()
+  {
+    return format.getType() == Type.DATE;
+  }
+
+  @Override
+  public boolean isString()
+  {
+    return format.getType() == Type.STRING;
   }
 }

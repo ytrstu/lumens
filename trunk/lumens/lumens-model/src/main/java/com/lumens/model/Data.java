@@ -14,7 +14,6 @@ import java.util.List;
 public interface Data
 {
   /*Methods to get and set properties of data node*/
-
   public int index();
 
   public void removeChild(Data data);
@@ -30,7 +29,8 @@ public interface Data
   public Format getFormat();
 
   public Object getValue();
-  /*Data methods to get and set value for data node */
+  
+  public void setParent(Data data);
 
   public void setValue(Object value);
 
@@ -65,4 +65,20 @@ public interface Data
   public String getString();
 
   public Date getDate();
+
+  public boolean isShort();
+
+  public boolean isInt();
+
+  public boolean isLong();
+
+  public boolean isFloat();
+
+  public boolean isDouble();
+
+  public boolean isBytes();
+
+  public boolean isDate();
+
+  public boolean isString();
 }
