@@ -46,6 +46,13 @@ public class NodeData implements Data
   }
 
   @Override
+  public Data addChild(String name)
+  {
+    Format child = format.getChild(name);
+    return addChild(new NodeData(child));
+  }
+
+  @Override
   public Data addChild(Data data)
   {
     String name = data.getFormat().getName();
