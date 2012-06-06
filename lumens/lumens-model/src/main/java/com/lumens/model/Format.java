@@ -50,6 +50,10 @@ public interface Format
 
   public void setName(String name);
 
+  public Format getParent();
+
+  public void setParent(Format format);
+
   public Format addChild(Format format);
 
   public Format addChild(String name, Form form, Type type);

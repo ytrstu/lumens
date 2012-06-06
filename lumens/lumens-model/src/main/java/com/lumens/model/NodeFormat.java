@@ -20,6 +20,7 @@ public class NodeFormat implements Format
   private String name;
   private Type type = Type.NONE;
   private Form form = Form.NONE;
+  private Format parent;
 
   public NodeFormat()
   {
@@ -80,6 +81,7 @@ public class NodeFormat implements Format
     {
       throw new IllegalArgumentException("Duplicate child \"" + format.getName() + "\"");
     }
+    format.setParent(this);
     children.put(format.getName(), format);
     childrenList.add(format);
     return format;
@@ -101,5 +103,17 @@ public class NodeFormat implements Format
   public List<Format> getChildren()
   {
     return childrenList;
+  }
+
+  @Override
+  public Format getParent()
+  {
+    return parent;
+  }
+
+  @Override
+  public void setParent(Format parent)
+  {
+    this.parent = parent;
   }
 }
