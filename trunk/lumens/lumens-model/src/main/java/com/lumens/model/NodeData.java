@@ -316,6 +316,12 @@ public class NodeData implements Data
   }
 
   @Override
+  public List<Data> getArrayItems()
+  {
+    return arrayItems;
+  }
+
+  @Override
   public boolean isArray()
   {
     return format.isArray() && !isArrayItem();
