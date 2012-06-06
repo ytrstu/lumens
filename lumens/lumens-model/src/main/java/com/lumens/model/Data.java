@@ -29,6 +29,8 @@ public interface Data
   public Data getChild(String name);
 
   public List<Data> getChildren();
+  
+  public List<Data> getArrayItems();
 
   public List<Data> getSlibling();
 

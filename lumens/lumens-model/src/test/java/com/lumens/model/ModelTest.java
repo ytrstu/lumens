@@ -67,8 +67,8 @@ public class ModelTest
     nameData.setValue("James wang");
     assertEquals("James wang", nameData.getString());
     Data assetData = personData.addChild("asset");
-    assetData = assetData.addArrayItem();
-    assetData.addChild("name").setValue("Mac air book");
-    assetData.addChild("price").setValue(12000.05f);
+    Data assetDataItem = assetData.addArrayItem();
+    assetDataItem.addChild("name").setValue("Mac air book");
+    assetDataItem.addChild("price").setValue(12000.05f);
   }
 }
