@@ -1,0 +1,105 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.lumens.model;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ *
+ * @author shaofeng wang
+ */
+public class NodeFormat implements Format
+{
+  protected Map<String, Format> children = new HashMap<String, Format>();
+  protected List<Format> childrenList = new ArrayList<Format>();
+  private String name;
+  private Type type = Type.NONE;
+  private Form form = Form.NONE;
+
+  public NodeFormat()
+  {
+  }
+
+  public NodeFormat(String name)
+  {
+    this.name = name;
+  }
+
+  public NodeFormat(String name,  Form form, Type type)
+  {
+    this.name = name;
+    this.form = form;
+    this.type = type;
+  }
+
+  @Override
+  public Type getType()
+  {
+    return type;
+  }
+
+  @Override
+  public Form getForm()
+  {
+    return form;
+  }
+
+  @Override
+  public void setType(Type type)
+  {
+    this.type = type;
+  }
+
+  @Override
+  public void setForm(Form form)
+  {
+    this.form = form;
+  }
+
+  @Override
+  public String getName()
+  {
+    return name;
+  }
+
+  @Override
+  public void setName(String name)
+  {
+    this.name = name;
+  }
+
+  @Override
+  public Format addChild(Format format)
+  {
+    if (children.containsKey(format.getName()))
+    {
+      throw new IllegalArgumentException("Duplicate child \"" + format.getName() + "\"");
+    }
+    children.put(format.getName(), format);
+    childrenList.add(format);
+    return format;
+  }
+
+  @Override
+  public Format addChild(String name, Form form, Type type)
+  {
+    return addChild(new NodeFormat(name, form, type));
+  }
+
+  @Override
+  public Format getChild(String name)
+  {
+    return children.get(name);
+  }
+
+  @Override
+  public List<Format> getChildren()
+  {
+    return childrenList;
+  }
+}
