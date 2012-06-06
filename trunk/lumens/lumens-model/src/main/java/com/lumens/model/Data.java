@@ -18,6 +18,8 @@ public interface Data
 
   public void removeChild(Data data);
 
+  public Data addChild(String name);
+
   public Data addChild(Data data);
 
   public Data getParent();
@@ -29,7 +31,7 @@ public interface Data
   public Format getFormat();
 
   public Object getValue();
-  
+
   public void setParent(Data data);
 
   public void setValue(Object value);

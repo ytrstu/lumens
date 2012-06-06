@@ -40,9 +40,9 @@ public class ModelTest
     asset.addChild("name", Form.ATTRIBUTE, Type.STRING);
     asset.addChild("price", Form.ATTRIBUTE, Type.FLOAT);
     assertEquals(Type.STRING, person.getChild("asset").getChild("name").getType());
-    
+
     Data personData = new NodeData(person);
-    Data nameData = personData.addChild(new NodeData(person.getChild("name")));
+    Data nameData = personData.addChild("name");
     nameData.setValue("James wang");
     assertEquals("James wang", nameData.getString());
   }
