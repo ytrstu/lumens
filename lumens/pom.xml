@@ -6,14 +6,14 @@
   <version>1.0</version>
   <packaging>pom</packaging>
   <name>lumens</name>
-    <modules>
-        <module>lumens-connector</module>
-        <module>lumens-editor</module>
-        <module>lumens-engine</module>
-        <module>lumens-model</module>
+      <modules>
+        <module>lumens-model</module>        
         <module>lumens-processor</module>
+        <module>lumens-connector</module>
+        <module>lumens-engine</module>
         <module>lumens-server</module>
-    </modules>
+        <module>lumens-editor</module>
+      </modules>
     <url>http://maven.apache.org</url>
      <build>
         <plugins>
