@@ -23,6 +23,8 @@ public class NodeData implements Data
   protected Format format;
   protected Object value;
   private Data parent;
+  private int index = -1;
+  private boolean isArrayItem;
 
   public NodeData(Format format)
   {
@@ -32,7 +34,7 @@ public class NodeData implements Data
   @Override
   public int index()
   {
-    return -1;
+    return index;
   }
 
   @Override
@@ -55,6 +57,10 @@ public class NodeData implements Data
   @Override
   public Data addChild(Data data)
   {
+    if (isArray())
+    {
+      throw new RuntimeException("Error, the data node is an array, it is not an array item");
+    }
     String name = data.getFormat().getName();
     if (children.containsKey(name))
     {
@@ -79,6 +85,12 @@ public class NodeData implements Data
   }
 
   @Override
+  public Data getChild(String name)
+  {
+    return children.get(name);
+  }
+
+  @Override
   public List<Data> getChildren()
   {
     return childrenList;
@@ -99,61 +111,89 @@ public class NodeData implements Data
   @Override
   public Object getValue()
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return value;
   }
 
   @Override
   public void setValue(Object value)
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    this.value = value;
   }
 
   @Override
   public void setValue(short value)
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (!isShort())
+    {
+      throw new IllegalArgumentException("Error, data type is not short !");
+    }
+    this.value = value;
   }
 
   @Override
   public void setValue(int value)
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (!isInt())
+    {
+      throw new IllegalArgumentException("Error, data type is not int !");
+    }
+    this.value = value;
   }
 
   @Override
   public void setValue(long value)
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (!isLong())
+    {
+      throw new IllegalArgumentException("Error, data type is not long !");
+    }
+    this.value = value;
   }
 
   @Override
   public void setValue(float value)
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (!isFloat())
+    {
+      throw new IllegalArgumentException("Error, data type is not float !");
+    }
+    this.value = value;
   }
 
   @Override
   public void setValue(double value)
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (!isDouble())
+    {
+      throw new IllegalArgumentException("Error, data type is not double !");
+    }
+    this.value = value;
   }
 
   @Override
   public void setValue(byte[] value)
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (!isBinary())
+    {
+      throw new IllegalArgumentException("Error, data type is not binary !");
+    }
+    this.value = value;
   }
 
   @Override
   public void setValue(Date value)
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (!isDate())
+    {
+      throw new IllegalArgumentException("Error, data type is not date time !");
+    }
+    this.value = value;
   }
 
   @Override
   public void setValue(String value)
   {
-    if (format.getType() != Type.STRING)
+    if (!isString())
     {
       throw new IllegalArgumentException("Error, data type is not string !");
     }
@@ -163,53 +203,49 @@ public class NodeData implements Data
   @Override
   public short getShort()
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return (Short) value;
   }
 
   @Override
   public int getInt()
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return (Integer) value;
   }
 
   @Override
   public long getLong()
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return (Long) value;
   }
 
   @Override
   public float getFloat()
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return (Float) value;
   }
 
   @Override
   public double getDouble()
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return (Double) value;
   }
 
   @Override
-  public byte[] getBytes()
+  public byte[] getBinary()
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return (byte[]) value;
   }
 
   @Override
   public String getString()
   {
-    if (format.getType() != Type.STRING)
-    {
-      throw new RuntimeException("The value type is not string");
-    }
     return (String) value;
   }
 
   @Override
   public Date getDate()
   {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return (Date) value;
   }
 
   @Override
@@ -243,7 +279,7 @@ public class NodeData implements Data
   }
 
   @Override
-  public boolean isBytes()
+  public boolean isBinary()
   {
     return format.getType() == Type.BINARY;
   }
@@ -258,5 +294,36 @@ public class NodeData implements Data
   public boolean isString()
   {
     return format.getType() == Type.STRING;
+  }
+
+  @Override
+  public Data addArrayItem()
+  {
+    if (!format.isArray())
+    {
+      throw new RuntimeException("Error, the node type is not an array");
+    }
+    NodeData data = new NodeData(format);
+    if (arrayItems == null)
+    {
+      arrayItems = new ArrayList<Data>();
+    }
+    data.setParent(this);
+    data.index = arrayItems.size();
+    data.isArrayItem = true;
+    this.arrayItems.add(data);
+    return data;
+  }
+
+  @Override
+  public boolean isArray()
+  {
+    return format.isArray() && !isArrayItem();
+  }
+
+  @Override
+  public boolean isArrayItem()
+  {
+    return isArrayItem;
   }
 }
