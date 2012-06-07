@@ -3,23 +3,23 @@
 lumens 数据结构的设计
 
 * 节点种类：Format和Data
-# Format：定义了数据类型(Type)，表达方式(Form)。
-# Data：表达具体的数据值。
+ # Format：定义了数据类型(Type)，表达方式(Form)。
+ # Data：表达具体的数据值。
 
 * 节点的表达方式(Form)及分类：
-# FIELD
+ # FIELD
 一个数据结构的叶子节点称为field
-# STRUCT
+ # STRUCT
 一个复合由field和struct组成的非重复数据节点称为struct
-# ARRAY
+ # ARRAY
 一个复合由field和struct组成的可重复的数据节点称为array，array包含item。它的概念和编程语言的数组一样。一个ARRAY节点表示它可以包含不定数量的item，item的结构由ARRAY本身决定。
 
 * 节点的数据类型(Type)
-# SHORT
-# INT
-# LONG
-# FLOAT
-# DOUBLE
-# BINARY
-# DATE
-# STRING
+ # SHORT
+ # INT
+ # LONG
+ # FLOAT
+ # DOUBLE
+ # BINARY
+ # DATE
+ # STRING
