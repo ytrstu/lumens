@@ -48,5 +48,6 @@ public class PathToken
       return;
     }
     index = Integer.parseInt(token.substring(i + 1, token.length() - 1));
+    this.token = token.substring(0, i);
   }
 }

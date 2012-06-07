@@ -6,6 +6,7 @@ package com.lumens.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -85,7 +86,30 @@ public class DataElement implements Element
   @Override
   public Element getChildByPath(String path)
   {
-    return null;
+    return getChildByPath(new ElementPath(path));
+  }
+
+  @Override
+  public Element getChildByPath(Path path)
+  {
+    Element child = this;
+    PathToken token = null;
+    List<Element> items = null;
+    Iterator<PathToken> it = path.iterator();
+    while (it.hasNext())
+    {
+      token = it.next();
+      child = child.getChild(token.toString());
+      if (token.isIndexed() || child.isArray())
+      {
+        items = child.getArrayItems();
+        if (items == null)
+          throw new IllegalArgumentException("Error path \"" + path.toString() + "\"");
+        child = items.get(token.isIndexed() ? token.index() : 0);
+      }
+    }
+
+    return child;
   }
 
   @Override
