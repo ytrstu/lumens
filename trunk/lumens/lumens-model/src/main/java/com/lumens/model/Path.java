@@ -11,7 +11,7 @@ import java.util.Iterator;
  */
 public interface Path
 {
-  public Iterator<String> iterator();
+  public Iterator<PathToken> iterator();
 
   public Path left(int count);
 

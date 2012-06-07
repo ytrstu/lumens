@@ -13,20 +13,20 @@ import java.util.List;
  */
 public class ElementPath implements Path
 {
-  private List<String> tokens;
+  private List<PathToken> tokens;
 
   public ElementPath(String path)
   {
     parse(path);
   }
 
-  public ElementPath(List<String> tokens)
+  public ElementPath(List<PathToken> tokens)
   {
     this.tokens = tokens;
   }
 
   @Override
-  public Iterator<String> iterator()
+  public Iterator<PathToken> iterator()
   {
     if (tokens == null)
       return null;
@@ -36,7 +36,7 @@ public class ElementPath implements Path
   @Override
   public Path left(int count)
   {
-    List<String> subTokens = null;
+    List<PathToken> subTokens = null;
     if (count > 0)
       subTokens = tokens.subList(0, count);
     return new ElementPath(subTokens);
@@ -45,7 +45,7 @@ public class ElementPath implements Path
   @Override
   public Path right(int count)
   {
-    List<String> subTokens = null;
+    List<PathToken> subTokens = null;
     if (count > 0)
     {
       int size = tokens.size();
@@ -57,9 +57,9 @@ public class ElementPath implements Path
   @Override
   public Path removeLeft(int count)
   {
-    List<String> removed = null;
+    List<PathToken> removed = null;
     if (count > 0)
-      removed = new LinkedList<String>();
+      removed = new LinkedList<PathToken>();
     while (0 < count--)
       removed.add(tokens.remove(0));
     return new ElementPath(removed);
@@ -68,7 +68,7 @@ public class ElementPath implements Path
   @Override
   public Path removeRight(int count)
   {
-    LinkedList<String> removed = new LinkedList<String>();
+    LinkedList<PathToken> removed = new LinkedList<PathToken>();
     while (0 < count--)
       removed.addFirst(tokens.remove(tokens.size() - 1));
     return new ElementPath(removed);
@@ -80,14 +80,15 @@ public class ElementPath implements Path
     if (tokens == null)
       return "";
     StringBuilder builder = new StringBuilder();
-    for (String token : tokens)
+    for (PathToken token : tokens)
     {
+      String strToken = token.toString();
       if (builder.length() > 0)
         builder.append('.');
-      if (token.indexOf('.') > 0)
-        builder.append('\'').append(token).append('\'');
+      if (strToken.indexOf('.') > 0)
+        builder.append('\'').append(strToken).append('\'');
       else
-        builder.append(token);
+        builder.append(strToken);
     }
     return builder.toString();
   }
@@ -96,7 +97,7 @@ public class ElementPath implements Path
   {
     if (path == null || path.isEmpty())
       return;
-    List<String> pathTokens = new LinkedList<String>();
+    List<PathToken> pathTokens = new LinkedList<PathToken>();
     int length = path.length();
     int found = 0, index = 0;
     boolean quoteFound = false;
@@ -120,10 +121,10 @@ public class ElementPath implements Path
       tokens = pathTokens;
   }
 
-  private String removeQuote(String token)
+  private PathToken removeQuote(String token)
   {
     if (token.charAt(0) == '\'' && token.charAt(token.length() - 1) == '\'')
-      return token.substring(1, token.length() - 1);
-    return token;
+      return new PathToken(token.substring(1, token.length() - 1));
+    return new PathToken(token);
   }
 }

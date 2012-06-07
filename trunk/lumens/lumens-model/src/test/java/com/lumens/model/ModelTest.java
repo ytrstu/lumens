@@ -84,24 +84,35 @@ public class ModelTest
   public void testElementPath()
   {
     Path path = new ElementPath("asset.vendor.name");
-    Iterator<String> it = path.iterator();
-    assertEquals("asset", it.next());
-    assertEquals("vendor", it.next());
-    assertEquals("name", it.next());
+    Iterator<PathToken> it = path.iterator();
+    assertEquals("asset", it.next().toString());
+    assertEquals("vendor", it.next().toString());
+    assertEquals("name", it.next().toString());
 
     path = new ElementPath("asset.'vendor.info'.name");
     it = path.iterator();
-    assertEquals("asset", it.next());
-    assertEquals("vendor.info", it.next());
-    assertEquals("name", it.next());
+    assertEquals("asset", it.next().toString());
+    assertEquals("vendor.info", it.next().toString());
+    assertEquals("name", it.next().toString());
 
     Path removed = path.removeLeft(2);
     assertEquals("asset.'vendor.info'", removed.toString());
     path = new ElementPath("asset.'vendor.info'.name");
     removed = path.removeRight(2);
     assertEquals("'vendor.info'.name", removed.toString());
+
+    PathToken token = new PathToken("abc");
+    assertTrue(!token.isIndexed());
+    assertEquals(-1, token.index());
+    token = new PathToken("abc[10]");
+    assertTrue(token.isIndexed());
+    assertEquals(10, token.index());
+
+    token = new PathToken("abc10]");
+    assertTrue(!token.isIndexed());
+    assertEquals(-1, token.index());
   }
-  
+
   public void testScriptPath()
   {
     //var name = @asset.'vendor.info'[0].name
