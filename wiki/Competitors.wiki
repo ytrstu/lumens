@@ -5,10 +5,10 @@
 了解行业
 
 
-= Details =
-1. Jitterbit
-2. Talend
-3. Informatica
-4. Biztalk
-5. Etl-tools
-6. 灵蜂纵横
+*Details*
+ # Jitterbit
+ # Talend
+ # Informatica
+ # Biztalk
+ # Etl-tools
+ # 灵蜂纵横
