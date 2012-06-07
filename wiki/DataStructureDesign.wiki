@@ -22,6 +22,6 @@
   # STRING
  
  * Transform
-  # TransformRule 订制数据如何从源映射(mapping)到目标的规则
-  # TransformRuleSet 多个Rule的集合可以顺序执行，也可以并发执行，取决于具体情况由用户决定
-  # TransformProcessor 具体执行数据的计算，根据一个Rule把数据从源数据结构放到目标数据结构
+  # TransformRule  订制数据如何从源映射(mapping)到目标的规则
+  # TransformRuleSet  多个Rule的集合可以顺序执行，也可以并发执行，取决于具体情况由用户决定
+  # TransformProcessor  具体执行数据的计算，根据一个Rule把数据从源数据结构放到目标数据结构
