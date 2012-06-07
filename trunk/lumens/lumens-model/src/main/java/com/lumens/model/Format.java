@@ -14,19 +14,6 @@ import java.util.List;
  */
 public interface Format
 {
-  public enum Type
-  {
-    NONE,
-    SHORT,
-    INT,
-    LONG,
-    FLOAT,
-    DOUBLE,
-    STRING,
-    BINARY,
-    DATE
-  }
-
   public enum Form
   {
     NONE,
@@ -57,6 +44,8 @@ public interface Format
   public Format addChild(Format format);
 
   public Format addChild(String name, Form form, Type type);
+
+  public Format addChild(String name, Form form);
 
   public Format getChild(String name);
 
