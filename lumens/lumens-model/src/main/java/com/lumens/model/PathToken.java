@@ -36,7 +36,17 @@ public class PathToken
 
   private void parseToken(String token)
   {
-    if (token.charAt(token.length() - 1) != ']')
+    if (token.charAt(token.length() - 1) != ']' || token.length() < 4)
+    {
       index = -1;
+      return;
+    }
+    int i = token.lastIndexOf('[');
+    if (i < 0)
+    {
+      index = -1;
+      return;
+    }
+    index = Integer.parseInt(token.substring(i + 1, token.length() - 1));
   }
 }
