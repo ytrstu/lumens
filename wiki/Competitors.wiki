@@ -1,0 +1,14 @@
+#summary Competitors
+
+= Introduction =
+
+了解行业
+
+
+= Details =
+1. Jitterbit
+2. Talend
+3. Informatica
+4. Biztalk
+5. Etl-tools
+6. 灵蜂纵横
