@@ -4,7 +4,6 @@
  */
 package com.lumens.model;
 
-import com.lumens.model.Format.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,18 +14,18 @@ import java.util.Map;
  *
  * @author shaofeng wang
  */
-public class NodeData implements Data
+public class DataElement implements Element
 {
-  protected Map<String, Data> children = new HashMap<String, Data>();
-  protected List<Data> childrenList = new ArrayList<Data>();
-  protected List<Data> arrayItems;
+  protected Map<String, Element> children = new HashMap<String, Element>();
+  protected List<Element> childrenList = new ArrayList<Element>();
+  protected List<Element> arrayItems;
   protected Format format;
   protected Object value;
-  private Data parent;
+  private Element parent;
   private int index = -1;
   private boolean isArrayItem;
 
-  public NodeData(Format format)
+  public DataElement(Format format)
   {
     this.format = format;
   }
@@ -38,34 +37,28 @@ public class NodeData implements Data
   }
 
   @Override
-  public void removeChild(Data data)
+  public void removeChild(Element data)
   {
-    Data removed = children.remove(data.getFormat().getName());
+    Element removed = children.remove(data.getFormat().getName());
     if (removed != null)
-    {
       childrenList.remove(removed);
-    }
   }
 
   @Override
-  public Data addChild(String name)
+  public Element addChild(String name)
   {
     Format child = format.getChild(name);
-    return addChild(new NodeData(child));
+    return addChild(new DataElement(child));
   }
 
   @Override
-  public Data addChild(Data data)
+  public Element addChild(Element data)
   {
     if (isArray())
-    {
       throw new RuntimeException("Error, the data node is an array, it is not an array item");
-    }
     String name = data.getFormat().getName();
     if (children.containsKey(name))
-    {
       throw new IllegalArgumentException("Duplicate child \"" + format.getName() + "\"");
-    }
     data.setParent(this);
     children.put(name, data);
     childrenList.add(data);
@@ -73,31 +66,37 @@ public class NodeData implements Data
   }
 
   @Override
-  public void setParent(Data parent)
+  public void setParent(Element parent)
   {
     this.parent = parent;
   }
 
   @Override
-  public Data getParent()
+  public Element getParent()
   {
     return parent;
   }
 
   @Override
-  public Data getChild(String name)
+  public Element getChild(String name)
   {
     return children.get(name);
   }
 
   @Override
-  public List<Data> getChildren()
+  public Element getChildByPath(String path)
+  {
+    return null;
+  }
+
+  @Override
+  public List<Element> getChildren()
   {
     return childrenList;
   }
 
   @Override
-  public List<Data> getSlibling()
+  public List<Element> getSlibling()
   {
     throw new UnsupportedOperationException("Not supported yet.");
   }
@@ -124,9 +123,7 @@ public class NodeData implements Data
   public void setValue(short value)
   {
     if (!isShort())
-    {
       throw new IllegalArgumentException("Error, data type is not short !");
-    }
     this.value = value;
   }
 
@@ -134,9 +131,7 @@ public class NodeData implements Data
   public void setValue(int value)
   {
     if (!isInt())
-    {
       throw new IllegalArgumentException("Error, data type is not int !");
-    }
     this.value = value;
   }
 
@@ -144,9 +139,7 @@ public class NodeData implements Data
   public void setValue(long value)
   {
     if (!isLong())
-    {
       throw new IllegalArgumentException("Error, data type is not long !");
-    }
     this.value = value;
   }
 
@@ -154,9 +147,7 @@ public class NodeData implements Data
   public void setValue(float value)
   {
     if (!isFloat())
-    {
       throw new IllegalArgumentException("Error, data type is not float !");
-    }
     this.value = value;
   }
 
@@ -164,9 +155,7 @@ public class NodeData implements Data
   public void setValue(double value)
   {
     if (!isDouble())
-    {
       throw new IllegalArgumentException("Error, data type is not double !");
-    }
     this.value = value;
   }
 
@@ -174,9 +163,7 @@ public class NodeData implements Data
   public void setValue(byte[] value)
   {
     if (!isBinary())
-    {
       throw new IllegalArgumentException("Error, data type is not binary !");
-    }
     this.value = value;
   }
 
@@ -184,9 +171,7 @@ public class NodeData implements Data
   public void setValue(Date value)
   {
     if (!isDate())
-    {
       throw new IllegalArgumentException("Error, data type is not date time !");
-    }
     this.value = value;
   }
 
@@ -194,9 +179,7 @@ public class NodeData implements Data
   public void setValue(String value)
   {
     if (!isString())
-    {
       throw new IllegalArgumentException("Error, data type is not string !");
-    }
     this.value = value;
   }
 
@@ -297,17 +280,13 @@ public class NodeData implements Data
   }
 
   @Override
-  public Data addArrayItem()
+  public Element addArrayItem()
   {
     if (!format.isArray())
-    {
       throw new RuntimeException("Error, the node type is not an array");
-    }
-    NodeData data = new NodeData(format);
+    DataElement data = new DataElement(format);
     if (arrayItems == null)
-    {
-      arrayItems = new ArrayList<Data>();
-    }
+      arrayItems = new ArrayList<Element>();
     data.setParent(this);
     data.index = arrayItems.size();
     data.isArrayItem = true;
@@ -316,7 +295,7 @@ public class NodeData implements Data
   }
 
   @Override
-  public List<Data> getArrayItems()
+  public List<Element> getArrayItems()
   {
     return arrayItems;
   }

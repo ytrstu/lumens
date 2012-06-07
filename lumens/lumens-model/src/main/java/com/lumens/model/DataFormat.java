@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * @author shaofeng wang
  */
-public class NodeFormat implements Format
+public class DataFormat implements Format
 {
   protected Map<String, Format> children = new HashMap<String, Format>();
   protected List<Format> childrenList = new ArrayList<Format>();
@@ -22,16 +22,16 @@ public class NodeFormat implements Format
   private Form form = Form.NONE;
   private Format parent;
 
-  public NodeFormat()
+  public DataFormat()
   {
   }
 
-  public NodeFormat(String name)
+  public DataFormat(String name)
   {
     this.name = name;
   }
 
-  public NodeFormat(String name, Form form, Type type)
+  public DataFormat(String name, Form form, Type type)
   {
     this.name = name;
     this.form = form;
@@ -78,9 +78,7 @@ public class NodeFormat implements Format
   public Format addChild(Format format)
   {
     if (children.containsKey(format.getName()))
-    {
       throw new IllegalArgumentException("Duplicate child \"" + format.getName() + "\"");
-    }
     format.setParent(this);
     children.put(format.getName(), format);
     childrenList.add(format);
@@ -90,7 +88,13 @@ public class NodeFormat implements Format
   @Override
   public Format addChild(String name, Form form, Type type)
   {
-    return addChild(new NodeFormat(name, form, type));
+    return addChild(new DataFormat(name, form, type));
+  }
+
+  @Override
+  public Format addChild(String name, Form form)
+  {
+    return addChild(new DataFormat(name, form, Type.NONE));
   }
 
   @Override

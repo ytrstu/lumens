@@ -11,34 +11,36 @@ import java.util.List;
  *
  * @author shaofeng wang
  */
-public interface Data
+public interface Element
 {
   /*Methods to get and set properties of data node*/
   public int index();
 
-  public void removeChild(Data data);
+  public void removeChild(Element data);
 
-  public Data addChild(String name);
+  public Element addChild(String name);
 
-  public Data addChild(Data data);
+  public Element addChild(Element data);
 
-  public Data addArrayItem();
+  public Element addArrayItem();
 
-  public Data getParent();
+  public Element getParent();
 
-  public Data getChild(String name);
+  public Element getChild(String name);
 
-  public List<Data> getChildren();
-  
-  public List<Data> getArrayItems();
+  public Element getChildByPath(String path);
 
-  public List<Data> getSlibling();
+  public List<Element> getChildren();
+
+  public List<Element> getArrayItems();
+
+  public List<Element> getSlibling();
 
   public Format getFormat();
 
   public Object getValue();
 
-  public void setParent(Data data);
+  public void setParent(Element data);
 
   public void setValue(Object value);
 
