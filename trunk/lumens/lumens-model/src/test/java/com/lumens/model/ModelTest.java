@@ -73,12 +73,6 @@ public class ModelTest
     assetDataItem.addChild("price").setValue(12000.05f);
     assetDataItem.addChild("vendor").addChild("name").setValue("Apple");
     assertEquals(12000.05f, personData.getChild("asset").getArrayItems().get(0).getChild("price").getFloat());
-
-    // TODO
-    nameData = personData.getChildByPath("asset.vendor.name");
-    assertNull(nameData);
-    nameData = personData.getChildByPath("asset[0].vendor.name");
-    assertNull(nameData);
   }
 
   public void testElementPath()
@@ -105,12 +99,48 @@ public class ModelTest
     assertTrue(!token.isIndexed());
     assertEquals(-1, token.index());
     token = new PathToken("abc[10]");
+    assertEquals("abc", token.toString());
     assertTrue(token.isIndexed());
     assertEquals(10, token.index());
 
     token = new PathToken("abc10]");
     assertTrue(!token.isIndexed());
     assertEquals(-1, token.index());
+  }
+
+  public void testPathForArrayNode()
+  {
+    // Fill data 
+    // Create format
+    Format root = new DataFormat("root");
+    Format person = root.addChild("Person", Form.STRUCT);
+    person.addChild("name", Form.FIELD, Type.STRING);
+    Format asset = person.addChild("asset", Form.ARRAY);
+    asset.addChild("name", Form.FIELD, Type.STRING);
+    asset.addChild("price", Form.FIELD, Type.FLOAT);
+    asset.addChild("vendor", Form.STRUCT).addChild("name", Form.FIELD, Type.STRING);
+
+    // Fill data
+    Element personData = new DataElement(person);
+    Element nameData = personData.addChild("name");
+    nameData.setValue("James wang");
+    assertEquals("James wang", nameData.getString());
+    Element assetData = personData.addChild("asset");
+    Element assetDataItem = assetData.addArrayItem();
+    assetDataItem.addChild("name").setValue("Mac air book");
+    assetDataItem.addChild("price").setValue(12000.05f);
+    assetDataItem.addChild("vendor").addChild("name").setValue("Apple");
+    assetDataItem = assetData.addArrayItem();
+    assetDataItem.addChild("name").setValue("HP computer");
+    assetDataItem.addChild("price").setValue(15000.05f);
+    assetDataItem.addChild("vendor").addChild("name").setValue("HP");
+
+    nameData = personData.getChildByPath("asset.vendor.name");
+    assertNotNull(nameData);
+    nameData = personData.getChildByPath("asset[0].vendor.name");
+    assertNotNull(nameData);
+    nameData = personData.getChildByPath("asset[1].vendor.name");
+    assertNotNull(nameData);
   }
 
   public void testScriptPath()

@@ -29,6 +29,8 @@ public interface Element
 
   public Element getChildByPath(String path);
 
+  public Element getChildByPath(Path path);
+
   public List<Element> getChildren();
 
   public List<Element> getArrayItems();
