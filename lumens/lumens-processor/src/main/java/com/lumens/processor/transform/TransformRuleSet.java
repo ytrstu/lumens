@@ -1,5 +1,5 @@
 /*
- * Lumens developer shaofeng.cjpw@gmail.com
+ * Copyright Lumens Team, Inc. All Rights Reserved.
  */
 package com.lumens.processor.transform;
 
