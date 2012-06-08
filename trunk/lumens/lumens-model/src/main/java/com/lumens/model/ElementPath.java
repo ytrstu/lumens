@@ -1,5 +1,5 @@
 /*
- * Lumens developer shaofeng.cjpw@gmail.com
+ * Copyright Lumens Team, Inc. All Rights Reserved.
  */
 package com.lumens.model;
 
@@ -33,6 +33,22 @@ public class ElementPath implements Path
     return tokens.iterator();
   }
 
+  public Path addLeft(String token)
+  {
+    if (tokens == null)
+      tokens = new LinkedList<PathToken>();
+    tokens.add(0, new PathToken(token));
+    return this;
+  }
+  
+  public Path addRight(String token)
+  {
+    if (tokens == null)
+      tokens = new LinkedList<PathToken>();
+    tokens.add(new PathToken(token));
+    return this;
+  }
+
   @Override
   public Path left(int count)
   {
@@ -61,7 +77,9 @@ public class ElementPath implements Path
     if (count > 0)
       removed = new LinkedList<PathToken>();
     while (0 < count--)
+    {
       removed.add(tokens.remove(0));
+    }
     return new ElementPath(removed);
   }
 
@@ -70,7 +88,9 @@ public class ElementPath implements Path
   {
     LinkedList<PathToken> removed = new LinkedList<PathToken>();
     while (0 < count--)
+    {
       removed.addFirst(tokens.remove(tokens.size() - 1));
+    }
     return new ElementPath(removed);
   }
 

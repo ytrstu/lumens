@@ -1,5 +1,5 @@
 /*
- * Lumens developer shaofeng.cjpw@gmail.com
+ * Copyright Lumens Team, Inc. All Rights Reserved.
  */
 package com.lumens.model;
 
@@ -28,6 +28,12 @@ public class DataFormat implements Format
   public DataFormat(String name)
   {
     this.name = name;
+  }
+
+  public DataFormat(String name, Form form)
+  {
+    this.name = name;
+    this.form = form;
   }
 
   public DataFormat(String name, Form form, Type type)
@@ -106,6 +112,22 @@ public class DataFormat implements Format
   public List<Format> getChildren()
   {
     return childrenList;
+  }
+
+  @Override
+  public Path getFullPath()
+  {
+    Path fullPath = new ElementPath((String) null);
+    if (parent != null)
+    {
+      Format format = this;
+      while (format.getParent() != null)
+      {
+        fullPath.addLeft(format.getName());
+        format = format.getParent();
+      }
+    }
+    return fullPath;
   }
 
   @Override
