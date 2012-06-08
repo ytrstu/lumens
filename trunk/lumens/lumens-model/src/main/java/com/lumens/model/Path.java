@@ -11,19 +11,19 @@ import java.util.Iterator;
  */
 public interface Path
 {
-  public boolean isEmpty();
+    public boolean isEmpty();
 
-  public Iterator<PathToken> iterator();
+    public Iterator<PathToken> iterator();
 
-  public Path addLeft(String token);
+    public Path addLeft(String token);
 
-  public Path addRight(String token);
+    public Path addRight(String token);
 
-  public Path left(int count);
+    public Path left(int count);
 
-  public Path right(int count);
+    public Path right(int count);
 
-  public Path removeLeft(int count);
+    public Path removeLeft(int count);
 
-  public Path removeRight(int count);
+    public Path removeRight(int count);
 }

@@ -58,7 +58,7 @@ public class DataElement implements Element
       throw new RuntimeException("Error, the data node is an array, it is not an array item");
     String name = data.getFormat().getName();
     if (children.containsKey(name))
-      throw new IllegalArgumentException("Duplicate child \"" + format.getName() + "\"");
+          throw new IllegalArgumentException("Duplicate child \"" + format.getName() + "\"");
     data.setParent(this);
     children.put(name, data);
     childrenList.add(data);

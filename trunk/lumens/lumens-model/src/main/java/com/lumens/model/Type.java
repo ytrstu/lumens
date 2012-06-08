@@ -9,13 +9,13 @@ package com.lumens.model;
  */
 public enum Type
 {
-  NONE,
-  SHORT,
-  INT,
-  LONG,
-  FLOAT,
-  DOUBLE,
-  STRING,
-  BINARY,
-  DATE
+    NONE,
+    SHORT,
+    INT,
+    LONG,
+    FLOAT,
+    DOUBLE,
+    STRING,
+    BINARY,
+    DATE
 }

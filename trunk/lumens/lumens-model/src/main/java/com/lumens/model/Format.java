@@ -13,48 +13,48 @@ import java.util.List;
  */
 public interface Format
 {
-  public enum Form
-  {
-    NONE,
-    FIELD,
-    STRUCT,
-    ARRAY
-  }
-  public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-  public static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
-  public static final DateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public enum Form
+    {
+        NONE,
+        FIELD,
+        STRUCT,
+        ARRAY
+    }
+    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    public static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+    public static final DateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-  public Type getType();
+    public Type getType();
 
-  public Form getForm();
+    public Form getForm();
 
-  public void setType(Type type);
+    public void setType(Type type);
 
-  public void setForm(Form form);
+    public void setForm(Form form);
 
-  public String getName();
+    public String getName();
 
-  public void setName(String name);
+    public void setName(String name);
 
-  public Format getParent();
+    public Format getParent();
 
-  public void setParent(Format format);
+    public void setParent(Format format);
 
-  public Format addChild(Format format);
+    public Format addChild(Format format);
 
-  public Format addChild(String name, Form form, Type type);
+    public Format addChild(String name, Form form, Type type);
 
-  public Format addChild(String name, Form form);
+    public Format addChild(String name, Form form);
 
-  public Format getChild(String name);
+    public Format getChild(String name);
 
-  public List<Format> getChildren();
-  
-  public Path getFullPath();
+    public List<Format> getChildren();
 
-  public boolean isField();
+    public Path getFullPath();
 
-  public boolean isStructure();
+    public boolean isField();
 
-  public boolean isArray();
+    public boolean isStructure();
+
+    public boolean isArray();
 }

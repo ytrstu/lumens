@@ -9,45 +9,45 @@ package com.lumens.model;
  */
 public class PathToken
 {
-  private String token;
-  private int index;
+    private String token;
+    private int index;
 
-  public PathToken(String token)
-  {
-    this.token = token;
-    parseToken(token);
-  }
-
-  public boolean isIndexed()
-  {
-    return index != -1;
-  }
-
-  public int index()
-  {
-    return index;
-  }
-
-  @Override
-  public String toString()
-  {
-    return token;
-  }
-
-  private void parseToken(String token)
-  {
-    if (token.charAt(token.length() - 1) != ']' || token.length() < 4)
+    public PathToken(String token)
     {
-      index = -1;
-      return;
+        this.token = token;
+        parseToken(token);
     }
-    int i = token.lastIndexOf('[');
-    if (i < 0)
+
+    public boolean isIndexed()
     {
-      index = -1;
-      return;
+        return index != -1;
     }
-    index = Integer.parseInt(token.substring(i + 1, token.length() - 1));
-    this.token = token.substring(0, i);
-  }
+
+    public int index()
+    {
+        return index;
+    }
+
+    @Override
+    public String toString()
+    {
+        return token;
+    }
+
+    private void parseToken(String token)
+    {
+        if (token.charAt(token.length() - 1) != ']' || token.length() < 4)
+        {
+            index = -1;
+            return;
+        }
+        int i = token.lastIndexOf('[');
+        if (i < 0)
+        {
+            index = -1;
+            return;
+        }
+        index = Integer.parseInt(token.substring(i + 1, token.length() - 1));
+        this.token = token.substring(0, i);
+    }
 }
