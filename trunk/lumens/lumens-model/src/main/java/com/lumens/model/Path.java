@@ -11,6 +11,8 @@ import java.util.Iterator;
  */
 public interface Path
 {
+  public boolean isEmpty();
+
   public Iterator<PathToken> iterator();
 
   public Path addLeft(String token);
