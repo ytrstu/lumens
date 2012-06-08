@@ -86,7 +86,7 @@ public class DataElement implements Element
   @Override
   public Element getChildByPath(String path)
   {
-    return getChildByPath(new ElementPath(path));
+    return getChildByPath(new AccessPath(path));
   }
 
   @Override

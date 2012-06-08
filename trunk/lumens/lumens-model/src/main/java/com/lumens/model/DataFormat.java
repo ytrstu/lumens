@@ -117,7 +117,7 @@ public class DataFormat implements Format
   @Override
   public Path getFullPath()
   {
-    Path fullPath = new ElementPath((String) null);
+    Path fullPath = new AccessPath((String) null);
     if (parent != null)
     {
       Format format = this;
