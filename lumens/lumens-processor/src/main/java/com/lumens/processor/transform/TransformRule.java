@@ -15,36 +15,41 @@ import java.util.Iterator;
  */
 public class TransformRule
 {
-  private Format dstFmt;
-  private TransformRuleItem root;
+    private Format dstFmt;
+    private TransformRuleItem root;
 
-  public TransformRule(Format dest)
-  {
-    dstFmt = dest;
-  }
-
-  public TransformRuleItem getRuleItem(String path)
-  {
-    Path fmtPath = new AccessPath(path);
-    if (root == null)
-      root = new TransformRuleItem(dstFmt);
-    if (!fmtPath.isEmpty())
+    public TransformRule(Format dest)
     {
-      PathToken token = null;
-      TransformRuleItem parent = root;
-      TransformRuleItem child = null;
-      Iterator<PathToken> it = fmtPath.iterator();
-      while (it.hasNext())
-      {
-        token = it.next();
-        child = parent.getChild(token.toString());
-        if (child == null)
-          child = parent.addChild(token.toString());
-        parent = child;
-      }
-      return child;
+        dstFmt = dest;
     }
 
-    return null;
-  }
+    public TransformRuleItem getRuleEntry()
+    {
+        return root;
+    }
+
+    public TransformRuleItem getRuleItem(String path)
+    {
+        Path fmtPath = new AccessPath(path);
+        if (root == null)
+            root = new TransformRuleItem(dstFmt);
+        if (!fmtPath.isEmpty())
+        {
+            PathToken token = null;
+            TransformRuleItem parent = root;
+            TransformRuleItem child = null;
+            Iterator<PathToken> it = fmtPath.iterator();
+            while (it.hasNext())
+            {
+                token = it.next();
+                child = parent.getChild(token.toString());
+                if (child == null)
+                    child = parent.addChild(token.toString());
+                parent = child;
+            }
+            return child;
+        }
+
+        return null;
+    }
 }
