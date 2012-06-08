@@ -26,6 +26,12 @@ public class AccessPath implements Path
   }
 
   @Override
+  public boolean isEmpty()
+  {
+    return tokens == null || tokens.isEmpty();
+  }
+
+  @Override
   public Iterator<PathToken> iterator()
   {
     if (tokens == null)
@@ -41,7 +47,7 @@ public class AccessPath implements Path
     tokens.add(0, new PathToken(token));
     return this;
   }
-  
+
   @Override
   public Path addRight(String token)
   {
