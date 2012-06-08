@@ -11,16 +11,16 @@ import java.util.List;
  *
  * @author shaofeng wang
  */
-public class ElementPath implements Path
+public class AccessPath implements Path
 {
   private List<PathToken> tokens;
 
-  public ElementPath(String path)
+  public AccessPath(String path)
   {
     parse(path);
   }
 
-  public ElementPath(List<PathToken> tokens)
+  public AccessPath(List<PathToken> tokens)
   {
     this.tokens = tokens;
   }
@@ -33,6 +33,7 @@ public class ElementPath implements Path
     return tokens.iterator();
   }
 
+  @Override
   public Path addLeft(String token)
   {
     if (tokens == null)
@@ -41,6 +42,7 @@ public class ElementPath implements Path
     return this;
   }
   
+  @Override
   public Path addRight(String token)
   {
     if (tokens == null)
@@ -55,7 +57,7 @@ public class ElementPath implements Path
     List<PathToken> subTokens = null;
     if (count > 0)
       subTokens = tokens.subList(0, count);
-    return new ElementPath(subTokens);
+    return new AccessPath(subTokens);
   }
 
   @Override
@@ -67,7 +69,7 @@ public class ElementPath implements Path
       int size = tokens.size();
       subTokens = tokens.subList(size - count, size - 1);
     }
-    return new ElementPath(subTokens);
+    return new AccessPath(subTokens);
   }
 
   @Override
@@ -80,7 +82,7 @@ public class ElementPath implements Path
     {
       removed.add(tokens.remove(0));
     }
-    return new ElementPath(removed);
+    return new AccessPath(removed);
   }
 
   @Override
@@ -91,7 +93,7 @@ public class ElementPath implements Path
     {
       removed.addFirst(tokens.remove(tokens.size() - 1));
     }
-    return new ElementPath(removed);
+    return new AccessPath(removed);
   }
 
   @Override

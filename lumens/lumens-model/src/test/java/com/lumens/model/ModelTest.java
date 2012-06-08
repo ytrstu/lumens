@@ -80,13 +80,13 @@ public class ModelTest
 
   public void testElementPath()
   {
-    Path path = new ElementPath("asset.vendor.name");
+    Path path = new AccessPath("asset.vendor.name");
     Iterator<PathToken> it = path.iterator();
     assertEquals("asset", it.next().toString());
     assertEquals("vendor", it.next().toString());
     assertEquals("name", it.next().toString());
 
-    path = new ElementPath("asset.'vendor.info'.name");
+    path = new AccessPath("asset.'vendor.info'.name");
     it = path.iterator();
     assertEquals("asset", it.next().toString());
     assertEquals("vendor.info", it.next().toString());
@@ -94,7 +94,7 @@ public class ModelTest
 
     Path removed = path.removeLeft(2);
     assertEquals("asset.'vendor.info'", removed.toString());
-    path = new ElementPath("asset.'vendor.info'.name");
+    path = new AccessPath("asset.'vendor.info'.name");
     removed = path.removeRight(2);
     assertEquals("'vendor.info'.name", removed.toString());
 
