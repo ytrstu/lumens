@@ -47,7 +47,7 @@ public class ProcessorTest
     personAsset.addChild("name", Format.Form.FIELD, Type.STRING);
     personAsset.addChild("price", Format.Form.FIELD, Type.FLOAT);
     Format name = personAsset.addChild("vendor", Format.Form.STRUCT).addChild("name", Format.Form.FIELD, Type.STRING);
-    assertEquals("Person.asset.vendor.name", name.getFullPath().toString());
+    assertEquals("asset.vendor.name", name.getFullPath().toString());
 
     // Fill data
     Element personData = new DataElement(person);
@@ -74,8 +74,9 @@ public class ProcessorTest
     cpu.addChild("corenumber", Form.FIELD, Type.INT);
     cpu.addChild("speed", Form.FIELD, Type.STRING);
 
-    TransformRule rule = new TransformRule(person, asset);
-    rule.getRuleItem("asset.name").setValue("Computer.name");
-    rule.getRuleItem("asset").setLoop("Computer");
+    TransformRule rule = new TransformRule(asset);
+    rule.getRuleItem("Computer.name").setValue("@asset.name");
+    rule.getRuleItem("Computer").setLoop("asset");
+    assertEquals("@asset.name", rule.getRuleItem("Computer.name").getValue());
   }
 }
