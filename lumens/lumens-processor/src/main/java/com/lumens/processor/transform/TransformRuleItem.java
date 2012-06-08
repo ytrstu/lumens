@@ -4,6 +4,8 @@
 package com.lumens.processor.transform;
 
 import com.lumens.model.Format;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -11,24 +13,53 @@ import com.lumens.model.Format;
  */
 public class TransformRuleItem
 {
-  private TransformRule rule;
   private TransformRuleItem parent;
-  private Format src;
-  private String valueScript;
+  private Map<String, TransformRuleItem> children;
+  private String value;
   private String arrayLoop;
+  private Format format;
 
-  public TransformRuleItem(TransformRule rule)
+  TransformRuleItem(Format format)
   {
-    this.rule = rule;
+    this.format = format;
   }
 
-  public void setValue(String valueScript)
+  public void setValue(String value)
   {
-    this.valueScript = valueScript;
+    this.value = value;
   }
 
   public void setLoop(String arrayLoop)
   {
     this.arrayLoop = arrayLoop;
+  }
+
+  public String getValue()
+  {
+    return value;
+  }
+
+  public String getLoop()
+  {
+    return arrayLoop;
+  }
+
+  public TransformRuleItem getChild(String name)
+  {
+    if (children == null)
+      return null;
+    return children.get(name);
+  }
+
+  public TransformRuleItem addChild(String name)
+  {
+    if (children == null)
+      children = new HashMap<String, TransformRuleItem>();
+    Format child = format.getChild(name);
+    if (child == null)
+      throw new IllegalArgumentException("The child format \"" + name + "\" does not exist");
+    TransformRuleItem item = new TransformRuleItem(child);
+    children.put(name, item);
+    return item;
   }
 }
