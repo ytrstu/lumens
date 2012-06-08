@@ -4,8 +4,9 @@
 package com.lumens.processor.transform;
 
 import com.lumens.model.Format;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -13,53 +14,73 @@ import java.util.Map;
  */
 public class TransformRuleItem
 {
-  private TransformRuleItem parent;
-  private Map<String, TransformRuleItem> children;
-  private String value;
-  private String arrayLoop;
-  private Format format;
+    private TransformRuleItem parent;
+    private List<TransformRuleItem> children;
+    private String value;
+    private String arrayLoop;
+    private Format format;
 
-  TransformRuleItem(Format format)
-  {
-    this.format = format;
-  }
+    TransformRuleItem(Format format)
+    {
+        this.format = format;
+    }
 
-  public void setValue(String value)
-  {
-    this.value = value;
-  }
+    public void setValue(String value)
+    {
+        this.value = value;
+    }
 
-  public void setLoop(String arrayLoop)
-  {
-    this.arrayLoop = arrayLoop;
-  }
+    public String getValue()
+    {
+        return value;
+    }
 
-  public String getValue()
-  {
-    return value;
-  }
+    public void setLoop(String arrayLoop)
+    {
+        this.arrayLoop = arrayLoop;
+    }
 
-  public String getLoop()
-  {
-    return arrayLoop;
-  }
+    public String getLoop()
+    {
+        return arrayLoop;
+    }
 
-  public TransformRuleItem getChild(String name)
-  {
-    if (children == null)
-      return null;
-    return children.get(name);
-  }
+    public TransformRuleItem getParent()
+    {
+        return parent;
+    }
 
-  public TransformRuleItem addChild(String name)
-  {
-    if (children == null)
-      children = new HashMap<String, TransformRuleItem>();
-    Format child = format.getChild(name);
-    if (child == null)
-      throw new IllegalArgumentException("The child format \"" + name + "\" does not exist");
-    TransformRuleItem item = new TransformRuleItem(child);
-    children.put(name, item);
-    return item;
-  }
+    public Iterator<TransformRuleItem> iterator()
+    {
+        return children != null ? children.iterator() : null;
+    }
+
+    public TransformRuleItem getChild(String name)
+    {
+        if (children != null)
+        {
+            for (TransformRuleItem item : children)
+                if (item.format.getName().equalsIgnoreCase(name))
+                    return item;
+        }
+        return null;
+    }
+
+    public TransformRuleItem addChild(String name)
+    {
+        if (children == null)
+            children = new ArrayList<TransformRuleItem>();
+        Format child = format.getChild(name);
+        if (child == null)
+            throw new IllegalArgumentException("The child format \"" + name + "\" does not exist");
+        TransformRuleItem item = new TransformRuleItem(child);
+        item.parent = this;
+        children.add(item);
+        return item;
+    }
+
+    public Format getFormat()
+    {
+        return format;
+    }
 }
