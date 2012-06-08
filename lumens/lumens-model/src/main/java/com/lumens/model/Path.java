@@ -1,5 +1,5 @@
 /*
- * Lumens developer shaofeng.cjpw@gmail.com
+ * Copyright Lumens Team, Inc. All Rights Reserved.
  */
 package com.lumens.model;
 
@@ -12,6 +12,10 @@ import java.util.Iterator;
 public interface Path
 {
   public Iterator<PathToken> iterator();
+
+  public Path addLeft(String token);
+
+  public Path addRight(String token);
 
   public Path left(int count);
 

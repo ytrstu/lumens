@@ -1,3 +1,6 @@
+/*
+ * Copyright Lumens Team, Inc. All Rights Reserved.
+ */
 package com.lumens.model;
 
 import com.lumens.model.Format.Form;
@@ -108,9 +111,8 @@ public class ModelTest
     assertEquals(-1, token.index());
   }
 
-  public void testPathForArrayNode()
+  public void testPathForDataElement()
   {
-    // Fill data 
     // Create format
     Format root = new DataFormat("root");
     Format person = root.addChild("Person", Form.STRUCT);
@@ -118,7 +120,8 @@ public class ModelTest
     Format asset = person.addChild("asset", Form.ARRAY);
     asset.addChild("name", Form.FIELD, Type.STRING);
     asset.addChild("price", Form.FIELD, Type.FLOAT);
-    asset.addChild("vendor", Form.STRUCT).addChild("name", Form.FIELD, Type.STRING);
+    Format name = asset.addChild("vendor", Form.STRUCT).addChild("name", Form.FIELD, Type.STRING);
+    assertEquals("Person.asset.vendor.name", name.getFullPath().toString());
 
     // Fill data
     Element personData = new DataElement(person);
@@ -145,6 +148,7 @@ public class ModelTest
 
   public void testScriptPath()
   {
-    //var name = @asset.'vendor.info'[0].name
+    //var name = @asset.'vendor.info'[0].name+,-,*,/,%,>,<"Hello"
+    //var name = @asset.'vendor.info'[0].name; "Hello"
   }
 }

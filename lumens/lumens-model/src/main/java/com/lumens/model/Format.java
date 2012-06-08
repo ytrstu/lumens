@@ -1,5 +1,5 @@
 /*
- * Lumens developer shaofeng.cjpw@gmail.com
+ * Copyright Lumens Team, Inc. All Rights Reserved.
  */
 package com.lumens.model;
 
@@ -49,6 +49,8 @@ public interface Format
   public Format getChild(String name);
 
   public List<Format> getChildren();
+  
+  public Path getFullPath();
 
   public boolean isField();
 
