@@ -310,15 +310,27 @@ public class DataElement implements Element
     @Override
     public Element addArrayItem()
     {
+        return addArrayItem(newArrayItem());
+    }
+
+    @Override
+    public Element addArrayItem(Element data)
+    {
+        if (arrayItems == null)
+            arrayItems = new ArrayList<Element>();
+        arrayItems.add(data);
+        return data;
+    }
+
+    @Override
+    public Element newArrayItem()
+    {
         if (!format.isArray())
             throw new RuntimeException("Error, the node type is not an array");
         DataElement data = new DataElement(format);
-        if (arrayItems == null)
-            arrayItems = new ArrayList<Element>();
         data.setParent(this);
         data.index = arrayItems.size();
         data.isArrayItem = true;
-        this.arrayItems.add(data);
         return data;
     }
 
