@@ -105,7 +105,7 @@ public class DataElement implements Element
         {
             token = it.next();
             child = child.getChild(token.toString());
-            if (token.isIndexed() || child.isArray())
+            if (token.isIndexed() || child.isArray() && it.hasNext())
             {
                 items = child.getArrayItems();
                 if (items == null)
@@ -329,7 +329,7 @@ public class DataElement implements Element
             throw new RuntimeException("Error, the node type is not an array");
         DataElement data = new DataElement(format);
         data.setParent(this);
-        data.index = arrayItems.size();
+        data.index = arrayItems == null ? 0 : arrayItems.size();
         data.isArrayItem = true;
         return data;
     }
