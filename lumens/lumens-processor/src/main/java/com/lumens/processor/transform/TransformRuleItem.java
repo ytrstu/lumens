@@ -35,12 +35,12 @@ public class TransformRuleItem
         return value;
     }
 
-    public void setLoop(String arrayLoop)
+    public void setArrayIterationPath(String arrayLoop)
     {
         this.arrayLoop = arrayLoop;
     }
 
-    public String getLoop()
+    public String getArrayIterationPath()
     {
         return arrayLoop;
     }
