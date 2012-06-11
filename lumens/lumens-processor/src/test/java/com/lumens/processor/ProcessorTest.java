@@ -69,8 +69,8 @@ public class ProcessorTest
         assetDataItem.addChild("vendor").addChild("name").setValue("HP");
 
         Format asset = new DataFormat("Asset", Form.STRUCT);
-        //Format computer = asset.addChild("Computer", Form.ARRAY);
-        Format computer = asset.addChild("Computer", Form.STRUCT);
+        Format computer = asset.addChild("Computer", Form.ARRAY);
+        //Format computer = asset.addChild("Computer", Form.STRUCT);
         computer.addChild("name", Form.FIELD, Type.STRING);
         Format cpu = computer.addChild("CPU", Form.ARRAY);
         cpu.addChild("name", Form.FIELD, Type.STRING);
@@ -79,7 +79,7 @@ public class ProcessorTest
 
         TransformRule rule = new TransformRule(asset);
         rule.getRuleItem("Computer.name").setValue("@asset.name");
-        //rule.getRuleItem("Computer").setArrayIterationPath("asset");
+        rule.getRuleItem("Computer").setArrayIterationPath("asset");
         assertEquals("@asset.name", rule.getRuleItem("Computer.name").getValue());
 
         Processor transformProcessor = new TransformProcessor();
