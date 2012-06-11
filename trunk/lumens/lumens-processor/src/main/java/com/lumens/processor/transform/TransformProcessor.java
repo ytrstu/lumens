@@ -44,7 +44,7 @@ public class TransformProcessor implements Processor
     {
         String value = rule.getValue();
         Format format = result.getFormat();
-        if (format.isArray())
+        if (result.isArray())
         {
             String arrayIterationPath = rule.getArrayIterationPath();
             if (arrayIterationPath != null)
@@ -58,12 +58,9 @@ public class TransformProcessor implements Processor
                 for (int index = 0; index < items.size(); ++index)
                 {
                     Element item = result.newArrayItem();
-                    if (value != null)
-                    {
-                        processRuleItem(ctx, data, item, rule);
-                        if (generateNullElement || item.getChildren() != null)
-                            result.addArrayItem(item);
-                    }
+                    processRuleItem(ctx, data, item, rule);
+                    if (generateNullElement || item.getChildren() != null)
+                        result.addArrayItem(item);
                 }
             }
         }
@@ -87,7 +84,10 @@ public class TransformProcessor implements Processor
                     TransformRuleItem ruleItem = it.next();
                     Element child = new DataElement(ruleItem.getFormat());
                     processRuleItem(ctx, data, child, ruleItem);
-                    if (generateNullElement || child.getFormat().getForm() == Form.FIELD || child.getChildren() != null)
+                    if (generateNullElement
+                        || child.getFormat().getForm() == Form.FIELD
+                        || child.getArrayItems() != null
+                        || child.getChildren() != null)
                         result.addChild(child);
                 }
             }
