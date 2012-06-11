@@ -138,6 +138,8 @@ public class ModelTest
         assetDataItem.addChild("price").setValue(15000.05f);
         assetDataItem.addChild("vendor").addChild("name").setValue("HP");
 
+        // if asset is array and asset is not the last path token, the default array item is 0
+        // if asset is the last token, return the array element
         nameData = personData.getChildByPath("asset.vendor.name");
         assertNotNull(nameData);
         nameData = personData.getChildByPath("asset[0].vendor.name");
