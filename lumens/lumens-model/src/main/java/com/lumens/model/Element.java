@@ -21,7 +21,11 @@ public interface Element
 
     public Element addChild(Element data);
 
+    public Element addArrayItem(Element data);
+
     public Element addArrayItem();
+
+    public Element newArrayItem();
 
     public Element getParent();
 
