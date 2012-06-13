@@ -17,44 +17,44 @@ public class TransformRuleItem
     private TransformRuleItem parent;
     private List<TransformRuleItem> children;
     private String value;
-    private String arrayLoop;
+    private String arrayIterationPath;
     private Format format;
-
+    
     TransformRuleItem(Format format)
     {
         this.format = format;
     }
-
+    
     public void setValue(String value)
     {
         this.value = value;
     }
-
+    
     public String getValue()
     {
         return value;
     }
-
-    public void setArrayIterationPath(String arrayLoop)
+    
+    public void setArrayIterationPath(String arrayIterationPath)
     {
-        this.arrayLoop = arrayLoop;
+        this.arrayIterationPath = arrayIterationPath;
     }
-
+    
     public String getArrayIterationPath()
     {
-        return arrayLoop;
+        return arrayIterationPath;
     }
-
+    
     public TransformRuleItem getParent()
     {
         return parent;
     }
-
+    
     public Iterator<TransformRuleItem> iterator()
     {
         return children != null ? children.iterator() : null;
     }
-
+    
     public TransformRuleItem getChild(String name)
     {
         if (children != null)
@@ -65,7 +65,7 @@ public class TransformRuleItem
         }
         return null;
     }
-
+    
     public TransformRuleItem addChild(String name)
     {
         if (children == null)
@@ -78,7 +78,7 @@ public class TransformRuleItem
         children.add(item);
         return item;
     }
-
+    
     public Format getFormat()
     {
         return format;
