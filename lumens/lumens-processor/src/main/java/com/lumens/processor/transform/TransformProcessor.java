@@ -30,15 +30,16 @@ public class TransformProcessor implements Processor
             TransformInput transInput = (TransformInput) input;
             Element data = transInput.getData();
             TransformRuleItem ruleEntry = transInput.getRule().getRuleEntry();
-            TransformContext ctx = new TransformContext();
             Format formatEntry = ruleEntry.getFormat();
             Element result = new DataElement(formatEntry);
+            TransformContext ctx = new TransformContext(data, result);
             processRuleItem(ctx, data, result, ruleEntry);
             return result;
         }
         return null;
     }
 
+    // #####TODO use an recursion implementation, it should be convert to norecursion later
     private void processRuleItem(TransformContext ctx, Element data, Element result,
                                  TransformRuleItem rule)
     {

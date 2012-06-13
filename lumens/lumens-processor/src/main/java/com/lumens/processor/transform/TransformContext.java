@@ -11,20 +11,22 @@ import com.lumens.model.Element;
  */
 public class TransformContext
 {
+    private Element input;
+    private Element result;
 
-    void setData(Element data)
+    public TransformContext(Element input, Element result)
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        this.input = input;
+        this.result = result;
     }
 
-    void setRuleEnry(TransformRuleItem ruleEntry)
+    Element getData()
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return input;
     }
 
-    void setResult(Element result)
+    Element getResult()
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return result;
     }
-    
 }
