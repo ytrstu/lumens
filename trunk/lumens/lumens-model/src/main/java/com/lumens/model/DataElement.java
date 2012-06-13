@@ -105,7 +105,7 @@ public class DataElement implements Element
         {
             token = it.next();
             child = child.getChild(token.toString());
-            if (token.isIndexed() || child.isArray() && it.hasNext())
+            if (child != null && (token.isIndexed() || child.isArray() && it.hasNext()))
             {
                 items = child.getArrayItems();
                 if (items == null)
