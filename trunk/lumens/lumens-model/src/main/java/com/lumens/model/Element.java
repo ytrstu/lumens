@@ -13,15 +13,17 @@ import java.util.List;
 public interface Element
 {
     /*Methods to get and set properties of data node*/
-    public int index();
+    public int getLevel();
 
-    public void removeChild(Element data);
+    public void removeChild(Element child);
+
+    public Element newChild(Format format);
 
     public Element addChild(String name);
 
-    public Element addChild(Element data);
+    public Element addChild(Element child);
 
-    public Element addArrayItem(Element data);
+    public Element addArrayItem(Element item);
 
     public Element addArrayItem();
 
@@ -36,8 +38,6 @@ public interface Element
     public Element getChildByPath(Path path);
 
     public List<Element> getChildren();
-
-    public List<Element> getArrayItems();
 
     public List<Element> getSlibling();
 
@@ -80,6 +80,10 @@ public interface Element
     public String getString();
 
     public Date getDate();
+
+    public boolean isField();
+
+    public boolean isStruct();
 
     public boolean isArray();
 

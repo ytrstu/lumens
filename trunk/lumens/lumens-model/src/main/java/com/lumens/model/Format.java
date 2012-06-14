@@ -54,7 +54,7 @@ public interface Format
 
     public boolean isField();
 
-    public boolean isStructure();
+    public boolean isStruct();
 
     public boolean isArray();
 }
