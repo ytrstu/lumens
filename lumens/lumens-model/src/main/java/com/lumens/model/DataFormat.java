@@ -149,7 +149,7 @@ public class DataFormat implements Format
     }
 
     @Override
-    public boolean isStructure()
+    public boolean isStruct()
     {
         return form == Form.STRUCT;
     }

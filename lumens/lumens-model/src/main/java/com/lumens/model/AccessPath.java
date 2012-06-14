@@ -81,6 +81,9 @@ public class AccessPath implements Path
     @Override
     public Path removeLeft(int count)
     {
+        if (count >= tokens.size())
+            return null;
+
         List<PathToken> removed = null;
         if (count > 0)
             removed = new LinkedList<PathToken>();
@@ -94,7 +97,12 @@ public class AccessPath implements Path
     @Override
     public Path removeRight(int count)
     {
-        LinkedList<PathToken> removed = new LinkedList<PathToken>();
+        if (count >= tokens.size())
+            return null;
+
+        LinkedList<PathToken> removed = null;
+        if (count > 0)
+            removed = new LinkedList<PathToken>();
         while (0 < count--)
         {
             removed.addFirst(tokens.remove(tokens.size() - 1));

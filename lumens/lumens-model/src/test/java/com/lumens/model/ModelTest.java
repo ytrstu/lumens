@@ -75,7 +75,7 @@ public class ModelTest
         assetDataItem.addChild("name").setValue("Mac air book");
         assetDataItem.addChild("price").setValue(12000.05f);
         assetDataItem.addChild("vendor").addChild("name").setValue("Apple");
-        assertEquals(12000.05f, personData.getChild("asset").getArrayItems().get(0).getChild("price").getFloat());
+        assertEquals(12000.05f, personData.getChild("asset").getChildren().get(0).getChild("price").getFloat());
     }
 
     public void testElementPath()
