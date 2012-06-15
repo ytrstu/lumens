@@ -39,8 +39,6 @@ public interface Element
 
     public List<Element> getChildren();
 
-    public List<Element> getSlibling();
-
     public Format getFormat();
 
     public Object getValue();

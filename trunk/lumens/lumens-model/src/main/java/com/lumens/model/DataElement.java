@@ -177,12 +177,6 @@ public class DataElement implements Element
     }
 
     @Override
-    public List<Element> getSlibling()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public Format getFormat()
     {
         return format;
@@ -197,7 +191,17 @@ public class DataElement implements Element
     @Override
     public void setValue(Object value)
     {
-        this.value = value;
+        if ((isShort() && value instanceof Short)
+            || (isInt() && value instanceof Integer)
+            || (isLong() && value instanceof Long)
+            || (isFloat() && value instanceof Float)
+            || (isDouble() && value instanceof Double)
+            || (isDate() && value instanceof Date)
+            || (isBinary() && value instanceof byte[])
+            || (isString() && value instanceof String))
+            this.value = value;
+        else
+            throw new IllegalArgumentException("Error, date type is \"" + format.getType().name() + "\"," + " value type is not correct !");
     }
 
     @Override

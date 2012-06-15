@@ -32,6 +32,12 @@ public class AccessPath implements Path
     }
 
     @Override
+    public int tokenCount()
+    {
+        return tokens.size();
+    }
+
+    @Override
     public Iterator<PathToken> iterator()
     {
         if (tokens == null)
@@ -73,7 +79,7 @@ public class AccessPath implements Path
         if (count > 0)
         {
             int size = tokens.size();
-            subTokens = tokens.subList(size - count, size - 1);
+            subTokens = tokens.subList(size - count, size);
         }
         return new AccessPath(subTokens);
     }

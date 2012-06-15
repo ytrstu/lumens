@@ -13,6 +13,8 @@ public interface Path
 {
     public boolean isEmpty();
 
+    public int tokenCount();
+
     public Iterator<PathToken> iterator();
 
     public Path addLeft(String token);
