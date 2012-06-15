@@ -4,6 +4,10 @@
 package com.lumens.processor.transform;
 
 import com.lumens.model.Format;
+import com.lumens.processor.ProcessorUtils;
+import com.lumens.processor.Script;
+import com.lumens.processor.script.AccessPathScript;
+import com.lumens.processor.script.JavaScript;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,45 +20,55 @@ public class TransformRuleItem
 {
     private TransformRuleItem parent;
     private List<TransformRuleItem> children;
-    private String value;
+    private Script script;
+    private String orignalScript;
     private String arrayIterationPath;
     private Format format;
-    
+
     TransformRuleItem(Format format)
     {
         this.format = format;
     }
-    
-    public void setValue(String value)
+
+    public void setScript(String script) throws Exception
     {
-        this.value = value;
+        orignalScript = script;
+        if (ProcessorUtils.isPathFormat(script))
+            this.script = new AccessPathScript(ProcessorUtils.getAccessPath(script));
+        else
+            this.script = new JavaScript(script);
     }
-    
-    public String getValue()
+
+    public Script getScript()
     {
-        return value;
+        return script;
     }
-    
+
+    public String getScriptString()
+    {
+        return orignalScript;
+    }
+
     public void setArrayIterationPath(String arrayIterationPath)
     {
         this.arrayIterationPath = arrayIterationPath;
     }
-    
+
     public String getArrayIterationPath()
     {
         return arrayIterationPath;
     }
-    
+
     public TransformRuleItem getParent()
     {
         return parent;
     }
-    
+
     public Iterator<TransformRuleItem> iterator()
     {
         return children != null ? children.iterator() : null;
     }
-    
+
     public TransformRuleItem getChild(String name)
     {
         if (children != null)
@@ -65,7 +79,7 @@ public class TransformRuleItem
         }
         return null;
     }
-    
+
     public TransformRuleItem addChild(String name)
     {
         if (children == null)
@@ -78,9 +92,14 @@ public class TransformRuleItem
         children.add(item);
         return item;
     }
-    
+
     public Format getFormat()
     {
         return format;
+    }
+
+    List<TransformRuleItem> getChildren()
+    {
+        return children;
     }
 }

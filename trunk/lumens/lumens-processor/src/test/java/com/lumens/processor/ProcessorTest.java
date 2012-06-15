@@ -40,7 +40,7 @@ public class ProcessorTest
         return new TestSuite(ProcessorTest.class);
     }
 
-    public void testTransform()
+    public void testTransform() throws Exception
     {
         // Create format
         Format person = new DataFormat("Person", Form.STRUCT);
@@ -78,12 +78,13 @@ public class ProcessorTest
         cpu.addChild("speed", Form.FIELD, Type.STRING);
 
         TransformRule rule = new TransformRule(asset);
-        rule.getRuleItem("Computer.name").setValue("@asset.name");
+        rule.getRuleItem("Computer.name").setScript("@asset.name");
         rule.getRuleItem("Computer").setArrayIterationPath("asset");
-        assertEquals("@asset.name", rule.getRuleItem("Computer.name").getValue());
+        assertEquals("@asset.name", rule.getRuleItem("Computer.name").getScriptString());
 
         Processor transformProcessor = new TransformProcessor();
         Element result = (Element) transformProcessor.process(new TransformInput(personData, rule));
         assertEquals("Mac air book", result.getChildByPath("Computer.name").getString());
+        assertEquals("HP computer", result.getChildByPath("Computer[1].name").getString());
     }
 }
