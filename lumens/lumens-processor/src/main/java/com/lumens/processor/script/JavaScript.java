@@ -7,7 +7,6 @@ import com.lumens.processor.Context;
 import com.lumens.processor.ProcessorUtils;
 import com.lumens.processor.Script;
 import com.lumens.processor.transform.TransformContext;
-import com.lumens.processor.transform.TransformInput;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
 
@@ -29,7 +28,8 @@ public class JavaScript implements Script
         jsCTX.evaluateString(scope,
                              ProcessorUtils.loadJS("com/lumens/processor/script/build-in.js"),
                              "build-in", 1, null);
-        jsFunction = jsCTX.compileFunction(scope, builder.build(orignalScript), "node-script", 1, null);
+        jsFunction = jsCTX.compileFunction(scope, builder.build(orignalScript), "element-script", 1,
+                                           null);
     }
 
     @Override

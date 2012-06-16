@@ -4,6 +4,7 @@
 package com.lumens.processor;
 
 import com.lumens.model.Element;
+import com.lumens.processor.script.AccessPathScript;
 import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 
@@ -47,6 +48,7 @@ public class ProcessorUtils
 
     public Element getElement(Context ctx, String path)
     {
-        return null;
+        AccessPathScript script = new AccessPathScript(path);
+        return (Element) script.execute(ctx);
     }
 }
