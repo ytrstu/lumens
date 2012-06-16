@@ -9,6 +9,7 @@ import java.io.StringReader;
 public class JavaScriptBuilder
 {
     private final String functionPrefix = "function fLumensScript_";
+    private final String pathEnding = "+-*/ &|!<>\n\r\t^%=;:?";
 
     public String build(String script)
     {
@@ -25,16 +26,16 @@ public class JavaScriptBuilder
     {
         try
         {
-            String token = null;
+            String line = null;
             LineNumberReader reader = new LineNumberReader(new StringReader(script));
             StringBuilder scriptWithoutComments = new StringBuilder();
             int lineCount = 0;
-            while ((token = reader.readLine()) != null)
+            while ((line = reader.readLine()) != null)
             {
-                if (token.startsWith("//"))
+                if (line.startsWith("//"))
                     continue;
-                token = addNodeAccessor(token);
-                scriptWithoutComments.append(token).append('\n');
+                line = addElementAccessor(line);
+                scriptWithoutComments.append(line).append('\n');
                 ++lineCount;
             }
             if (1 == lineCount)
@@ -47,23 +48,45 @@ public class JavaScriptBuilder
         }
     }
 
-    private String addNodeAccessor(String token)
+    private String addElementAccessor(String line)
     {
-        StringBuilder builder = new StringBuilder(token);
-        int i = 0;
-        int start = 0, end = 0;
-        while (0 <= i && i < builder.length())
+        StringBuilder builder = new StringBuilder();
+        boolean bQuote = false;
+        for (int i = 0; i < line.length(); ++i)
         {
-            // TODO need to change to parse path @a.b.c format
-            start = builder.indexOf("[", i);
-            end = builder.indexOf("]", start);
-            i = end;
-            if (0 <= start && start < end && end < builder.length())
+            char c = line.charAt(i);
+            if (c == '\"')
+                bQuote = !bQuote;
+            if (bQuote || c != '@')
             {
-                String path = builder.substring(start + 1, end);
-                builder.replace(start, end + 1, "getElementValue(ctx, \"" + path + "\")");
+                builder.append(c);
+                continue;
+            }
+            else if (c == '@')
+            { // find all @a.b.c format line in this line
+                i++;
+                if (i < line.length())
+                {
+                    StringBuilder path = new StringBuilder();
+                    while (i < line.length())
+                    {
+                        c = line.charAt(i);
+                        if (pathEnding.indexOf(c) > -1)
+                        {
+                            builder.append("getElementValue(ctx, \"").append(path).append("\")");
+                            builder.append(c);
+                            break;
+                        }
+                        else
+                        {
+                            path.append(c);
+                            ++i;
+                        }
+                    }
+                }
             }
         }
+
         return builder.toString();
     }
 }
