@@ -99,10 +99,11 @@ public class ProcessorTest
 
     public void testArrayToArray() throws Exception
     {
-        // a.@b.c.@d.e.f --> 1.@2.3.@4.5 (@b-@2, @d-@4)
-        // a.@b.c.@d.e.f --> 1.@2.3.@4.5 (@b-@2)
-        // a.@b.c.@d.e.f --> 1.@2.3.@4.5 (@d-@4)
-        // a.@b.c.@d.e.f --> 1.@2.3.@4.5 (none)
+        // a.@b.c.@d.e.f --> a1.@a2.a3.@a4.a5 (@b-@a2, @d-@a4)
+        // a.@b.c.@d.e.f --> a1.@a2.a3.@a4.a5 (@b-@a2)
+        // a.@b.c.@d.e.f --> a1.@a2.a3.@a4.a5 (@d-@a4)
+        // a.@b.c.@d.e.f --> a1.@a2.a3.@a4.a5 (@b-@a4) (wrong logic, what will happen ?)
+        // a.@b.c.@d.e.f --> a1.@a2.a3.@a4.a5 (none)
         Format a = new DataFormat("a", Form.STRUCT);
         a.addChild("b", Form.ARRAY).addChild("c", Form.STRUCT).addChild("d", Form.ARRAY).addChild(
                 "e", Form.STRUCT).addChild("f", Form.FIELD, Type.STRING);
@@ -145,11 +146,54 @@ public class ProcessorTest
 
         Processor transformProcessor = new TransformProcessor();
         Element result = (Element) transformProcessor.process(new TransformInput(a_data, rule));
+        assertEquals("test-b[3].d[1]", result.getChildByPath("a2[3].a3.a4[1].a5").getString());
+
         serializer = new DataElementXmlSerializer(result, "UTF-8", true);
-        baos = new ByteArrayOutputStream();
+        baos.reset();
         serializer.write(baos);
         System.out.println(baos.toString());
-        
-        assertEquals("test-b[3].d[1]", result.getChildByPath("a2[3].a3.a4[1].a5").getString());
+
+        rule.getRuleItem("a2.a3.a4").setArrayIterationPath(null);
+        result = (Element) transformProcessor.process(new TransformInput(a_data, rule));
+        assertEquals("test-b[3].d[0]", result.getChildByPath("a2[3].a3.a4[0].a5").getString());
+
+        serializer = new DataElementXmlSerializer(result, "UTF-8", true);
+        baos.reset();
+        serializer.write(baos);
+        System.out.println(baos.toString());
+
+        rule.getRuleItem("a2").setArrayIterationPath(null);
+        rule.getRuleItem("a2.a3.a4").setArrayIterationPath("b.c.d");
+        result = (Element) transformProcessor.process(new TransformInput(a_data, rule));
+
+        serializer = new DataElementXmlSerializer(result, "UTF-8", true);
+        baos.reset();
+        serializer.write(baos);
+        System.out.println(baos.toString());
+        assertEquals("test-b[0].d[2]", result.getChildByPath("a2[0].a3.a4[2].a5").getString());
+
+        try
+        {
+            // It will be error, "b.c.d" is used in child element
+            rule.getRuleItem("a2").setArrayIterationPath("b.c.d");
+            fail();
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            rule.getRuleItem("a2.a3.a4").setArrayIterationPath(null);
+            rule.getRuleItem("a2").setArrayIterationPath("b.c.d");
+        }
+
+        try
+        {
+            // It will be error, "b.c.d" is used in parent element
+            rule.getRuleItem("a2.a3.a4").setArrayIterationPath("b.c.d");
+            fail();
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 }

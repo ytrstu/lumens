@@ -24,7 +24,6 @@ import java.util.List;
 public class TransformProcessor implements Processor
 {
     // private boolean ignoreNull = Boolean.getBoolean("transform.ignore.null");
-
     @Override
     public Object process(Input input)
     {
@@ -66,11 +65,22 @@ public class TransformProcessor implements Processor
             List<TransformRuleItem> children = ruleItem.getChildren();
             for (TransformRuleItem child : children)
             {
-                Element childElem = executeTransformRule(ctx, child, currentElement.newChild(child.getFormat()));
+                Element childElem = executeTransformRule(ctx, child, currentElement.newChild(child.
+                        getFormat()));
                 if (childElem != null)
                     currentElement.addChild(childElem);
             }
         }
+    }
+
+    private Element getElementSearchEntry(TransformContext ctx, Element currentElement)
+    {
+        Element elementSearchEntry = ctx.getParentArrayElement(currentElement);
+
+        if (elementSearchEntry == null)
+            elementSearchEntry = ctx.getInputElement();
+
+        return elementSearchEntry;
     }
 
     private void buildElementArrayItem(TransformContext ctx, TransformRuleItem ruleItem,
@@ -98,16 +108,6 @@ public class TransformProcessor implements Processor
             arrayIterationPath.removeLeft(elementSearchEntry.getLevel());
 
         return getAllElementsFromEntry(elementSearchEntry, arrayIterationPath);
-    }
-
-    private Element getElementSearchEntry(TransformContext ctx, Element currentElement)
-    {
-        Element elementSearchEntry = ctx.getParentArrayElement(currentElement);
-
-        if (elementSearchEntry == null)
-            elementSearchEntry = ctx.getInputElement();
-
-        return elementSearchEntry;
     }
 
     private List<Element> getAllElementsFromEntry(Element arrayElementEntry, Path arrayIterationPath)
