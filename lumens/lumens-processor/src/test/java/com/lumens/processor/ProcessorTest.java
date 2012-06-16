@@ -108,8 +108,9 @@ public class ProcessorTest
         a.addChild("b", Form.ARRAY).addChild("c", Form.STRUCT).addChild("d", Form.ARRAY).addChild(
                 "e", Form.STRUCT).addChild("f", Form.FIELD, Type.STRING);
         Format a1 = new DataFormat("a1", Form.STRUCT);
-        a1.addChild("a2", Form.ARRAY).addChild("a3", Form.STRUCT).addChild("a4", Form.ARRAY).
-                addChild("a5", Form.FIELD, Type.STRING);
+        Format a3 = a1.addChild("a2", Form.ARRAY).addChild("a3", Form.STRUCT);
+        a3.addChild("a4", Form.ARRAY).addChild("a5", Form.FIELD, Type.STRING);
+        a3.addChild("aa4", Form.ARRAY).addChild("aa5", Form.FIELD, Type.STRING);
         // Fill data into a
         Element a_data = new DataElement(a);
         // array b
@@ -141,17 +142,20 @@ public class ProcessorTest
         // build the transform rule
         TransformRule rule = new TransformRule(a1);
         rule.getRuleItem("a2.a3.a4.a5").setScript("@b.c.d.e.f");
+        rule.getRuleItem("a2.a3.aa4.aa5").setScript("@b.c.d.e.f");
         rule.getRuleItem("a2").setArrayIterationPath("b");
         rule.getRuleItem("a2.a3.a4").setArrayIterationPath("b.c.d");
+        rule.getRuleItem("a2.a3.aa4").setArrayIterationPath("b.c.d");
 
         Processor transformProcessor = new TransformProcessor();
         Element result = (Element) transformProcessor.process(new TransformInput(a_data, rule));
         assertEquals("test-b[3].d[1]", result.getChildByPath("a2[3].a3.a4[1].a5").getString());
+        assertEquals("test-b[3].d[1]", result.getChildByPath("a2[3].a3.aa4[1].aa5").getString());
 
         serializer = new DataElementXmlSerializer(result, "UTF-8", true);
         baos.reset();
         serializer.write(baos);
-        System.out.println(baos.toString());
+        System.out.println("test####1:\n" + baos.toString());
 
         rule.getRuleItem("a2.a3.a4").setArrayIterationPath(null);
         result = (Element) transformProcessor.process(new TransformInput(a_data, rule));
@@ -182,6 +186,7 @@ public class ProcessorTest
         {
             System.out.println(e.getMessage());
             rule.getRuleItem("a2.a3.a4").setArrayIterationPath(null);
+            rule.getRuleItem("a2.a3.aa4").setArrayIterationPath(null);
             rule.getRuleItem("a2").setArrayIterationPath("b.c.d");
         }
 
