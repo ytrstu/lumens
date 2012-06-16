@@ -9,9 +9,11 @@ import com.lumens.model.Element;
 import com.lumens.model.Format;
 import com.lumens.model.Format.Form;
 import com.lumens.model.Type;
+import com.lumens.model.serializer.DataElementXmlSerializer;
 import com.lumens.processor.transform.TransformInput;
 import com.lumens.processor.transform.TransformProcessor;
 import com.lumens.processor.transform.TransformRule;
+import java.io.ByteArrayOutputStream;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -48,7 +50,9 @@ public class ProcessorTest
         Format personAsset = person.addChild("asset", Format.Form.ARRAY);
         personAsset.addChild("name", Format.Form.FIELD, Type.STRING);
         personAsset.addChild("price", Format.Form.FIELD, Type.FLOAT);
-        Format name = personAsset.addChild("vendor", Format.Form.STRUCT).addChild("name", Format.Form.FIELD, Type.STRING);
+        Format name = personAsset.addChild("vendor", Format.Form.STRUCT).addChild("name",
+                                                                                  Format.Form.FIELD,
+                                                                                  Type.STRING);
         assertEquals("asset.vendor.name", name.getFullPath().toString());
 
         // Fill data
@@ -86,5 +90,66 @@ public class ProcessorTest
         Element result = (Element) transformProcessor.process(new TransformInput(personData, rule));
         assertEquals("Mac air book", result.getChildByPath("Computer.name").getString());
         assertEquals("HP computer", result.getChildByPath("Computer[1].name").getString());
+
+        DataElementXmlSerializer serializer = new DataElementXmlSerializer(result, "UTF-8", true);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        serializer.write(baos);
+        System.out.println(baos.toString());
+    }
+
+    public void testArrayToArray() throws Exception
+    {
+        // a.@b.c.@d.e.f --> 1.@2.3.@4.5 (@b-@2, @d-@4)
+        // a.@b.c.@d.e.f --> 1.@2.3.@4.5 (@b-@2)
+        // a.@b.c.@d.e.f --> 1.@2.3.@4.5 (@d-@4)
+        // a.@b.c.@d.e.f --> 1.@2.3.@4.5 (none)
+        Format a = new DataFormat("a", Form.STRUCT);
+        a.addChild("b", Form.ARRAY).addChild("c", Form.STRUCT).addChild("d", Form.ARRAY).addChild(
+                "e", Form.STRUCT).addChild("f", Form.FIELD, Type.STRING);
+        Format a1 = new DataFormat("a1", Form.STRUCT);
+        a1.addChild("a2", Form.ARRAY).addChild("a3", Form.STRUCT).addChild("a4", Form.ARRAY).
+                addChild("a5", Form.FIELD, Type.STRING);
+        // Fill data into a
+        Element a_data = new DataElement(a);
+        // array b
+        Element b_data = a_data.addChild("b");
+        Element[] b_data_item = new Element[4];
+        b_data_item[0] = b_data.addArrayItem();
+        b_data_item[1] = b_data.addArrayItem();
+        b_data_item[2] = b_data.addArrayItem();
+        b_data_item[3] = b_data.addArrayItem();
+        // array d
+        for (int i = 0; i < b_data_item.length; ++i)
+        {
+            Element d_data = b_data_item[i].addChild("c").addChild("d");
+            Element[] d_data_item = new Element[3];
+            d_data_item[0] = d_data.addArrayItem();
+            d_data_item[1] = d_data.addArrayItem();
+            d_data_item[2] = d_data.addArrayItem();
+            for (int j = 0; j < d_data_item.length; ++j)
+            {
+                d_data_item[j].addChild("e").addChild("f").
+                        setValue("test-b[" + i + "]." + "d[" + j + ']');
+            }
+        }
+        DataElementXmlSerializer serializer = new DataElementXmlSerializer(a_data, "UTF-8", true);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        serializer.write(baos);
+        System.out.println(baos.toString());
+
+        // build the transform rule
+        TransformRule rule = new TransformRule(a1);
+        rule.getRuleItem("a2.a3.a4.a5").setScript("@b.c.d.e.f");
+        rule.getRuleItem("a2").setArrayIterationPath("b");
+        rule.getRuleItem("a2.a3.a4").setArrayIterationPath("b.c.d");
+
+        Processor transformProcessor = new TransformProcessor();
+        Element result = (Element) transformProcessor.process(new TransformInput(a_data, rule));
+        serializer = new DataElementXmlSerializer(result, "UTF-8", true);
+        baos = new ByteArrayOutputStream();
+        serializer.write(baos);
+        System.out.println(baos.toString());
+        
+        assertEquals("test-b[3].d[1]", result.getChildByPath("a2[3].a3.a4[1].a5").getString());
     }
 }

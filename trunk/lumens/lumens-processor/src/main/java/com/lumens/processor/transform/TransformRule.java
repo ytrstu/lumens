@@ -7,7 +7,9 @@ import com.lumens.model.AccessPath;
 import com.lumens.model.Format;
 import com.lumens.model.Path;
 import com.lumens.model.PathToken;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  *
@@ -15,6 +17,7 @@ import java.util.Iterator;
  */
 public class TransformRule
 {
+    private Set<String> arrayIterationCache = new HashSet<String>();
     private Format dstFmt;
     private TransformRuleItem root;
 
@@ -32,7 +35,7 @@ public class TransformRule
     {
         Path fmtPath = new AccessPath(path);
         if (root == null)
-            root = new TransformRuleItem(dstFmt);
+            root = new TransformRuleItem(dstFmt, arrayIterationCache);
         if (!fmtPath.isEmpty())
         {
             PathToken token = null;
