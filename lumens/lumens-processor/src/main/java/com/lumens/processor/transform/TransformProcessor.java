@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class TransformProcessor implements Processor
 {
-    private boolean ignoreNull = Boolean.getBoolean("transform.ignore.null");
+    // private boolean ignoreNull = Boolean.getBoolean("transform.ignore.null");
 
     @Override
     public Object process(Input input)
@@ -177,11 +177,8 @@ public class TransformProcessor implements Processor
         if (script != null)
         {
             Object value = script.execute(ctx);
-            if (result.getFormat().getType() != Type.NONE)
-            {
-                // TODO need to do more
+            if (result.getFormat().getType() != Type.NONE && value != null)
                 result.setValue(value);
-            }
         }
         return result;
     }

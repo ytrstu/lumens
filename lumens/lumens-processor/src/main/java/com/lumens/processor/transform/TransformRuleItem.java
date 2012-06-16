@@ -11,6 +11,7 @@ import com.lumens.processor.script.JavaScript;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -18,6 +19,7 @@ import java.util.List;
  */
 public class TransformRuleItem
 {
+    private Set<String> arrayIterationCache;
     private TransformRuleItem parent;
     private List<TransformRuleItem> children;
     private Script script;
@@ -25,9 +27,10 @@ public class TransformRuleItem
     private String arrayIterationPath;
     private Format format;
 
-    TransformRuleItem(Format format)
+    TransformRuleItem(Format format, Set<String> arrayIterationCache)
     {
         this.format = format;
+        this.arrayIterationCache = arrayIterationCache;
     }
 
     public void setScript(String script) throws Exception
@@ -51,7 +54,8 @@ public class TransformRuleItem
 
     public void setArrayIterationPath(String arrayIterationPath)
     {
-        this.arrayIterationPath = arrayIterationPath;
+        if (!arrayIterationCache.contains(arrayIterationPath))
+            this.arrayIterationPath = arrayIterationPath;
     }
 
     public String getArrayIterationPath()
@@ -87,7 +91,7 @@ public class TransformRuleItem
         Format child = format.getChild(name);
         if (child == null)
             throw new IllegalArgumentException("The child format \"" + name + "\" does not exist");
-        TransformRuleItem item = new TransformRuleItem(child);
+        TransformRuleItem item = new TransformRuleItem(child, arrayIterationCache);
         item.parent = this;
         children.add(item);
         return item;
