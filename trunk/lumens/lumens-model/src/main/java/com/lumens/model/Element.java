@@ -87,6 +87,8 @@ public interface Element
 
     public boolean isArrayItem();
 
+    public boolean isEmpty();
+
     public boolean isShort();
 
     public boolean isInt();
