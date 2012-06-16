@@ -156,9 +156,9 @@ public class ProcessorTest
         // check duplicate iteration path
         tryCheckingDuplicateArrayIterationPathConfiguration(a1);
 
-        // Start ###################Test java script supporting
+        // Test script
+        tryJavaScriptSupportingInTransformRule(transformProcessor, a1, a_data);
 
-        // End ###################Test java script supporting
     }
 
     private void tryMultipleArrayToArrayTransform(Processor transformProcessor, Format dstFormat,
@@ -177,7 +177,7 @@ public class ProcessorTest
         DataElementXmlSerializer serializer = new DataElementXmlSerializer(result, "UTF-8", true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         serializer.write(baos);
-        System.out.println("tryMultipleArrayToArrayTransform####1:\n" + baos.toString());
+        System.out.println("tryMultipleArrayToArrayTransform####\n" + baos.toString());
 
         assertEquals("test-b[3].d[2]", result.getChildByPath("a2[3].a3.a4[2].a5").getString());
         assertEquals("test-b[3].d[2]", result.getChildByPath("a2[3].a3.aa4[2].aa5").getString());
@@ -262,5 +262,28 @@ public class ProcessorTest
         String script = builder.build(IOUtils.toString(getInputStream(
                 "test-script/transform-script-test.txt")));
         System.out.println(script);
+    }
+
+    public void tryJavaScriptSupportingInTransformRule(Processor transformProcessor,
+                                                       Format dstFormat,
+                                                       Element data) throws Exception
+    {
+        TransformRule rule = new TransformRule(dstFormat);
+        rule.getRuleItem("a2.a3.a4.a5").setScript("@b.c.d.e.f");
+        rule.getRuleItem("a2.a3.aa4.aa5").setScript(IOUtils.toString(getInputStream(
+                "test-script/aa5-script.txt")));
+        rule.getRuleItem("a2").setArrayIterationPath("b");
+        rule.getRuleItem("a2.a3.a4").setArrayIterationPath("b.c.d");
+        rule.getRuleItem("a2.a3.aa4").setArrayIterationPath("b.c.d");
+
+        Element result = (Element) transformProcessor.process(new TransformInput(data, rule));
+
+        DataElementXmlSerializer serializer = new DataElementXmlSerializer(result, "UTF-8", true);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        serializer.write(baos);
+        System.out.println("tryJavaScriptSupportingInTransformRule####:\n" + baos.toString());
+
+        assertEquals("test-b[3].d[2]", result.getChildByPath("a2[3].a3.a4[2].a5").getString());
+        assertEquals("test-b[3].d[2]test test again", result.getChildByPath("a2[3].a3.aa4[2].aa5").getString());
     }
 }
