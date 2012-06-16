@@ -365,6 +365,12 @@ public class DataElement implements Element
     }
 
     @Override
+    public boolean isEmpty()
+    {
+        return value == null;
+    }
+
+    @Override
     public boolean isField()
     {
         return format.isField();

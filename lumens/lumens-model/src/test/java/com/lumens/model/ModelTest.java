@@ -4,6 +4,8 @@
 package com.lumens.model;
 
 import com.lumens.model.Format.Form;
+import com.lumens.model.serializer.DataElementXmlSerializer;
+import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -111,7 +113,7 @@ public class ModelTest
         assertEquals(-1, token.index());
     }
 
-    public void testPathForDataElement()
+    public void testPathForDataElement() throws Exception
     {
         // Create format
         Format root = new DataFormat("root");
@@ -146,6 +148,12 @@ public class ModelTest
         assertNotNull(nameData);
         nameData = personData.getChildByPath("asset[1].vendor.name");
         assertNotNull(nameData);
+
+        // test xml
+        DataElementXmlSerializer serializer = new DataElementXmlSerializer(personData, "UTF-8", true);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        serializer.write(baos);
+        System.out.println(baos.toString());
     }
 
     public void testScriptPath()
