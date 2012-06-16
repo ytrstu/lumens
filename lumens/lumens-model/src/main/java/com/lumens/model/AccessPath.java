@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class AccessPath implements Path
 {
-    private List<PathToken> tokens;
+    private List<PathToken> tokens = new LinkedList<PathToken>();
 
     public AccessPath(String path)
     {
@@ -28,7 +28,7 @@ public class AccessPath implements Path
     @Override
     public boolean isEmpty()
     {
-        return tokens == null || tokens.isEmpty();
+        return tokens.isEmpty();
     }
 
     @Override
@@ -40,16 +40,12 @@ public class AccessPath implements Path
     @Override
     public Iterator<PathToken> iterator()
     {
-        if (tokens == null)
-            return null;
         return tokens.iterator();
     }
 
     @Override
     public Path addLeft(String token)
     {
-        if (tokens == null)
-            tokens = new LinkedList<PathToken>();
         tokens.add(0, new PathToken(token));
         return this;
     }
@@ -57,8 +53,6 @@ public class AccessPath implements Path
     @Override
     public Path addRight(String token)
     {
-        if (tokens == null)
-            tokens = new LinkedList<PathToken>();
         tokens.add(new PathToken(token));
         return this;
     }
@@ -119,8 +113,9 @@ public class AccessPath implements Path
     @Override
     public String toString()
     {
-        if (tokens == null)
+        if (tokens.isEmpty())
             return "";
+
         StringBuilder builder = new StringBuilder();
         for (PathToken token : tokens)
         {
@@ -139,7 +134,6 @@ public class AccessPath implements Path
     {
         if (path == null || path.isEmpty())
             return;
-        List<PathToken> pathTokens = new LinkedList<PathToken>();
         int length = path.length();
         int found = 0, index = 0;
         boolean quoteFound = false;
@@ -150,7 +144,7 @@ public class AccessPath implements Path
             {
                 if (index == 0 || index + 1 == length)
                     throw new IllegalArgumentException("Error path format \"" + path + "\"");
-                pathTokens.add(removeQuote(path.substring(found, index)));
+                tokens.add(removeQuote(path.substring(found, index)));
                 found = index + 1;
             }
             else if (c == '\'')
@@ -158,9 +152,7 @@ public class AccessPath implements Path
             ++index;
         }
         if (found < length && index == length)
-            pathTokens.add(removeQuote(path.substring(found, index)));
-        if (pathTokens.size() > 0)
-            tokens = pathTokens;
+            tokens.add(removeQuote(path.substring(found, index)));
     }
 
     private PathToken removeQuote(String token)
