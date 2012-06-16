@@ -46,9 +46,9 @@ public class ProcessorUtils
         }
     }
 
-    public Element getElement(Context ctx, String path)
+    public static Object getElement(Context ctx, String path)
     {
         AccessPathScript script = new AccessPathScript(path);
-        return (Element) script.execute(ctx);
+        return script.execute(ctx);
     }
 }
