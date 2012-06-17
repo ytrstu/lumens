@@ -9,8 +9,7 @@ import com.lumens.model.Element;
 import com.lumens.model.Path;
 import com.lumens.model.PathToken;
 import com.lumens.model.Type;
-import com.lumens.processor.Input;
-import com.lumens.processor.Processor;
+import com.lumens.processor.AbstractProcessor;
 import com.lumens.processor.Script;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -21,18 +20,24 @@ import java.util.List;
  *
  * @author shaofeng wang
  */
-public class TransformProcessor implements Processor
+public class TransformProcessor extends AbstractProcessor
 {
     // private boolean ignoreNull = Boolean.getBoolean("transform.ignore.null");
-    @Override
-    public Object process(Input input)
+    private TransformRule rule;
+
+    public TransformProcessor(TransformRule rule)
     {
-        if (input instanceof TransformInput)
+        this.rule = rule;
+    }
+
+    @Override
+    public Object process(Object input)
+    {
+        if (input instanceof Element)
         {
             List<Element> results = new ArrayList<Element>();
-            TransformInput transInput = (TransformInput) input;
-            Element inputElement = transInput.getData();
-            TransformRuleItem ruleItem = transInput.getRule().getRuleEntry();
+            Element inputElement = (Element) input;
+            TransformRuleItem ruleItem = rule.getRuleEntry();
             String arrayIterationPath = ruleItem.getArrayIterationPath();
             List<Element> items;
             if (arrayIterationPath != null)
@@ -65,7 +70,9 @@ public class TransformProcessor implements Processor
 
             return results;
         }
-        return null;
+        throw new IllegalArgumentException("Incorrect input data type \"" + input.getClass().
+                getName() + "\"");
+
     }
 
     private void processRuleItems(TransformContext ctx, TransformPair item)
