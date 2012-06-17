@@ -5,5 +5,9 @@ package com.lumens.processor;
 
 public interface Processor
 {
-    public Object process(Input input);
+    public void setName(String name);
+
+    public String getName();
+
+    public Object process(Object input);
 }
