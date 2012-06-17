@@ -52,6 +52,12 @@ public class TransformRuleItem
 
     public void setArrayIterationPath(String arrayIterationPath)
     {
+        if (!format.isArray() && format.getParent() != null)
+        {
+            throw new IllegalArgumentException(
+                    "iteration path \"" + arrayIterationPath + "\" can not be configured for a no array or no root element");
+        }
+
         TransformRuleItem item = parent;
         while (item != null)
         {
