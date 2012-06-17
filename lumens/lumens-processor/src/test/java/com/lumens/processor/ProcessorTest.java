@@ -16,6 +16,7 @@ import com.lumens.processor.transform.TransformProcessor;
 import com.lumens.processor.transform.TransformRule;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -95,11 +96,13 @@ public class ProcessorTest
         assertEquals("@asset.name", rule.getRuleItem("Computer.name").getScriptString());
 
         Processor transformProcessor = new TransformProcessor();
-        Element result = (Element) transformProcessor.process(new TransformInput(personData, rule));
-        assertEquals("Mac air book", result.getChildByPath("Computer.name").getString());
-        assertEquals("HP computer", result.getChildByPath("Computer[1].name").getString());
+        List<Element> result = (List<Element>) transformProcessor.process(new TransformInput(
+                personData, rule));
+        assertEquals("Mac air book", result.get(0).getChildByPath("Computer.name").getString());
+        assertEquals("HP computer", result.get(0).getChildByPath("Computer[1].name").getString());
 
-        DataElementXmlSerializer serializer = new DataElementXmlSerializer(result, "UTF-8", true);
+        DataElementXmlSerializer serializer = new DataElementXmlSerializer(result.get(0), "UTF-8",
+                                                                           true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         serializer.write(baos);
         System.out.println(baos.toString());
@@ -153,6 +156,9 @@ public class ProcessorTest
         tryFirstArrayToFirstArray(transformProcessor, a1, a_data);
         //(@d-@a4)
         trySecondArrayToSecondArray(transformProcessor, a1, a_data);
+        //(@d-a1)
+        tryArrayIterationOnRootElement(transformProcessor, a1, a_data);
+
         // check duplicate iteration path
         tryCheckingDuplicateArrayIterationPathConfiguration(a1);
 
@@ -172,15 +178,18 @@ public class ProcessorTest
         rule.getRuleItem("a2.a3.a4").setArrayIterationPath("b.c.d");
         rule.getRuleItem("a2.a3.aa4").setArrayIterationPath("b.c.d");
 
-        Element result = (Element) transformProcessor.process(new TransformInput(data, rule));
+        List<Element> result = (List<Element>) transformProcessor.process(new TransformInput(data,
+                                                                                             rule));
 
-        DataElementXmlSerializer serializer = new DataElementXmlSerializer(result, "UTF-8", true);
+        DataElementXmlSerializer serializer = new DataElementXmlSerializer(result.get(0), "UTF-8",
+                                                                           true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         serializer.write(baos);
         System.out.println("tryMultipleArrayToArrayTransform####\n" + baos.toString());
 
-        assertEquals("test-b[3].d[2]", result.getChildByPath("a2[3].a3.a4[2].a5").getString());
-        assertEquals("test-b[3].d[2]", result.getChildByPath("a2[3].a3.aa4[2].aa5").getString());
+        assertEquals("test-b[3].d[2]", result.get(0).getChildByPath("a2[3].a3.a4[2].a5").getString());
+        assertEquals("test-b[3].d[2]", result.get(0).getChildByPath("a2[3].a3.aa4[2].aa5").
+                getString());
     }
 
     private void tryFirstArrayToFirstArray(Processor transformProcessor, Format dstFormat,
@@ -192,14 +201,16 @@ public class ProcessorTest
         rule.getRuleItem("a2.a3.aa4.aa5").setScript("@b.c.d.e.f");
         rule.getRuleItem("a2").setArrayIterationPath("b");
 
-        Element result = (Element) transformProcessor.process(new TransformInput(data, rule));
+        List<Element> result = (List<Element>) transformProcessor.process(new TransformInput(data,
+                                                                                             rule));
 
-        DataElementXmlSerializer serializer = new DataElementXmlSerializer(result, "UTF-8", true);
+        DataElementXmlSerializer serializer = new DataElementXmlSerializer(result.get(0), "UTF-8",
+                                                                           true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         serializer.write(baos);
         System.out.println("tryFirstArrayToFirstArray####\n" + baos.toString());
 
-        assertEquals("test-b[3].d[0]", result.getChildByPath("a2[3].a3.a4[0].a5").getString());
+        assertEquals("test-b[3].d[0]", result.get(0).getChildByPath("a2[3].a3.a4[0].a5").getString());
     }
 
     private void trySecondArrayToSecondArray(Processor transformProcessor, Format dstFormat,
@@ -211,14 +222,39 @@ public class ProcessorTest
         rule.getRuleItem("a2.a3.aa4.aa5").setScript("@b.c.d.e.f");
         rule.getRuleItem("a2.a3.a4").setArrayIterationPath("b.c.d");
 
-        Element result = (Element) transformProcessor.process(new TransformInput(data, rule));
+        List<Element> result = (List<Element>) transformProcessor.process(new TransformInput(data,
+                                                                                             rule));
 
-        DataElementXmlSerializer serializer = new DataElementXmlSerializer(result, "UTF-8", true);
+        DataElementXmlSerializer serializer = new DataElementXmlSerializer(result.get(0), "UTF-8",
+                                                                           true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         serializer.write(baos);
         System.out.println("trySecondArrayToSecondArray####\n" + baos.toString());
 
-        assertEquals("test-b[1].d[0]", result.getChildByPath("a2[0].a3.a4[3].a5").getString());
+        assertEquals("test-b[1].d[0]", result.get(0).getChildByPath("a2[0].a3.a4[3].a5").getString());
+    }
+
+    private void tryArrayIterationOnRootElement(Processor transformProcessor, Format dstFormat,
+                                                Element data) throws Exception
+    {
+        TransformRule rule = new TransformRule(dstFormat);
+        rule.getRuleItem("a2.a3.a4.a5").setScript("@b.c.d.e.f");
+        rule.getRuleItem("a2.a3.aa4.aa5").setScript("@b.c.d.e.f");
+        rule.getRuleEntry().setArrayIterationPath("b.c.d");
+
+        List<Element> result = (List<Element>) transformProcessor.process(new TransformInput(data,
+                                                                                             rule));
+
+        for (Element elem : result)
+        {
+            DataElementXmlSerializer serializer = new DataElementXmlSerializer(elem,
+                                                                               "UTF-8",
+                                                                               true);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            serializer.write(baos);
+            System.out.println("tryArrayIterationOnRootElement####\n" + baos.toString());
+        }
+        assertEquals("test-b[3].d[2]", result.get(11).getChildByPath("a2.a3.a4.a5").getString());
     }
 
     private void tryCheckingDuplicateArrayIterationPathConfiguration(Format dstFormat) throws Exception
@@ -276,14 +312,17 @@ public class ProcessorTest
         rule.getRuleItem("a2.a3.a4").setArrayIterationPath("b.c.d");
         rule.getRuleItem("a2.a3.aa4").setArrayIterationPath("b.c.d");
 
-        Element result = (Element) transformProcessor.process(new TransformInput(data, rule));
+        List<Element> result = (List<Element>) transformProcessor.process(new TransformInput(data,
+                                                                                             rule));
 
-        DataElementXmlSerializer serializer = new DataElementXmlSerializer(result, "UTF-8", true);
+        DataElementXmlSerializer serializer = new DataElementXmlSerializer(result.get(0), "UTF-8",
+                                                                           true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         serializer.write(baos);
         System.out.println("tryJavaScriptSupportingInTransformRule####:\n" + baos.toString());
 
-        assertEquals("test-b[3].d[2]", result.getChildByPath("a2[3].a3.a4[2].a5").getString());
-        assertEquals("test-b[3].d[2]test test again", result.getChildByPath("a2[3].a3.aa4[2].aa5").getString());
+        assertEquals("test-b[3].d[2]", result.get(0).getChildByPath("a2[3].a3.a4[2].a5").getString());
+        assertEquals("test-b[3].d[2]test test again", result.get(0).getChildByPath(
+                "a2[3].a3.aa4[2].aa5").getString());
     }
 }

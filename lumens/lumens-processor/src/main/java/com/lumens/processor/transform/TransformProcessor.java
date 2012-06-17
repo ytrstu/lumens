@@ -29,22 +29,41 @@ public class TransformProcessor implements Processor
     {
         if (input instanceof TransformInput)
         {
+            List<Element> results = new ArrayList<Element>();
             TransformInput transInput = (TransformInput) input;
             Element inputElement = transInput.getData();
             TransformRuleItem ruleItem = transInput.getRule().getRuleEntry();
-            Element resultElement = new DataElement(ruleItem.getFormat());
-            TransformContext ctx = new TransformContext(inputElement, resultElement);
-            executeTransformRule(ctx, ruleItem, resultElement);
-            ArrayDeque<TransformPair> queue = new ArrayDeque<TransformPair>();
-            queue.add(new TransformPair(resultElement, ruleItem));
-            TransformPair item;
-            while (!queue.isEmpty())
+            String arrayIterationPath = ruleItem.getArrayIterationPath();
+            List<Element> items;
+            if (arrayIterationPath != null)
             {
-                item = queue.removeFirst();
-                processRuleItems(ctx, item);
-                putChildrenElementsIntoProcessQueue(item, queue);
+                items = getAllElementsFromEntry(inputElement, new AccessPath(
+                        arrayIterationPath));
             }
-            return ctx.getResultElement();
+            else
+            {
+                items = new ArrayList<Element>();
+                items.add(inputElement);
+            }
+            for (Element elem : items)
+            {
+                Element resultElement = new DataElement(ruleItem.getFormat());
+                TransformContext ctx = new TransformContext(inputElement, resultElement);
+                ctx.putParentArrayElement(resultElement, elem);
+                executeTransformRule(ctx, ruleItem, resultElement);
+                ArrayDeque<TransformPair> queue = new ArrayDeque<TransformPair>();
+                queue.add(new TransformPair(resultElement, ruleItem));
+                TransformPair item;
+                while (!queue.isEmpty())
+                {
+                    item = queue.removeFirst();
+                    processRuleItems(ctx, item);
+                    putChildrenElementsIntoProcessQueue(item, queue);
+                }
+                results.add(ctx.getResultElement());
+            }
+
+            return results;
         }
         return null;
     }
