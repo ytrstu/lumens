@@ -9,7 +9,6 @@ import com.lumens.model.Path;
 import com.lumens.model.Type;
 import com.lumens.processor.Context;
 import com.lumens.processor.Script;
-import com.lumens.processor.transform.TransformContext;
 
 // TODO need to refine the package path, if it is correct to put the class into
 // transform package
@@ -25,19 +24,15 @@ public class AccessPathScript implements Script
     @Override
     public Object execute(Context ctx)
     {
-        if (ctx instanceof TransformContext)
-        {
-            TransformContext transformCtx = (TransformContext) ctx;
-            Element searchEntry = transformCtx.getCurrentElementSearchEntry();
-            Path currentPath;
-            if (searchEntry.getLevel() > 0)
-                currentPath = path.right(path.tokenCount() - searchEntry.getLevel());
-            else
-                currentPath = path;
-            Element find = searchEntry.getChildByPath(currentPath);
-            if (find.getFormat().getType() != Type.NONE)
-                return find.getValue();
-        }
+        Element searchEntry = ctx.getAccessPathEntry();
+        Path currentPath;
+        if (searchEntry.getLevel() > 0)
+            currentPath = path.right(path.tokenCount() - searchEntry.getLevel());
+        else
+            currentPath = path;
+        Element find = searchEntry.getChildByPath(currentPath);
+        if (find.getFormat().getType() != Type.NONE)
+            return find.getValue();
 
         return null;
     }

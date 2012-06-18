@@ -79,7 +79,7 @@ public class TransformProcessor extends AbstractProcessor
     {
         Element currentElement = item.getFirst();
         TransformRuleItem ruleItem = item.getSecond();
-        ctx.setCurrentElementSearchEntry(getElementSearchEntry(ctx, currentElement));
+        ctx.setAccessPathEntry(getAccessPathEntry(ctx, currentElement));
 
         if (currentElement.isArray())
         {
@@ -99,7 +99,7 @@ public class TransformProcessor extends AbstractProcessor
         }
     }
 
-    private Element getElementSearchEntry(TransformContext ctx, Element currentElement)
+    private Element getAccessPathEntry(TransformContext ctx, Element currentElement)
     {
         Element elementSearchEntry = ctx.getParentArrayElement(currentElement);
 
@@ -126,7 +126,7 @@ public class TransformProcessor extends AbstractProcessor
     private List<Element> buildArrayIterationElementList(TransformContext ctx,
                                                          TransformRuleItem ruleItem)
     {
-        Element elementSearchEntry = ctx.getCurrentElementSearchEntry();
+        Element elementSearchEntry = ctx.getAccessPathEntry();
         String arrayIterationPathStr = ruleItem.getArrayIterationPath();
         Path arrayIterationPath = new AccessPath(arrayIterationPathStr);
 

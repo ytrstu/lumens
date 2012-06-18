@@ -4,7 +4,6 @@
 package com.lumens.processor.transform;
 
 import com.lumens.model.Format;
-import com.lumens.processor.ProcessorUtils;
 import com.lumens.processor.Script;
 import com.lumens.processor.script.AccessPathScript;
 import com.lumens.processor.script.JavaScript;
@@ -34,8 +33,8 @@ public class TransformRuleItem
     public void setScript(String script) throws Exception
     {
         orignalScript = script;
-        if (ProcessorUtils.isPathFormat(script))
-            this.script = new AccessPathScript(ProcessorUtils.getAccessPath(script));
+        if (TransformUtils.isPathFormat(script))
+            this.script = new AccessPathScript(TransformUtils.getAccessPath(script));
         else
             this.script = new JavaScript(script);
     }

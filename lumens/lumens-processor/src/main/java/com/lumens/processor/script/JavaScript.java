@@ -4,7 +4,6 @@
 package com.lumens.processor.script;
 
 import com.lumens.processor.Context;
-import com.lumens.processor.ProcessorUtils;
 import com.lumens.processor.Script;
 import com.lumens.processor.transform.TransformContext;
 import org.mozilla.javascript.Function;
@@ -26,7 +25,7 @@ public class JavaScript implements Script
         jsCTX = org.mozilla.javascript.Context.enter();
         scope = jsCTX.initStandardObjects();
         jsCTX.evaluateString(scope,
-                             ProcessorUtils.loadJS("com/lumens/processor/script/build-in.js"),
+                             ScriptUtils.loadJS("com/lumens/processor/script/build-in.js"),
                              "build-in", 1, null);
         jsFunction = jsCTX.compileFunction(scope, builder.build(orignalScript), "element-script", 1,
                                            null);

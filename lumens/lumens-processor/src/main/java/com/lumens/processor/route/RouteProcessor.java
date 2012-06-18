@@ -8,7 +8,7 @@ import com.lumens.processor.Processor;
 
 public class RouteProcessor extends AbstractProcessor
 {
-    public void addRoutePoint(Processor point)
+    public void addRoutePoint(Processor point, RouteRule rule)
     {
     }
 

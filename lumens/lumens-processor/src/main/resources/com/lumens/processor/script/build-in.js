@@ -1,5 +1,5 @@
-var ProcessorUtils = com.lumens.processor.ProcessorUtils;
+var ScriptUtils = com.lumens.processor.script.ScriptUtils;
 
 function getElementValue(ctx, path) {
-  return ProcessorUtils.getElement(ctx, path);
+  return ScriptUtils.getElement(ctx, path);
 }
