@@ -68,12 +68,13 @@ public class TransformContext implements Context
         return null;
     }
 
-    public void setCurrentElementSearchEntry(Element elementSearchEntry)
+    public void setAccessPathEntry(Element elementSearchEntry)
     {
         this.elementSearchEntry = elementSearchEntry;
     }
 
-    public Element getCurrentElementSearchEntry()
+    @Override
+    public Element getAccessPathEntry()
     {
         return elementSearchEntry;
     }

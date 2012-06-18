@@ -17,12 +17,12 @@ public class JavaScriptBuilder
         StringBuilder function = new StringBuilder();
         Long l = System.currentTimeMillis();
         function.append(functionPrefix).append(l).append("(ctx) {\n");
-        function.append(replaceNodePathScriptToFunction(script));
+        function.append(replaceAccessPathScriptToFunction(script));
         function.append('}');
         return function.toString();
     }
 
-    private String replaceNodePathScriptToFunction(String script)
+    private String replaceAccessPathScriptToFunction(String script)
     {
         try
         {
@@ -38,8 +38,6 @@ public class JavaScriptBuilder
                 scriptWithoutComments.append(line).append('\n');
                 ++lineCount;
             }
-            if (1 == lineCount)
-                scriptWithoutComments.insert(0, "return ");
             return scriptWithoutComments.toString();
         }
         catch (Exception e)
@@ -67,20 +65,26 @@ public class JavaScriptBuilder
                 i++;
                 if (i < line.length())
                 {
+                    boolean singleQuote = false;
                     StringBuilder path = new StringBuilder();
                     while (i < line.length())
                     {
                         c = line.charAt(i);
-                        if (pathEnding.indexOf(c) > -1)
+                        if (c == '\'')
+                            singleQuote = !singleQuote;
+
+                        if (!singleQuote && pathEnding.indexOf(c) > -1)
                         {
-                            builder.append("getElementValue(ctx, \"").append(path).append("\")");
-                            builder.append(c);
+                            builder.append("getElementValue(ctx, \"").append(path).append("\")").
+                                    append(c);
                             break;
                         }
                         else
                         {
                             path.append(c);
                             ++i;
+                            if (i == line.length())
+                                builder.append("getElementValue(ctx, \"").append(path).append("\")");
                         }
                     }
                 }

@@ -11,6 +11,7 @@ import com.lumens.model.Format.Form;
 import com.lumens.model.Type;
 import com.lumens.model.serializer.DataElementXmlSerializer;
 import com.lumens.processor.route.RouteProcessor;
+import com.lumens.processor.route.RouteRule;
 import com.lumens.processor.script.JavaScriptBuilder;
 import com.lumens.processor.transform.TransformProcessor;
 import com.lumens.processor.transform.TransformRule;
@@ -163,6 +164,9 @@ public class ProcessorTest
         // Test script
         tryJavaScriptSupportingInTransformRule(a1, a_data);
 
+        // Test router
+        tryRouteProcessor(a1, a_data);
+
     }
 
     private void tryMultipleArrayToArrayTransform(Format dstFormat,
@@ -292,7 +296,11 @@ public class ProcessorTest
         JavaScriptBuilder builder = new JavaScriptBuilder();
         String script = builder.build(IOUtils.toString(getInputStream(
                 "test-script/transform-script-test.txt")));
-        System.out.println(script);
+        System.out.println("testJavaScriptBuilder###: " + script);
+        String s = "@'a.b.c./a/*'";
+        script = builder.build(s);
+        System.out.println("testJavaScriptBuilder###: " + script);
+        assertTrue(script.contains("getElementValue(ctx, \"'a.b.c./a/*'"));
     }
 
     public void tryJavaScriptSupportingInTransformRule(Format dstFormat,
@@ -319,10 +327,14 @@ public class ProcessorTest
                 "a2[3].a3.aa4[2].aa5").getString());
     }
 
-    public void tryRouteProcessor() throws Exception
+    public void tryRouteProcessor(Format dstFormat,
+                                  Element data) throws Exception
     {
         RouteProcessor router = new RouteProcessor();
-        Processor transformProcessor = new TransformProcessor(null);
-        router.addRoutePoint(transformProcessor);
+        Processor t1 = new TransformProcessor(null);
+        router.addRoutePoint(t1, new RouteRule("scipt here"));
+        Processor t2 = new TransformProcessor(null);
+        router.addRoutePoint(t2, new RouteRule("scipt here"));
+        //router.process(data);
     }
 }
