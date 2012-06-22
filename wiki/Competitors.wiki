@@ -12,3 +12,11 @@
  # Biztalk
  # Etl-tools
  # 灵蜂纵横
+
+*Target*
+ #lightweight
+ #Easy to use
+ #Better performance
+ #Oriented object data processing
+ #Embedded transform engine
+ #Web UI ? 
