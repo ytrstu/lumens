@@ -97,14 +97,14 @@ public class DataFormat implements Format
     @Override
     public Format addChild(Format format)
     {
-        if (children.containsKey(format.getName()))
+        if (children == null && childrenList == null)
+        {
+            children = new HashMap<String, Format>();
+            childrenList = new ArrayList<Format>();
+        }
+        else if (children.containsKey(format.getName()))
             throw new IllegalArgumentException("Duplicate child \"" + format.getName() + "\"");
         format.setParent(this);
-
-        if (children == null)
-            children = new HashMap<String, Format>();
-        if (childrenList == null)
-            childrenList = new ArrayList<Format>();
 
         children.put(format.getName(), format);
         childrenList.add(format);
