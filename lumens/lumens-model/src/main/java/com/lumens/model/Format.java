@@ -40,6 +40,10 @@ public interface Format
 
     public void setParent(Format format);
 
+    public void setProperty(String name, Object value);
+
+    public Object getProperty(String name);
+
     public Format addChild(Format format);
 
     public Format addChild(String name, Form form, Type type);

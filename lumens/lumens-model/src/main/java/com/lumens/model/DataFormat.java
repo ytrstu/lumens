@@ -14,8 +14,9 @@ import java.util.Map;
  */
 public class DataFormat implements Format
 {
-    protected Map<String, Format> children = new HashMap<String, Format>();
-    protected List<Format> childrenList = new ArrayList<Format>();
+    protected Map<String, Object> properties;
+    protected Map<String, Format> children;
+    protected List<Format> childrenList;
     private String name;
     private Type type = Type.NONE;
     private Form form = Form.NONE;
@@ -80,11 +81,31 @@ public class DataFormat implements Format
     }
 
     @Override
+    public void setProperty(String name, Object value)
+    {
+        if (properties == null)
+            properties = new HashMap<String, Object>();
+        properties.put(name, value);
+    }
+
+    @Override
+    public Object getProperty(String name)
+    {
+        return properties == null ? null : properties.get(name);
+    }
+
+    @Override
     public Format addChild(Format format)
     {
         if (children.containsKey(format.getName()))
             throw new IllegalArgumentException("Duplicate child \"" + format.getName() + "\"");
         format.setParent(this);
+
+        if (children == null)
+            children = new HashMap<String, Format>();
+        if (childrenList == null)
+            childrenList = new ArrayList<Format>();
+
         children.put(format.getName(), format);
         childrenList.add(format);
         return format;
