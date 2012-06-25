@@ -7,7 +7,7 @@ import com.lumens.connector.Configurable;
 import com.lumens.connector.Connector;
 import com.lumens.connector.Reader;
 import com.lumens.connector.Writer;
-import com.lumens.connector.database.oracle.OracleClient;
+import com.lumens.connector.database.client.oracle.OracleClient;
 import com.lumens.model.Format;
 import java.util.Map;
 

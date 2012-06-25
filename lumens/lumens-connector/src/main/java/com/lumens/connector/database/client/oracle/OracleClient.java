@@ -1,9 +1,9 @@
 /*
  * Copyright Lumens Team, Inc. All Rights Reserved.
  */
-package com.lumens.connector.database.oracle;
+package com.lumens.connector.database.client.oracle;
 
-import com.lumens.connector.database.AbstractClient;
+import com.lumens.connector.database.client.AbstractClient;
 import com.lumens.connector.database.DbUtils;
 import com.lumens.model.DataFormat;
 import com.lumens.model.Format;
