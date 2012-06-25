@@ -1,8 +1,10 @@
 /*
  * Copyright Lumens Team, Inc. All Rights Reserved.
  */
-package com.lumens.connector.database;
+package com.lumens.connector.database.client;
 
+import com.lumens.connector.database.Client;
+import com.lumens.connector.database.DbUtils;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;

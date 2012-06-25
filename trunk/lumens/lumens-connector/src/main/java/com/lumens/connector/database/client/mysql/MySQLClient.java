@@ -1,7 +1,7 @@
 /*
  * Copyright Lumens Team, Inc. All Rights Reserved.
  */
-package com.lumens.connector.database.mysql;
+package com.lumens.connector.database.client.mysql;
 
 /**
  *
@@ -9,5 +9,5 @@ package com.lumens.connector.database.mysql;
  */
 public class MySQLClient
 {
-    
+
 }
