@@ -1,7 +1,7 @@
 /*
  * Copyright Lumens Team, Inc. All Rights Reserved.
  */
-package com.lumens.connector;
+package com.lumens.connector.database;
 
 import com.lumens.model.Format;
 
@@ -11,5 +11,9 @@ import com.lumens.model.Format;
  */
 public interface Client
 {
+    public void open();
+
+    public void close();
+
     public Format describeFormats();
 }

@@ -15,9 +15,9 @@ import java.util.Iterator;
  */
 public class DatabaseReader implements Reader, Cacheable
 {
-    private DatabaseConnector db;
+    private Client db;
 
-    DatabaseReader(DatabaseConnector db)
+    DatabaseReader(Client db)
     {
         this.db = db;
     }

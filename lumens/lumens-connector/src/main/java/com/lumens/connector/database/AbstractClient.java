@@ -3,15 +3,10 @@
  */
 package com.lumens.connector.database;
 
-import com.lumens.connector.Client;
-import com.lumens.model.Format;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Connection;
-import org.apache.commons.dbcp.ConnectionFactory;
-import org.apache.commons.dbcp.DriverManagerConnectionFactory;
-import org.apache.commons.dbcp.PoolableConnectionFactory;
-import org.apache.commons.dbcp.PoolingDataSource;
-import org.apache.commons.pool.ObjectPool;
-import org.apache.commons.pool.impl.GenericObjectPool;
+import java.sql.Driver;
 
 /**
  *
@@ -19,32 +14,31 @@ import org.apache.commons.pool.impl.GenericObjectPool;
  */
 public abstract class AbstractClient implements Client
 {
-    private PoolingDataSource dataSource;
-    private String user;
-    private String password;
+    protected URLClassLoader driverLoader;
+    protected Driver driver;
+    protected Connection conn;
+    protected String connURL;
+    protected String user;
+    protected String password;
 
-    public AbstractClient(String connUrl, String user, String password)
+    public AbstractClient(String driverURL, String driverClass, String connURL, String user,
+                          String password)
     {
-        ObjectPool connectionPool = new GenericObjectPool();
-        ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(connUrl, null);
-        new PoolableConnectionFactory(connectionFactory, connectionPool, null, null, false, true);
-        dataSource = new PoolingDataSource(connectionPool);
-        this.user = user;
-        this.password = password;
-    }
-
-    @Override
-    public Format describeFormats()
-    {
-        Connection conn = null;
         try
         {
-            conn = DbUtils.getConnection(dataSource, user, password);
+            // Load jar and find the class
+            driverLoader = new URLClassLoader(new URL[]
+                    {
+                        new URL(driverURL)
+                    }, getClass().getClassLoader());
+            driver = DbUtils.getDriver(driverLoader, driverClass);
+            this.connURL = connURL;
+            this.user = user;
+            this.password = password;
         }
-        finally
+        catch (Exception ex)
         {
-            DbUtils.releaseConnection(conn);
+            throw new RuntimeException(ex);
         }
-        return null;
     }
 }
