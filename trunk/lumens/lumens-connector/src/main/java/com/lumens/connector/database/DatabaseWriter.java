@@ -13,9 +13,9 @@ import com.lumens.model.Element;
  */
 public class DatabaseWriter implements Writer, Cacheable
 {
-    private DatabaseConnector db;
+    private Client db;
 
-    DatabaseWriter(DatabaseConnector db)
+    DatabaseWriter(Client db)
     {
         this.db = db;
     }

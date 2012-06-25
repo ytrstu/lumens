@@ -3,11 +3,13 @@
  */
 package com.lumens.connector.database;
 
+import java.net.URLClassLoader;
 import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.commons.dbcp.PoolingDataSource;
+import java.sql.Statement;
+import java.util.Properties;
 
 /**
  *
@@ -29,16 +31,53 @@ public class DbUtils
         }
     }
 
-    public static Connection getConnection(PoolingDataSource dataSource, String user,
+    public static Connection getConnection(Driver driver, String connURL, String user,
                                            String password)
     {
         try
         {
-            return dataSource.getConnection(user, password);
+            Properties props = new Properties();
+            props.put("user", user);
+            props.put("password", password);
+            return driver.connect(connURL, props);
         }
         catch (SQLException ex)
         {
-            throw new RuntimeException(ex.getMessage());
+            throw new RuntimeException(ex);
         }
+    }
+
+    public static void releaseResultSet(ResultSet ret)
+    {
+        if (ret != null)
+        {
+            try
+            {
+                ret.close();
+            }
+            catch (SQLException ex)
+            {
+            }
+        }
+    }
+
+    public static void releaseStatement(Statement stat)
+    {
+        if (stat != null)
+        {
+            try
+            {
+                stat.close();
+            }
+            catch (SQLException ex)
+            {
+            }
+        }
+    }
+
+    public static Driver getDriver(URLClassLoader driverLoader, String driverClass) throws Exception
+    {
+        Class clazz = driverLoader.loadClass(driverClass);
+        return (Driver) clazz.newInstance();
     }
 }
