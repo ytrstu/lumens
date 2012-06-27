@@ -6,6 +6,7 @@ package com.lumens.model;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -43,6 +44,8 @@ public interface Format
     public void setProperty(String name, Object value);
 
     public Object getProperty(String name);
+
+    public Map<String, Object> getProperties();
 
     public Format addChild(Format format);
 
