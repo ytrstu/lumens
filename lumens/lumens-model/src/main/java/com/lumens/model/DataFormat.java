@@ -95,6 +95,12 @@ public class DataFormat implements Format
     }
 
     @Override
+    public Map<String, Object> getProperties()
+    {
+        return properties;
+    }
+
+    @Override
     public Format addChild(Format format)
     {
         if (children == null && childrenList == null)
