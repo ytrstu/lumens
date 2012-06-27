@@ -3,8 +3,8 @@
  */
 package com.lumens.connector.database.client.oracle;
 
-import com.lumens.connector.database.client.AbstractClient;
 import com.lumens.connector.database.DbUtils;
+import com.lumens.connector.database.client.AbstractClient;
 import com.lumens.model.DataFormat;
 import com.lumens.model.Format;
 import com.lumens.model.Format.Form;
@@ -17,7 +17,6 @@ import java.sql.Statement;
  */
 public class OracleClient extends AbstractClient implements OracleConstants
 {
-
 
     public OracleClient(String ojdbcURL, String connURL, String user, String password)
     {

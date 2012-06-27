@@ -5,7 +5,6 @@ package com.lumens.connector.database.client;
 
 import com.lumens.connector.database.Client;
 import com.lumens.connector.database.DbUtils;
-import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -28,12 +27,7 @@ public abstract class AbstractClient implements Client
     {
         try
         {
-            // Load jar and find the class
-            driverLoader = new URLClassLoader(new URL[]
-                    {
-                        new URL(driverURL)
-                    }, getClass().getClassLoader());
-            driver = DbUtils.getDriver(driverLoader, driverClass);
+            driver = (Driver) DbUtils.getInstance(driverURL, driverClass);
             this.connURL = connURL;
             this.user = user;
             this.password = password;
