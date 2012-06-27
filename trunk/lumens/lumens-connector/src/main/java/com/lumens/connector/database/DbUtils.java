@@ -3,6 +3,7 @@
  */
 package com.lumens.connector.database;
 
+import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -75,9 +76,22 @@ public class DbUtils
         }
     }
 
-    public static Driver getDriver(URLClassLoader driverLoader, String driverClass) throws Exception
+    public static Object getInstance(String jarURL, String className) throws Exception
     {
-        Class clazz = driverLoader.loadClass(driverClass);
-        return (Driver) clazz.newInstance();
+        ClassLoader savedClassLoader = Thread.currentThread().getContextClassLoader();
+        try
+        {
+            ClassLoader urlClassLoader = new URLClassLoader(new URL[]
+                    {
+                        new URL(jarURL)
+                    });
+            Thread.currentThread().setContextClassLoader(urlClassLoader);
+            Class clazz = Class.forName(className, true, urlClassLoader);
+            return clazz.newInstance();
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader(savedClassLoader);
+        }
     }
 }

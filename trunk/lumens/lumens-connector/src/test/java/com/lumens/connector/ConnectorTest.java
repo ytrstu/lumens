@@ -49,7 +49,7 @@ public class ConnectorTest
         writer.write(Operate.CREATE, e);
     }
 
-    public static void TtestOracleConnector()
+    public static void testOracleConnector()
     {
         DatabaseConnector cntr = new DatabaseConnector();
         HashMap<String, Object> props = new HashMap<String, Object>();
@@ -59,16 +59,11 @@ public class ConnectorTest
         props.put("Password", "accit");
         cntr.setConfiguration(props);
         cntr.open();
-        //cntr.close();
+        cntr.close();
         cntr = new DatabaseConnector();
         props.put("OJDBC", "file:///C:/oracle/product/11.1.0/db_1/jdbc/lib/ojdbc6_g.jar");
         cntr.setConfiguration(props);
         cntr.open();
-        //cntr.close();
-    }
-
-    public static void main(String[] args)
-    {
-        TtestOracleConnector();
+        cntr.close();
     }
 }
