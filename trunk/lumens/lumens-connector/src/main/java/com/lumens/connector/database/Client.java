@@ -15,5 +15,7 @@ public interface Client
 
     public void close();
 
-    public Format describeFormats();
+    public Format describeFormats(boolean fullLoad);
+
+    public void describeFormat(Format format);
 }
