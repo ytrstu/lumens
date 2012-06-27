@@ -17,12 +17,18 @@ import java.util.Map;
  */
 public class DatabaseConnector implements Connector, Configurable
 {
+    public static final String OJDBC = "OJDBC";
+    public static final String CONNECTION_URL = "ConnectionURL";
+    public static final String USER = "User";
+    public static final String PASSWORD = "Password";
+    public static final String FULL_LOAD = "FullLoad";
     private Client dbClient;
     private Format tables;
     private String ojdbcURL;
     private String connURL;
     private String user;
     private String password;
+    private boolean fullLoad;
 
     @Override
     public void open()
@@ -30,14 +36,27 @@ public class DatabaseConnector implements Connector, Configurable
         // TODO only create oracle client now, select different db client later
         dbClient = new OracleClient(ojdbcURL, connURL, user, password);
         dbClient.open();
-        tables = dbClient.describeFormats();
+        tables = dbClient.describeFormats(fullLoad);
     }
 
     @Override
     public void close()
     {
-        dbClient.close();
+        if (dbClient != null)
+            dbClient.close();
         tables = null;
+    }
+
+    @Override
+    public Format getFormats()
+    {
+        return tables;
+    }
+
+    @Override
+    public void describeFormat(Format format)
+    {
+        dbClient.describeFormat(format);
     }
 
     @Override
@@ -55,14 +74,16 @@ public class DatabaseConnector implements Connector, Configurable
     @Override
     public void setConfiguration(Map<String, Object> configuration)
     {
-        if (configuration.containsKey("OJDBC"))
-            ojdbcURL = (String) configuration.get("OJDBC");
-        if (configuration.containsKey("ConnectionURL"))
-            connURL = (String) configuration.get("ConnectionURL");
-        if (configuration.containsKey("User"))
-            user = (String) configuration.get("User");
-        if (configuration.containsKey("Password"))
-            password = (String) configuration.get("Password");
+        if (configuration.containsKey(OJDBC))
+            ojdbcURL = (String) configuration.get(OJDBC);
+        if (configuration.containsKey(CONNECTION_URL))
+            connURL = (String) configuration.get(CONNECTION_URL);
+        if (configuration.containsKey(USER))
+            user = (String) configuration.get(USER);
+        if (configuration.containsKey(PASSWORD))
+            password = (String) configuration.get(PASSWORD);
+        if (configuration.containsKey(FULL_LOAD))
+            fullLoad = (Boolean) configuration.get(FULL_LOAD);
     }
 
     @Override

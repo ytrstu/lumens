@@ -5,8 +5,10 @@ import com.lumens.connector.database.DatabaseConnector;
 import com.lumens.model.DataElement;
 import com.lumens.model.DataFormat;
 import com.lumens.model.Element;
+import com.lumens.model.Format;
 import com.lumens.model.Format.Form;
 import com.lumens.model.Type;
+import com.lumens.model.serializer.DataFormatXmlSerializer;
 import java.util.HashMap;
 import java.util.Iterator;
 import junit.framework.Test;
@@ -49,21 +51,28 @@ public class ConnectorTest
         writer.write(Operate.CREATE, e);
     }
 
-    public static void testOracleConnector()
+    public static void testOracleConnector() throws Exception
     {
-        DatabaseConnector cntr = new DatabaseConnector();
-        HashMap<String, Object> props = new HashMap<String, Object>();
-        props.put("OJDBC", "file:///C:/oracle/product/11.1.0/db_1/jdbc/lib/ojdbc6.jar");
-        props.put("ConnectionURL", "jdbc:oracle:thin:@//127.0.0.1:1521/ORCL");
-        props.put("User", "sh");
-        props.put("Password", "accit");
-        cntr.setConfiguration(props);
-        cntr.open();
-        cntr.close();
-        cntr = new DatabaseConnector();
-        props.put("OJDBC", "file:///C:/oracle/product/11.1.0/db_1/jdbc/lib/ojdbc6_g.jar");
-        cntr.setConfiguration(props);
-        cntr.open();
-        cntr.close();
+        DatabaseConnector cntr = null;
+        try
+        {
+            cntr = new DatabaseConnector();
+            HashMap<String, Object> props = new HashMap<String, Object>();
+            props.put(DatabaseConnector.OJDBC,
+                      "file:///C:/oracle/product/11.1.0/db_1/jdbc/lib/ojdbc6.jar");
+            props.put(DatabaseConnector.CONNECTION_URL, "jdbc:oracle:thin:@//127.0.0.1:1521/ORCL");
+            props.put(DatabaseConnector.USER, "sh");
+            props.put(DatabaseConnector.PASSWORD, "accit");
+            props.put(DatabaseConnector.FULL_LOAD, true);
+            cntr.setConfiguration(props);
+            cntr.open();
+            DataFormatXmlSerializer xml = new DataFormatXmlSerializer(cntr.getFormats(), "UTF-8",
+                                                                      true);
+            xml.write(System.out);
+        }
+        finally
+        {
+            cntr.close();
+        }
     }
 }

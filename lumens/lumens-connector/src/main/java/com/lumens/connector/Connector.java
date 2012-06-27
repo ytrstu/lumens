@@ -3,6 +3,8 @@
  */
 package com.lumens.connector;
 
+import com.lumens.model.Format;
+
 /**
  *
  * @author shaofeng wang
@@ -16,4 +18,8 @@ public interface Connector
     public Reader createReader();
 
     public Writer createWriter();
+
+    public Format getFormats();
+
+    public void describeFormat(Format format);
 }

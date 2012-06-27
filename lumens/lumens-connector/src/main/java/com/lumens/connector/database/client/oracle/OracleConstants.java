@@ -12,5 +12,8 @@ public interface OracleConstants
     public String ORACLE_CLASS = "oracle.jdbc.OracleDriver";
     public String TYPE = "type";
     public String DESCRIPTION = "description";
+    public String DATA_LENGTH = "data_length";
+    public String DATA_TYPE = "data_type";
     public String TABLENAMES = "select t.table_name,t.comments, t.TABLE_TYPE from user_tab_comments t";
+    public String TABLECOLUMNS = "select t.COLUMN_NAME, t.DATA_TYPE, t.DATA_LENGTH from user_tab_columns t where t.TABLE_NAME = ";
 }
