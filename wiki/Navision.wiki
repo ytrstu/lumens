@@ -4,6 +4,8 @@
 Modules:
 finance, manufacturing, customer relationship management, supply chains, analytics and electronic commerce
 
+Integration:
+http://msdn.microsoft.com/en-us/library/ms952079
 = Other product integration with Navision module =
 
 EDI integration with Microsoft Dynamics™ NAV (Navision)
