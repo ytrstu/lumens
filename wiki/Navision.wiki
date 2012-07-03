@@ -1,6 +1,8 @@
-Navision ERP integration with other finance system project
+#summary Navision ERP integration with other finance system project
 
--------Other product integration with Navision module-------------
+
+= Other product integration with Navision module =
+
 EDI integration with Microsoft Dynamics™ NAV (Navision)
 Provide efficiency to the EDI transaction process by automatically moving data to and from EDI documents
 
