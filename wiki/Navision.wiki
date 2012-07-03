@@ -12,3 +12,6 @@ Increase the speed of information exchange with your eCommerce site for faster o
 
 SCM | Supply Chain Management integration with Microsoft Dynamics™ NAV (Navision)
 Generate UPS®, FedEx® or DHL® shipments with source data from the back-office financial system
+
+Modules:
+finance, manufacturing, customer relationship management, supply chains, analytics and electronic commerce
