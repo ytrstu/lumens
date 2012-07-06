@@ -16,10 +16,22 @@ public interface Format
 {
     public enum Form
     {
-        NONE,
-        FIELD,
-        STRUCT,
-        ARRAY
+        NONE("None"),
+        FIELD("Field"),
+        STRUCT("Struct"),
+        ARRAY("Array");
+        private String name;
+
+        private Form(String name)
+        {
+            this.name = name;
+        }
+
+        @Override
+        public String toString()
+        {
+            return name;
+        }
     }
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     public static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
