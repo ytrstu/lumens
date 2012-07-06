@@ -4,8 +4,10 @@
 package com.lumens.model.serializer;
 
 import com.lumens.model.Element;
+import com.lumens.model.Format;
+import com.lumens.model.Format.Form;
+import com.lumens.model.Type;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -35,44 +37,59 @@ public class DataElementXmlSerializer implements XmlSerializer
     @Override
     public void write(OutputStream out) throws Exception
     {
-        DataOutputStream dataOut = new DataOutputStream(out);
-        dataOut.writeBytes("<?xml version=\"1.0\" encoding=\"" + charset + "\"?>\n");
-        StringBuilder indent = new StringBuilder();
-        writeToXml(element, dataOut, indent);
+        StringWriter dataOut = new StringWriter(new DataOutputStream(out));
+        dataOut.println("<?xml version=\"1.0\" encoding=\"" + charset + "\"?>");
+        StringBuilder indent = new StringBuilder("");
+        writeElementToXml(element, indent, dataOut);
     }
 
-    private void writeToXml(Element elem, DataOutputStream out, StringBuilder indent) throws IOException
+    private void writeElementToXml(Element element, StringBuilder indent, StringWriter out) throws Exception
     {
-        if (elem.isArray() || elem.isStruct())
+        boolean closeTag = false;
+        Format format = element.getFormat();
+        out.print(indent.toString()).print("<Element name=\"").print(format.getName()).print("\" ").
+                print("form=\"");
+        if (element.isArrayItem())
+            out.print(Form.STRUCT.toString());
+        else
+            out.print(format.getForm().toString());
+        out.print("\" ").print("type=\"").print(format.getType().toString()).print("\"");
+
+        if (format.getType() != Type.NONE)
         {
-            if (elem.isArrayItem() || elem.isStruct())
+            if (!closeTag)
+                out.print(">");
+            closeTag = true;
+            if (element.isField())
+                out.print(element.getString());
+            else
+                out.println(element.getString());
+        }
+
+        List<Element> children = element.getChildren();
+        if (children != null && children.size() > 0)
+        {
+            if (!closeTag)
+                out.println(">");
+            closeTag = true;
+            for (Element child : children)
             {
-                out.writeBytes("<");
-                out.writeBytes(elem.getFormat().getName());
-                out.writeBytes(">\n");
-            }
-            List<Element> children = elem.getChildren();
-            if (children != null && !children.isEmpty())
-            {
-                for (Element child : children)
-                    writeToXml(child, out, indent);
-            }
-            if (elem.isArrayItem() || elem.isStruct())
-            {
-                out.writeBytes("</");
-                out.writeBytes(elem.getFormat().getName());
-                out.writeBytes(">\n");
+                if (child.isArray())
+                    writeElementToXml(child, new StringBuilder(indent).append("  "), out);
+                else if (child.isStruct())
+                    writeElementToXml(child, new StringBuilder(indent).append("  "), out);
+                else if (child.isField())
+                    writeElementToXml(child, new StringBuilder(indent).append("  "), out);
             }
         }
-        else if (elem.isField())
+        if (closeTag)
         {
-            out.writeBytes("<");
-            out.writeBytes(elem.getFormat().getName());
-            out.writeBytes(">");
-            out.writeBytes(elem.getValue().toString());
-            out.writeBytes("</");
-            out.writeBytes(elem.getFormat().getName());
-            out.writeBytes(">\n");
+            if (element.isField())
+                out.println("</Element>");
+            else
+                out.print(indent.toString()).println("</Element>");
         }
+        else
+            out.println("/>");
     }
 }

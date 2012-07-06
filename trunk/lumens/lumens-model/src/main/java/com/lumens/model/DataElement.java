@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import sun.misc.BASE64Encoder;
 
 /**
  *
@@ -201,7 +202,8 @@ public class DataElement implements Element
             || (isString() && value instanceof String))
             this.value = value;
         else
-            throw new IllegalArgumentException("Error, date type is \"" + format.getType().name() + "\"," + " value type is not correct !");
+            throw new IllegalArgumentException(
+                    "Error, date type is \"" + format.getType().name() + "\"," + " value type is not correct !");
     }
 
     @Override
@@ -307,7 +309,7 @@ public class DataElement implements Element
     @Override
     public String getString()
     {
-        return (String) value;
+        return value.toString();
     }
 
     @Override
