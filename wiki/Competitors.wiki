@@ -12,6 +12,7 @@
  # Biztalk
  # Etl-tools
  # 灵蜂纵横
+ # http://www.apatarforge.org
 
 *Target*
  # Lightweight
@@ -20,3 +21,4 @@
  # Oriented object data processing
  # Embedded transform engine
  # Web UI ? 
+ # adapter separate?
