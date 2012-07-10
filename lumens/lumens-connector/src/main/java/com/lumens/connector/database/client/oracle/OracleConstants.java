@@ -14,6 +14,18 @@ public interface OracleConstants
     public String DESCRIPTION = "description";
     public String DATA_LENGTH = "data_length";
     public String DATA_TYPE = "data_type";
+
+    // Oracle SQL to query tables information
     public String TABLENAMES = "select t.table_name,t.comments, t.TABLE_TYPE from user_tab_comments t";
     public String TABLECOLUMNS = "select t.COLUMN_NAME, t.DATA_TYPE, t.DATA_LENGTH from user_tab_columns t where t.TABLE_NAME = ";
+
+    // Oracle data types
+    public String CHAR = "CHAR";
+    public String VARCHAR2 = "VARCHAR2";
+    public String NVARCHAR2 = "NVARCHAR2";
+    public String CLOB = "CLOB";
+    public String NUMBER = "NUMBER";
+    public String DATE = "DATE";
+    public String NUMBERIC = "NUMBERIC";
+    public String BLOB = "BLOB";
 }

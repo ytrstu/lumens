@@ -37,7 +37,7 @@ public class OracleClient extends AbstractClient implements OracleConstants
     }
 
     @Override
-    public Format describeFormats(boolean fullLoad)
+    public Format getFormats(boolean fullLoad)
     {
         Format tables = new DataFormat("Tables", Form.STRUCT);
         Statement stat = null;
@@ -98,7 +98,7 @@ public class OracleClient extends AbstractClient implements OracleConstants
     }
 
     @Override
-    public void describeFormat(Format format)
+    public Format getFormat(Format format)
     {
         Statement stat = null;
         ResultSet ret = null;
@@ -128,21 +128,23 @@ public class OracleClient extends AbstractClient implements OracleConstants
             DbUtils.releaseResultSet(ret);
             DbUtils.releaseStatement(stat);
         }
+
+        return format;
     }
 
     private Type toType(String dataType)
     {
-        if (dataType.equalsIgnoreCase("CHAR")
-            || dataType.startsWith("VARCHAR2") || dataType.startsWith("NVARCHAR2") || dataType.
-                equalsIgnoreCase("CLOB"))
+        if (dataType.equalsIgnoreCase(CHAR)
+            || dataType.startsWith(VARCHAR2) || dataType.startsWith(NVARCHAR2) || dataType.
+                equalsIgnoreCase(CLOB))
             return Type.STRING;
-        else if (dataType.startsWith("NUMBER"))
+        else if (dataType.startsWith(NUMBER))
             return Type.INT;
-        else if (dataType.equalsIgnoreCase("DATE"))
+        else if (dataType.equalsIgnoreCase(DATE))
             return Type.DATE;
-        else if (dataType.startsWith("NUMBERIC"))
+        else if (dataType.startsWith(NUMBERIC))
             return Type.DOUBLE;
-        else if (dataType.equalsIgnoreCase("BLOB"))
+        else if (dataType.equalsIgnoreCase(BLOB))
             return Type.BINARY;
         return Type.NONE;
     }

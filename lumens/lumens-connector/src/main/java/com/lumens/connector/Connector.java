@@ -21,5 +21,5 @@ public interface Connector
 
     public Format getFormats();
 
-    public void describeFormat(Format format);
+    public Format getFormat(Format format);
 }
