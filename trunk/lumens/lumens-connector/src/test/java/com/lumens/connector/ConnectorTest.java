@@ -9,9 +9,15 @@ import com.lumens.model.Element;
 import com.lumens.model.Format;
 import com.lumens.model.Format.Form;
 import com.lumens.model.Type;
+import com.lumens.model.serializer.DataElementXmlSerializer;
 import com.lumens.model.serializer.DataFormatXmlSerializer;
+import com.lumens.processor.Processor;
+import com.lumens.processor.transform.TransformProcessor;
+import com.lumens.processor.transform.TransformRule;
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -91,8 +97,19 @@ public class ConnectorTest
             connector.getFormat(service);
             break;
         }
+        Format retrieveIncidentRequest = services.getChild("RetrieveIncidentRequest");
         DataFormatXmlSerializer xml = new DataFormatXmlSerializer(services, "UTF-8",
                                                                   true);
         xml.write(System.out);
+
+        TransformRule rule = new TransformRule(retrieveIncidentRequest);
+        rule.getRuleItem("attachmentData").setScript("true");
+        rule.getRuleItem("model.instance.AssigneeName").setScript("\"test\"");
+        Processor transformProcessor = new TransformProcessor(rule);
+        Element data = new DataElement(retrieveIncidentRequest);
+        List<Element> result = (List<Element>) transformProcessor.process(data);
+        DataElementXmlSerializer serializer = new DataElementXmlSerializer(result.get(0), "UTF-8",
+                                                                           true);
+        serializer.write(System.out);
     }
 }
