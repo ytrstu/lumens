@@ -6,6 +6,7 @@ package com.lumens.connector.webservice.soap;
 import com.lumens.model.DataFormat;
 import com.lumens.model.Format;
 import com.lumens.model.Format.Form;
+import com.lumens.model.Type;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,6 +34,8 @@ import org.apache.xerces.xni.XMLResourceIdentifier;
 import org.apache.xerces.xni.XNIException;
 import org.apache.xerces.xni.parser.XMLEntityResolver;
 import org.apache.xerces.xni.parser.XMLInputSource;
+import org.apache.xerces.xs.XSAttributeDeclaration;
+import org.apache.xerces.xs.XSAttributeUse;
 import org.apache.xerces.xs.XSComplexTypeDefinition;
 import org.apache.xerces.xs.XSElementDeclaration;
 import org.apache.xerces.xs.XSModel;
@@ -61,6 +64,34 @@ public class SOAPClient implements SOAPConstants, XMLEntityResolver
     private Definition definition;
     private XSModel xsModel;
     private Map<String, Element> schemaCache;
+    private static final Map<String, Type> buildinTypes = new HashMap<String, Type>();
+
+    static
+    {
+        buildinTypes.put("string", Type.STRING);
+        buildinTypes.put("byte", Type.BYTE);
+        buildinTypes.put("boolean", Type.BOOLEAN);
+        buildinTypes.put("int", Type.INT);
+        buildinTypes.put("nonPositiveInteger", Type.LONG);
+        buildinTypes.put("negativeInteger", Type.LONG);
+        buildinTypes.put("nonNegativeInteger", Type.LONG);
+        buildinTypes.put("nonPositiveInteger", Type.LONG);
+        buildinTypes.put("integer", Type.LONG);
+        buildinTypes.put("long", Type.LONG);
+        buildinTypes.put("float", Type.FLOAT);
+        buildinTypes.put("double", Type.DOUBLE);
+        buildinTypes.put("decimal", Type.DOUBLE);
+        buildinTypes.put("time", Type.DATE);
+        buildinTypes.put("date", Type.DATE);
+        buildinTypes.put("dateTime", Type.DATE);
+        buildinTypes.put("gDay", Type.STRING);
+        buildinTypes.put("gMonth", Type.STRING);
+        buildinTypes.put("gMonthDay", Type.STRING);
+        buildinTypes.put("gYear", Type.STRING);
+        buildinTypes.put("gYearMonth", Type.STRING);
+        buildinTypes.put("base64Binary", Type.BINARY);
+        buildinTypes.put("hexBinary", Type.BINARY);
+    }
 
     public SOAPClient(String wsdlURL, String user, String password)
     {
@@ -176,18 +207,19 @@ public class SOAPClient implements SOAPConstants, XMLEntityResolver
     public Format getFormat(Format format)
     {
         String name = format.getName();
-        String nameSpace = (String) format.getProperty(NAMESPACE);
-        XSElementDeclaration xsElement = xsModel.getElementDeclaration(name, nameSpace);
+        String namespace = (String) format.getProperty(NAMESPACE);
+        XSElementDeclaration xsElement = xsModel.getElementDeclaration(name, namespace);
         XSTypeDefinition xsTypeDef = xsElement.getTypeDefinition();
         if (xsTypeDef.getTypeCategory() == XSTypeDefinition.COMPLEX_TYPE)
         {
             XSComplexTypeDefinition xsComplex = (XSComplexTypeDefinition) xsTypeDef;
-            buildFormatFromComplexType(format, xsComplex, false);
+            buildFieldFromXSAttributeList(format, xsComplex);
+            buildFormatFromXSComplexType(format, null, null, xsComplex, false);
         }
         else if (xsTypeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE)
         {
             XSSimpleTypeDefinition xsSimple = (XSSimpleTypeDefinition) xsTypeDef;
-            buildFormatFromSimpleType(format, xsSimple, false);
+            buildFormatFromXSSimpleType(format, name, namespace, xsSimple, false);
         }
         return null;
     }
@@ -195,66 +227,103 @@ public class SOAPClient implements SOAPConstants, XMLEntityResolver
     private static void buildFromatFromElement(Format parent, XSElementDeclaration xsElement,
                                                boolean isArray)
     {
-        String formatName = xsElement.getName();
-        String nameSpace = xsElement.getNamespace();
-        Format format = parent.getChild(formatName);
+        String name = xsElement.getName();
+        String namespace = xsElement.getNamespace();
 
         XSTypeDefinition xsTypeDef = xsElement.getTypeDefinition();
         if (xsTypeDef.getTypeCategory() == XSTypeDefinition.COMPLEX_TYPE)
         {
-            if (format == null)
-            {
-                Form form = isArray ? Form.ARRAY : Form.STRUCT;
-                format = parent.addChild(formatName, form);
-                format.setProperty(NAMESPACE, nameSpace);
-            }
+
             XSComplexTypeDefinition xsComplex = (XSComplexTypeDefinition) xsTypeDef;
-            buildFormatFromComplexType(format, xsComplex, isArray);
+            buildFormatFromXSComplexType(parent, name, namespace, xsComplex, isArray);
         }
         else if (xsTypeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE)
         {
-            if (format == null)
-            {
-                Form form = isArray ? Form.ARRAY : Form.STRUCT;
-                format = parent.addChild(formatName, form);
-                format.setProperty(NAMESPACE, nameSpace);
-            }
+
             XSSimpleTypeDefinition xsSimple = (XSSimpleTypeDefinition) xsTypeDef;
-            buildFormatFromSimpleType(format, xsSimple, isArray);
+            buildFormatFromXSSimpleType(parent, name, namespace, xsSimple, isArray);
         }
     }
 
-    private static void buildFormatFromComplexType(Format parent, XSComplexTypeDefinition xsComplex,
-                                                   boolean array)
+    private static void buildFormatFromXSComplexType(Format parent, String name, String namespace,
+                                                     XSComplexTypeDefinition xsComplex,
+                                                     boolean isArray)
     {
         short contentType = xsComplex.getContentType();
         if (contentType == XSComplexTypeDefinition.CONTENTTYPE_SIMPLE)
         {
             XSTypeDefinition baseType = xsComplex.getBaseType();
+            int max = 20;
             while (baseType != null
-                   && baseType.getType() == XSComplexTypeDefinition.CONTENTTYPE_SIMPLE)
+                   && baseType.getType() == XSComplexTypeDefinition.CONTENTTYPE_SIMPLE && --max > 0)
             {
                 baseType = baseType.getBaseType();
             }
-            buildFormatFromSimpleType(parent, (XSSimpleTypeDefinition) baseType, array);
+            Format format = buildFormatFromXSSimpleType(parent, name, namespace,
+                                                        (XSSimpleTypeDefinition) baseType,
+                                                        isArray);
+            buildFieldFromXSAttributeList(format, xsComplex);
+
+            if (format.getChildren() != null && format.isField())
+                format.setForm(Form.STRUCT);
+
         }
         else if (contentType == XSComplexTypeDefinition.SIMPLE_TYPE)
         {
-            buildFormatFromSimpleType(parent, xsComplex.getSimpleType(), array);
+            buildFormatFromXSSimpleType(parent, name, namespace, xsComplex.getSimpleType(), isArray);
         }
         else if (contentType == XSComplexTypeDefinition.CONTENTTYPE_ELEMENT)
         {
+            if (name != null)
+            {
+                Format format = parent.getChild(name);
+                if (format == null)
+                {
+                    Form form = isArray ? Form.ARRAY : Form.STRUCT;
+                    format = parent.addChild(name, form);
+                    format.setProperty(NAMESPACE, namespace);
+                    buildFieldFromXSAttributeList(format, xsComplex);
+                }
+                parent = format;
+            }
             XSParticle xsPartice = xsComplex.getParticle();
-            buildFromFromParticle(parent, xsPartice);
+            buildFromFromXSParticle(parent, xsPartice);
         }
     }
 
-    private static void buildFormatFromSimpleType(Format parent, XSSimpleTypeDefinition xsSimple,
-                                                  boolean array)
+    private static Format buildFormatFromXSSimpleType(Format parent, String name, String namespace,
+                                                      XSSimpleTypeDefinition xsSimple,
+                                                      boolean isArray)
     {
+        if (name != null)
+        {
+            Format format = parent.getChild(name);
+            if (format == null)
+            {
+                Form form = isArray ? Form.ARRAY : Form.FIELD;
+                format = parent.addChild(name, form);
+                format.setProperty(NAMESPACE, namespace);
+                String simpleName = xsSimple.getName();
+                if (XMLSCHEMAXSD.equalsIgnoreCase(xsSimple.getNamespace()))
+                {
+                    Type type = buildinTypes.get(simpleName);
+                    if (type != null)
+                    {
+                        format.setType(type);
+                        return format;
+                    }
+                }
+
+                // TODO it should log an error not throw an exception
+                throw new RuntimeException(
+                        "Not supported type \"" + xsSimple.getNamespace() + ':' + simpleName + "\"");
+
+            }
+        }
+        return null;
     }
 
-    private static void buildFromFromParticle(Format parent, XSParticle xsParticle)
+    private static void buildFromFromXSParticle(Format parent, XSParticle xsParticle)
     {
         boolean isUnbounded = xsParticle.getMaxOccursUnbounded();
         int maxOccurs = xsParticle.getMaxOccurs();
@@ -273,7 +342,7 @@ public class SOAPClient implements SOAPConstants, XMLEntityResolver
             for (Object xsObj : list)
             {
                 XSParticle xsPart = (XSParticle) xsObj;
-                buildFromFromParticle(parent, xsPart);
+                buildFromFromXSParticle(parent, xsPart);
             }
         }
         else if (term instanceof XSWildcard)
@@ -336,6 +405,25 @@ public class SOAPClient implements SOAPConstants, XMLEntityResolver
                     SchemaImport sImport = (SchemaImport) vecO;
                     buildSchemaCache(sImport.getReferencedSchema());
                 }
+            }
+        }
+    }
+
+    private static void buildFieldFromXSAttributeList(Format format,
+                                                      XSComplexTypeDefinition xsComplex)
+    {
+        XSObjectList attrUses = xsComplex.getAttributeUses();
+        for (Object o : attrUses)
+        {
+            XSAttributeUse attrUse = (XSAttributeUse) o;
+            XSAttributeDeclaration attrDecl = attrUse.getAttrDeclaration();
+            String attrName = attrDecl.getName();
+            String typeName = attrUse.getAttrDeclaration().getTypeDefinition().getName();
+            if (format.getChild(attrName) == null)
+            {
+                Type type = buildinTypes.get(typeName);
+                if (type != null)
+                    format.addChild(attrName, Form.FIELD, type);
             }
         }
     }

@@ -9,6 +9,7 @@ package com.lumens.connector.webservice.soap;
  */
 public interface SOAPConstants
 {
-    public static final String NAMESPACE = "Namespace";
-    public static final String TARGETNAMESPACE = "targetNamespace";
+    public String NAMESPACE = "Namespace";
+    public String TARGETNAMESPACE = "targetNamespace";
+    public String XMLSCHEMAXSD = "http://www.w3.org/2001/XMLSchema";
 }
