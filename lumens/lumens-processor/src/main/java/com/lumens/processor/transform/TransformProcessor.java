@@ -33,10 +33,10 @@ public class TransformProcessor extends AbstractProcessor
     @Override
     public Object process(Object input)
     {
-        if (input instanceof Element)
+        if (input instanceof Element || input == null)
         {
-            List<Element> results = new ArrayList<Element>();
             Element inputElement = (Element) input;
+            List<Element> results = new ArrayList<Element>();
             TransformRuleItem ruleItem = rule.getRuleEntry();
             String arrayIterationPath = ruleItem.getArrayIterationPath();
             List<Element> items;

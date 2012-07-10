@@ -41,12 +41,17 @@ public class JavaScript implements Script
 
     public JavaScript(String script) throws Exception
     {
+        this("script" + System.currentTimeMillis(), script);
+    }
+
+    public JavaScript(String sourceName, String script) throws Exception
+    {
         // TODO refine here, put the context initialization to gloabl place, in
         // order to load build in function only once
         this.orignalScript = script;
         jsCTX = org.mozilla.javascript.Context.enter();
         scope = jsCTX.initStandardObjects(globalScope);
-        jsFunction = jsCTX.compileFunction(scope, builder.build(orignalScript), "element-script", 1,
+        jsFunction = jsCTX.compileFunction(scope, builder.build(orignalScript), sourceName, 1,
                                            null);
     }
 
