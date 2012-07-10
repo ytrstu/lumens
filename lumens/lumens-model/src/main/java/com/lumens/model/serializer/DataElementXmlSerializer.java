@@ -60,7 +60,7 @@ public class DataElementXmlSerializer implements XmlSerializer
             if (!closeTag)
                 out.print(">");
             closeTag = true;
-            if (element.isField())
+            if (element.isField() || element.getChildren() == null)
                 out.print(element.getString());
             else
                 out.println(element.getString());
@@ -84,7 +84,7 @@ public class DataElementXmlSerializer implements XmlSerializer
         }
         if (closeTag)
         {
-            if (element.isField())
+            if (element.isField() || element.getChildren() == null)
                 out.println("</Element>");
             else
                 out.print(indent.toString()).println("</Element>");
