@@ -132,7 +132,7 @@ public class DataFormat implements Format
     @Override
     public Format getChild(String name)
     {
-        return children.get(name);
+        return children == null ? null : children.get(name);
     }
 
     @Override

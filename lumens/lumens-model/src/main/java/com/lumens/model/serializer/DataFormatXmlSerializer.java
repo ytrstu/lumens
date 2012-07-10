@@ -21,12 +21,18 @@ public class DataFormatXmlSerializer implements XmlSerializer
     private final Format format;
     private final String charset;
     private final boolean useIndent;
+    private boolean careProperties;
 
     public DataFormatXmlSerializer(Format format, String charset, boolean indent)
     {
         this.format = format;
         this.charset = charset;
         this.useIndent = indent;
+    }
+
+    public void setCareProperties(boolean care)
+    {
+        careProperties = care;
     }
 
     @Override
@@ -65,7 +71,7 @@ public class DataFormatXmlSerializer implements XmlSerializer
                 print(
                 "form=\"").print(format.getForm().toString()).print("\" ").print("type=\"").
                 print(format.getType().toString()).print("\" ");
-        if (format.getProperties() != null)
+        if (format.getProperties() != null && careProperties)
         {
             closeTag = true;
             out.println(">");
