@@ -38,11 +38,13 @@ public class JavaScriptBuilder
                 scriptWithoutComments.append(line).append('\n');
                 ++lineCount;
             }
+            if (1 == lineCount)
+                scriptWithoutComments.insert(0, "return ");
             return scriptWithoutComments.toString();
         }
         catch (Exception e)
         {
-            throw new RuntimeException("Wroing parsing script");
+            throw new RuntimeException(e);
         }
     }
 
