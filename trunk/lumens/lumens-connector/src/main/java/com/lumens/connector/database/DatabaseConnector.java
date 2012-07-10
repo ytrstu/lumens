@@ -36,7 +36,7 @@ public class DatabaseConnector implements Connector, Configurable
         // TODO only create oracle client now, select different db client later
         dbClient = new OracleClient(ojdbcURL, connURL, user, password);
         dbClient.open();
-        tables = dbClient.describeFormats(fullLoad);
+        tables = dbClient.getFormats(fullLoad);
     }
 
     @Override
@@ -54,9 +54,9 @@ public class DatabaseConnector implements Connector, Configurable
     }
 
     @Override
-    public void describeFormat(Format format)
+    public Format getFormat(Format format)
     {
-        dbClient.describeFormat(format);
+        return dbClient.getFormat(format);
     }
 
     @Override
@@ -84,11 +84,5 @@ public class DatabaseConnector implements Connector, Configurable
             password = (String) configuration.get(PASSWORD);
         if (configuration.containsKey(FULL_LOAD))
             fullLoad = (Boolean) configuration.get(FULL_LOAD);
-    }
-
-    @Override
-    public Map<String, Object> getConfiguration()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

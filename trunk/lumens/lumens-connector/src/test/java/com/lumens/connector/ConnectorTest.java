@@ -2,6 +2,7 @@ package com.lumens.connector;
 
 import com.lumens.connector.Writer.Operate;
 import com.lumens.connector.database.DatabaseConnector;
+import com.lumens.connector.webservice.WebServiceConnector;
 import com.lumens.model.DataElement;
 import com.lumens.model.DataFormat;
 import com.lumens.model.Element;
@@ -51,7 +52,7 @@ public class ConnectorTest
         writer.write(Operate.CREATE, e);
     }
 
-    public static void testOracleConnector() throws Exception
+    public static void TtestOracleConnector() throws Exception
     {
         DatabaseConnector cntr = null;
         try
@@ -74,5 +75,24 @@ public class ConnectorTest
         {
             cntr.close();
         }
+    }
+
+    public void testWebServiceConnector() throws Exception
+    {
+        WebServiceConnector connector = new WebServiceConnector();
+        HashMap<String, Object> props = new HashMap<String, Object>();
+        props.put(WebServiceConnector.WSDL,
+                  getClass().getResource("/sm-wsdl/IncidentManagement.wsdl").toString());
+        connector.setConfiguration(props);
+        connector.open();
+        Format services = connector.getFormats();
+        for (Format service : services.getChildren())
+        {
+            connector.getFormat(service);
+            break;
+        }
+        DataFormatXmlSerializer xml = new DataFormatXmlSerializer(services, "UTF-8",
+                                                                  true);
+        xml.write(System.out);
     }
 }
