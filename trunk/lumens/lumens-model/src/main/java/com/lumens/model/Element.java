@@ -49,6 +49,10 @@ public interface Element
 
     public void setValue(short value);
 
+    public void setValue(byte value);
+
+    public void setValue(boolean value);
+
     public void setValue(int value);
 
     public void setValue(long value);
@@ -64,6 +68,10 @@ public interface Element
     public void setValue(String value);
 
     public short getShort();
+
+    public byte getByte();
+
+    public boolean getBoolean();
 
     public int getInt();
 
@@ -90,6 +98,10 @@ public interface Element
     public boolean isEmpty();
 
     public boolean isShort();
+
+    public boolean isByte();
+
+    public boolean isBoolean();
 
     public boolean isInt();
 

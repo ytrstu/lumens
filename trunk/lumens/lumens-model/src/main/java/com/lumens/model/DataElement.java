@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import sun.misc.BASE64Encoder;
 
 /**
  *
@@ -192,7 +191,9 @@ public class DataElement implements Element
     @Override
     public void setValue(Object value)
     {
-        if ((isShort() && value instanceof Short)
+        if ((isBoolean() && value instanceof Boolean)
+            || (isByte() && value instanceof Byte)
+            || (isShort() && value instanceof Short)
             || (isInt() && value instanceof Integer)
             || (isLong() && value instanceof Long)
             || (isFloat() && value instanceof Float)
@@ -203,7 +204,7 @@ public class DataElement implements Element
             this.value = value;
         else
             throw new IllegalArgumentException(
-                    "Error, date type is \"" + format.getType().name() + "\"," + " value type is not correct !");
+                    "Error, date type is \"" + format.getType() + "\"," + " value type is not correct !");
     }
 
     @Override
@@ -211,6 +212,22 @@ public class DataElement implements Element
     {
         if (!isShort())
             throw new IllegalArgumentException("Error, data type is not short !");
+        this.value = value;
+    }
+
+    @Override
+    public void setValue(byte value)
+    {
+        if (!isByte())
+            throw new IllegalArgumentException("Error, data type is not Byte !");
+        this.value = value;
+    }
+
+    @Override
+    public void setValue(boolean value)
+    {
+        if (!isBoolean())
+            throw new IllegalArgumentException("Error, data type is not Boolean !");
         this.value = value;
     }
 
@@ -277,6 +294,18 @@ public class DataElement implements Element
     }
 
     @Override
+    public byte getByte()
+    {
+        return (Byte) value;
+    }
+
+    @Override
+    public boolean getBoolean()
+    {
+        return (Boolean) value;
+    }
+
+    @Override
     public int getInt()
     {
         return (Integer) value;
@@ -322,6 +351,18 @@ public class DataElement implements Element
     public boolean isShort()
     {
         return format.getType() == Type.SHORT;
+    }
+
+    @Override
+    public boolean isByte()
+    {
+        return format.getType() == Type.BYTE;
+    }
+
+    @Override
+    public boolean isBoolean()
+    {
+        return format.getType() == Type.BOOLEAN;
     }
 
     @Override

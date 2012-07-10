@@ -10,6 +10,8 @@ package com.lumens.model;
 public enum Type
 {
     NONE("None"),
+    BYTE("Byte"),
+    BOOLEAN("Boolean"),
     SHORT("Short"),
     INT("Integer"),
     LONG("Long"),
