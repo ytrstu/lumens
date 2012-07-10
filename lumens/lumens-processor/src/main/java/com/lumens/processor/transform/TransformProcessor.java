@@ -70,9 +70,7 @@ public class TransformProcessor extends AbstractProcessor
 
             return results;
         }
-        throw new IllegalArgumentException("Incorrect input data type \"" + input.getClass().
-                getName() + "\"");
-
+        throw new IllegalArgumentException("Incorrect input data type \"" + input + "\"");
     }
 
     private void processRuleItems(TransformContext ctx, TransformPair item)
@@ -89,12 +87,15 @@ public class TransformProcessor extends AbstractProcessor
         else if (currentElement.isStruct())
         {
             List<TransformRuleItem> children = ruleItem.getChildren();
-            for (TransformRuleItem child : children)
+            if (children != null)
             {
-                Element childElem = executeTransformRule(ctx, child, currentElement.newChild(child.
-                        getFormat()));
-                if (childElem != null)
-                    currentElement.addChild(childElem);
+                for (TransformRuleItem child : children)
+                {
+                    Element childElem = executeTransformRule(ctx, child, currentElement.
+                            newChild(child.getFormat()));
+                    if (childElem != null)
+                        currentElement.addChild(childElem);
+                }
             }
         }
     }
@@ -182,12 +183,15 @@ public class TransformProcessor extends AbstractProcessor
 
         TransformRuleItem ruleItem = item.getSecond();
         List<TransformRuleItem> ruleItemChildren = ruleItem.getChildren();
-        List<Element> children = currentElement.getChildren();
-        for (int i = 0; i < children.size(); ++i)
+        if (ruleItemChildren != null)
         {
-            if (!currentElement.isArray())
-                ruleItem = ruleItemChildren.get(i);
-            queue.add(new TransformPair(children.get(i), ruleItem));
+            List<Element> children = currentElement.getChildren();
+            for (int i = 0; i < children.size(); ++i)
+            {
+                if (!currentElement.isArray())
+                    ruleItem = ruleItemChildren.get(i);
+                queue.add(new TransformPair(children.get(i), ruleItem));
+            }
         }
     }
 
