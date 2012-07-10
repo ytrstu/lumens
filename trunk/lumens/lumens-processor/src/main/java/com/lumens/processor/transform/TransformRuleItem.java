@@ -36,7 +36,7 @@ public class TransformRuleItem
         if (TransformUtils.isPathFormat(script))
             this.script = new AccessPathScript(TransformUtils.getAccessPath(script));
         else
-            this.script = new JavaScript(script);
+            this.script = new JavaScript(format.getFullPath().toString(), script);
     }
 
     public Script getScript()
