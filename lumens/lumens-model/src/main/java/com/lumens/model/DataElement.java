@@ -3,12 +3,14 @@
  */
 package com.lumens.model;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  *
@@ -202,9 +204,11 @@ public class DataElement implements Element
             || (isBinary() && value instanceof byte[])
             || (isString() && value instanceof String))
             this.value = value;
+        else if (value != null && value instanceof String)
+            this.value = parseString(value.toString());
         else
             throw new IllegalArgumentException(
-                    "Error, date type is \"" + format.getType() + "\"," + " value type is not correct !");
+                    "Error, data type is \"" + format.getType() + "\"," + " value type is \"" + value + "\" !");
     }
 
     @Override
@@ -282,9 +286,13 @@ public class DataElement implements Element
     @Override
     public void setValue(String value)
     {
+        // TODO need to try to convert to other data type from a string
         if (!isString())
-            throw new IllegalArgumentException("Error, data type is not string !");
-        this.value = value;
+        {
+            this.value = parseString(value);
+        }
+        else
+            this.value = value;
     }
 
     @Override
@@ -338,7 +346,7 @@ public class DataElement implements Element
     @Override
     public String getString()
     {
-        return value.toString();
+        return value == null ? null : value.toString();
     }
 
     @Override
@@ -435,5 +443,36 @@ public class DataElement implements Element
     public boolean isArrayItem()
     {
         return isArrayItem;
+    }
+
+    private Object parseString(String value)
+    {
+        if (isBoolean())
+            return Boolean.parseBoolean(value);
+        else if (isByte())
+            return Byte.parseByte(value);
+        else if (isShort())
+            return Short.parseShort(value);
+        else if (isInt())
+            return Integer.parseInt(value);
+        else if (isLong())
+            return Long.parseLong(value);
+        else if (isFloat())
+            return Float.parseFloat(value);
+        else if (isDouble())
+            return Double.parseDouble(value);
+        else if (isDate())
+            try
+            {
+                return Format.DATETIME_FORMAT.parse(value);
+            }
+            catch (ParseException ex)
+            {
+                throw new RuntimeException(ex);
+            }
+        else if (isBinary())
+            return Base64.decodeBase64(value);
+
+        throw new RuntimeException("Not supported data type !");
     }
 }
