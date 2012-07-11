@@ -14,7 +14,6 @@ import com.lumens.model.serializer.DataFormatXmlSerializer;
 import com.lumens.processor.Processor;
 import com.lumens.processor.transform.TransformProcessor;
 import com.lumens.processor.transform.TransformRule;
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -89,25 +88,29 @@ public class ConnectorTest
         HashMap<String, Object> props = new HashMap<String, Object>();
         props.put(WebServiceConnector.WSDL,
                   getClass().getResource("/sm-wsdl/IncidentManagement.wsdl").toString());
+        //props.put(WebServiceConnector.WSDL, "http://citvm25:13930/SM/7/IncidentManagement.wsdl");
         connector.setConfiguration(props);
         connector.open();
         Format services = connector.getFormats();
-        for (Format service : services.getChildren())
-        {
-            connector.getFormat(service);
-            break;
-        }
-        Format retrieveIncidentRequest = services.getChild("RetrieveIncidentRequest");
         DataFormatXmlSerializer xml = new DataFormatXmlSerializer(services, "UTF-8",
                                                                   true);
         xml.write(System.out);
-
-        TransformRule rule = new TransformRule(retrieveIncidentRequest);
-        rule.getRuleItem("attachmentData").setScript("true");
-        rule.getRuleItem("model.instance.AssigneeName").setScript("\"test\"");
+        for (Format service : services.getChildren())
+        {
+            for (Format message : service.getChildren())
+                connector.getFormat(message);
+            break;
+        }
+        xml.write(System.out);
+        Format RetrieveIncident = services.getChild("RetrieveIncident");
+        TransformRule rule = new TransformRule(RetrieveIncident);
+        rule.getRuleItem("RetrieveIncidentRequest.attachmentData").setScript("true");
+        rule.getRuleItem("RetrieveIncidentRequest.model.instance.AssigneeName").
+                setScript("\'test\'");
+        rule.getRuleItem("RetrieveIncidentRequest.model.instance.ClosedTime").setScript(
+                "dateFormat(now(), \"yyyy-MM-dd HH:mm:ss\")");
         Processor transformProcessor = new TransformProcessor(rule);
-        Element data = new DataElement(retrieveIncidentRequest);
-        List<Element> result = (List<Element>) transformProcessor.process(data);
+        List<Element> result = (List<Element>) transformProcessor.process(null);
         DataElementXmlSerializer serializer = new DataElementXmlSerializer(result.get(0), "UTF-8",
                                                                            true);
         serializer.write(System.out);
