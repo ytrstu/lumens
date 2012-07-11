@@ -7,6 +7,7 @@ import com.lumens.processor.Context;
 import com.lumens.processor.Script;
 import com.lumens.processor.transform.TransformContext;
 import org.mozilla.javascript.Function;
+import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
@@ -77,7 +78,13 @@ public class JavaScript implements Script
             {
                 ctx
             };
-            return jsFunction.call(jsCTX, scope, scope, args);
+            Object result = jsFunction.call(jsCTX, scope, scope, args);
+            if(result instanceof NativeJavaObject)
+            {
+                NativeJavaObject nativeObj = (NativeJavaObject)result;
+                return nativeObj.unwrap();
+            }
+            return result;
         }
         return null;
     }
