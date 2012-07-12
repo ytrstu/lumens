@@ -3,6 +3,7 @@
  */
 package com.lumens.connector.webservice.soap;
 
+import com.lumens.connector.Usage;
 import com.lumens.model.DataFormat;
 import com.lumens.model.Format;
 import com.lumens.model.Format.Form;
@@ -22,6 +23,7 @@ import javax.wsdl.Definition;
 import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
+import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
@@ -121,9 +123,9 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
         }
     }
 
-    public Format buildFormats()
+    public Format buildServiceFormats(Usage usage)
     {
-        Format services = buildServices(definition);
+        Format services = buildServices(definition, usage);
 
         // Caching the schema information
         List schemas = definition.getTypes().getExtensibilityElements();
@@ -191,22 +193,25 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
         return services;
     }
 
-    public Format buildFormat(Format format)
+    public Format buildMessageFormat(Format format)
     {
         String name = format.getName();
         String namespace = (String) format.getProperty(TARGETNAMESPACE);
         XSElementDeclaration xsElement = xsModel.getElementDeclaration(name, namespace);
-        XSTypeDefinition xsTypeDef = xsElement.getTypeDefinition();
-        if (xsTypeDef.getTypeCategory() == XSTypeDefinition.COMPLEX_TYPE)
+        if (xsElement != null)
         {
-            XSComplexTypeDefinition xsComplex = (XSComplexTypeDefinition) xsTypeDef;
-            buildFieldFromXSAttributeList(format, xsComplex);
-            buildFormatFromXSComplexType(format, null, null, xsComplex, false);
-        }
-        else if (xsTypeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE)
-        {
-            XSSimpleTypeDefinition xsSimple = (XSSimpleTypeDefinition) xsTypeDef;
-            buildFormatFromXSSimpleType(format, name, namespace, xsSimple, false);
+            XSTypeDefinition xsTypeDef = xsElement.getTypeDefinition();
+            if (xsTypeDef.getTypeCategory() == XSTypeDefinition.COMPLEX_TYPE)
+            {
+                XSComplexTypeDefinition xsComplex = (XSComplexTypeDefinition) xsTypeDef;
+                buildFieldFromXSAttributeList(format, xsComplex);
+                buildFormatFromXSComplexType(format, null, null, xsComplex, false);
+            }
+            else if (xsTypeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE)
+            {
+                XSSimpleTypeDefinition xsSimple = (XSSimpleTypeDefinition) xsTypeDef;
+                buildFormatFromXSSimpleType(format, name, namespace, xsSimple, false);
+            }
         }
         return null;
     }
@@ -415,7 +420,7 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
         }
     }
 
-    private static Format buildServices(Definition definition)
+    private static Format buildServices(Definition definition, Usage usage)
     {
         Format services = new DataFormat(SOAPSERVICES, Form.STRUCT);
         Collection<Service> wsServices = definition.getServices().values();
@@ -425,60 +430,63 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
             for (Port port : ports)
             {
                 String endPoint = getSOAPEndPoint(port);
+                if (endPoint == null)
+                {
+                    // TODO use a log warning
+                    continue;
+                }
                 Binding binding = port.getBinding();
                 List<BindingOperation> bindingOperations = binding.getBindingOperations();
                 for (BindingOperation bindingOperation : bindingOperations)
                 {
                     String name = bindingOperation.getName();
-                    Format serviceFmt = services.addChild(name, Form.STRUCT);
-                    serviceFmt.setProperty(SOAPENDPOINT, endPoint);
-                    serviceFmt.setProperty(SOAPBINDING, binding.getQName().getLocalPart());
-                    serviceFmt.setProperty(TARGETNAMESPACE, binding.getQName().getNamespaceURI());
+                    Format portFmt = services.addChild(name, Form.STRUCT);
+                    portFmt.setProperty(SOAPENDPOINT, endPoint);
                     String soapAction = getSOAPAction(bindingOperation);
                     if (soapAction != null)
-                        serviceFmt.setProperty(SOAPACTION, soapAction);
+                        portFmt.setProperty(SOAPACTION, soapAction);
                     String inputName = bindingOperation.getBindingInput().getName();
                     if (inputName != null)
-                        serviceFmt.setProperty(BINDINGINPUT, inputName);
+                        portFmt.setProperty(BINDINGINPUT, inputName);
                     String outputName = bindingOperation.getBindingOutput().getName();
                     if (outputName != null)
-                        serviceFmt.setProperty(BINDINGOUTPUT, outputName);
+                        portFmt.setProperty(BINDINGOUTPUT, outputName);
+                    portFmt.setProperty(TARGETNAMESPACE, binding.getQName().getNamespaceURI());
+                    buildMessages(portFmt, binding.getPortType(), usage);
                 }
             }
         }
-        buildMessages(services, definition);
         return services;
     }
 
-    private static void buildMessages(Format services, Definition definition)
+    private static void buildMessages(Format port, PortType portType, Usage usage)
     {
-        List<Format> children = services.getChildren();
-        Collection<PortType> portTypes = definition.getPortTypes().values();
-        if (children != null)
+        if (portType != null)
         {
-            for (Format port : children)
+            String inputName = (String) port.getProperty(BINDINGINPUT);
+            String outputName = (String) port.getProperty(BINDINGOUTPUT);
+            Operation operation = portType.getOperation(port.getName(), inputName,
+                                                        outputName);
+            if (operation != null)
             {
-                String bindingName = (String) port.getProperty(SOAPBINDING);
-                String namespace = (String) port.getProperty(TARGETNAMESPACE);
-                PortType portType = getPortType(portTypes, bindingName, namespace);
-                if (portType != null)
+                Message message = null;
+                if (usage == Usage.INPUT || usage == Usage.BOTH)
                 {
-                    String inputName = (String) port.getProperty(BINDINGINPUT);
-                    String outputName = (String) port.getProperty(BINDINGOUTPUT);
-                    Operation operation = portType.getOperation(port.getName(), inputName,
-                                                                outputName);
-                    if (operation != null)
-                    {
-                        Input input = operation.getInput();
-                        Message inputMessage = input.getMessage();
-                        Collection<Part> parts = inputMessage.getParts().values();
-                        for (Part part : parts)
-                        {
-                            QName qName = part.getElementName();
-                            Format message = port.addChild(qName.getLocalPart(), Form.STRUCT);
-                            message.setProperty(TARGETNAMESPACE, qName.getNamespaceURI());
-                        }
-                    }
+                    Input input = operation.getInput();
+                    message = input.getMessage();
+                }
+                else if (usage == Usage.OUTPUT || usage == Usage.BOTH)
+                {
+                    Output output = operation.getOutput();
+                    message = output.getMessage();
+                }
+                Collection<Part> parts = message.getParts().values();
+                for (Part part : parts)
+                {
+                    QName qName = part.getElementName();
+                    Format msgFmt = port.addChild(qName.getLocalPart(), Form.STRUCT);
+                    msgFmt.setProperty(TARGETNAMESPACE, qName.getNamespaceURI());
+                    msgFmt.setProperty(SOAPMESSAGE, true);
                 }
             }
         }

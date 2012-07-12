@@ -3,6 +3,7 @@ package com.lumens.connector;
 import com.lumens.connector.Writer.Operate;
 import com.lumens.connector.database.DatabaseConnector;
 import com.lumens.connector.webservice.WebServiceConnector;
+import com.lumens.connector.webservice.soap.SOAPMessageBuilder;
 import com.lumens.model.DataElement;
 import com.lumens.model.DataFormat;
 import com.lumens.model.Element;
@@ -20,6 +21,7 @@ import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.apache.axiom.soap.SOAPEnvelope;
 
 /**
  * Unit test for simple App.
@@ -72,7 +74,7 @@ public class ConnectorTest
             props.put(DatabaseConnector.FULL_LOAD, true);
             cntr.setConfiguration(props);
             cntr.open();
-            DataFormatXmlSerializer xml = new DataFormatXmlSerializer(cntr.getFormats(), "UTF-8",
+            DataFormatXmlSerializer xml = new DataFormatXmlSerializer(cntr.getFormats(null), "UTF-8",
                                                                       true);
             xml.write(System.out);
         }
@@ -90,14 +92,14 @@ public class ConnectorTest
                   getClass().getResource("/wsdl/IncidentManagement.wsdl").toString());
         connector.setConfiguration(props);
         connector.open();
-        Format services = connector.getFormats();
+        Format services = connector.getFormats(Usage.INPUT);
         DataFormatXmlSerializer xml = new DataFormatXmlSerializer(services, "UTF-8",
                                                                   true);
         xml.write(System.out);
         for (Format service : services.getChildren())
         {
             for (Format message : service.getChildren())
-                connector.getFormat(message);
+                connector.getFormat(message, null);
         }
         xml.write(System.out);
         Format RetrieveIncident = services.getChild("RetrieveIncident");
@@ -113,21 +115,32 @@ public class ConnectorTest
                                                                            true);
         serializer.write(System.out);
         connector.close();
-
+        SOAPMessageBuilder soapBuilder = new SOAPMessageBuilder();
+        SOAPEnvelope envelope = soapBuilder.buildSOAPMessage(result.get(0));
+        System.out.println(envelope);
         props.put(WebServiceConnector.WSDL,
                   getClass().getResource("/wsdl/ChinaOpenFundWS.asmx").toString());
         connector.setConfiguration(props);
         connector.open();
-        services = connector.getFormats();
-        xml = new DataFormatXmlSerializer(services, "UTF-8",
-                                          true);
+        services = connector.getFormats(Usage.INPUT);
+        xml = new DataFormatXmlSerializer(services, "UTF-8", true);
         xml.write(System.out);
         for (Format service : services.getChildren())
         {
             for (Format message : service.getChildren())
-                connector.getFormat(message);
+                connector.getFormat(message, null);
         }
         xml.write(System.out);
         Format getOpenFundString = services.getChild("getOpenFundString");
+        rule = new TransformRule(getOpenFundString);
+        rule.getRuleItem("getOpenFundString.userID").setScript("\"13482718164\"");
+        transformProcessor = new TransformProcessor(rule);
+        result = (List<Element>) transformProcessor.process(null);
+        serializer = new DataElementXmlSerializer(result.get(0), "UTF-8", true);
+        serializer.write(System.out);
+        connector.close();
+
+        envelope = soapBuilder.buildSOAPMessage(result.get(0));
+        System.out.println(envelope);
     }
 }

@@ -19,7 +19,7 @@ public interface Connector
 
     public Writer createWriter();
 
-    public Format getFormats();
+    public Format getFormats(Usage usage);
 
-    public Format getFormat(Format format);
+    public Format getFormat(Format format, Usage usage);
 }

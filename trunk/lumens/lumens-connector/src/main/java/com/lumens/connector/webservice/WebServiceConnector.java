@@ -6,13 +6,14 @@ package com.lumens.connector.webservice;
 import com.lumens.connector.Configurable;
 import com.lumens.connector.Connector;
 import com.lumens.connector.Reader;
+import com.lumens.connector.Usage;
 import com.lumens.connector.Writer;
 import com.lumens.connector.webservice.soap.SOAPClient;
 import com.lumens.model.Format;
 import java.util.Map;
 
 /**
- *
+ * TODO need to enhance to handle complex xsd element
  * @author shaofeng wang
  */
 public class WebServiceConnector implements Connector, Configurable
@@ -24,14 +25,12 @@ public class WebServiceConnector implements Connector, Configurable
     private String wsdlURL;
     private String user;
     private String password;
-    private Format services;
 
     @Override
     public void open()
     {
         soapClient = new SOAPClient(wsdlURL, user, password);
         soapClient.open();
-        services = soapClient.getFormats();
     }
 
     @Override
@@ -55,13 +54,13 @@ public class WebServiceConnector implements Connector, Configurable
     }
 
     @Override
-    public Format getFormats()
+    public Format getFormats(Usage usage)
     {
-        return services;
+        return soapClient.buildServiceFormats(usage);
     }
 
     @Override
-    public Format getFormat(Format format)
+    public Format getFormat(Format format, Usage usage)
     {
         return soapClient.getFormat(format);
     }
