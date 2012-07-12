@@ -13,6 +13,7 @@ public interface SOAPConstants
     public String SOAPBINDING = "SOAPBinding";
     public String SOAPENDPOINT = "SOAPAddress";
     public String SOAPACTION = "SOAPAction";
+    public String SOAPATTRIBUTE = "SOAPAttribute";
     public String BINDINGINPUT = "BindingInput";
     public String BINDINGOUTPUT = "BindingOutput";
     public String NAMESPACE = "Namespace";
