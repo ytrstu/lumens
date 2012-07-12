@@ -27,6 +27,7 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.http.HTTPAddress;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.extensions.schema.SchemaImport;
 import javax.wsdl.extensions.soap.SOAPAddress;
@@ -409,12 +410,12 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
             {
                 Type type = buildinTypes.get(typeName);
                 if (type != null)
-                    format.addChild(attrName, Form.FIELD, type);
+                    format.addChild(attrName, Form.FIELD, type).setProperty(SOAPATTRIBUTE, true);
             }
         }
     }
 
-    private Format buildServices(Definition definition)
+    private static Format buildServices(Definition definition)
     {
         Format services = new DataFormat(SOAPSERVICES, Form.STRUCT);
         Collection<Service> wsServices = definition.getServices().values();
@@ -449,7 +450,7 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
         return services;
     }
 
-    private void buildMessages(Format services, Definition definition)
+    private static void buildMessages(Format services, Definition definition)
     {
         List<Format> children = services.getChildren();
         Collection<PortType> portTypes = definition.getPortTypes().values();
@@ -483,7 +484,7 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
         }
     }
 
-    private String getSOAPAction(BindingOperation bindingOperation)
+    private static String getSOAPAction(BindingOperation bindingOperation)
     {
         // Get SOAP Action
         List<ExtensibilityElement> extElemList = bindingOperation.getExtensibilityElements();
@@ -503,7 +504,7 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
         return null;
     }
 
-    private String getSOAPEndPoint(Port port)
+    private static String getSOAPEndPoint(Port port)
     {
         List<ExtensibilityElement> extElemList = port.getExtensibilityElements();
         for (ExtensibilityElement extElem : extElemList)
@@ -515,15 +516,20 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
             }
             else if (extElem instanceof SOAP12Address)
             {
-                SOAP12Address soapAddress = (SOAP12Address) extElem;
-                return soapAddress.getLocationURI();
+                SOAP12Address soap12Address = (SOAP12Address) extElem;
+                return soap12Address.getLocationURI();
+            }
+            else if (extElem instanceof HTTPAddress)
+            {
+                HTTPAddress httpAddress = (HTTPAddress) extElem;
+                return httpAddress.getLocationURI();
             }
         }
         return null;
     }
 
-    private PortType getPortType(Collection<PortType> portTypes, String bindingName,
-                                 String namespace)
+    private static PortType getPortType(Collection<PortType> portTypes, String bindingName,
+                                        String namespace)
     {
         for (PortType portType : portTypes)
         {

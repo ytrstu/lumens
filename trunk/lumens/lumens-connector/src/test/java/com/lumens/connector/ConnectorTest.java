@@ -87,8 +87,7 @@ public class ConnectorTest
         WebServiceConnector connector = new WebServiceConnector();
         HashMap<String, Object> props = new HashMap<String, Object>();
         props.put(WebServiceConnector.WSDL,
-                  getClass().getResource("/sm-wsdl/IncidentManagement.wsdl").toString());
-        //props.put(WebServiceConnector.WSDL, "http://citvm25:13930/SM/7/IncidentManagement.wsdl");
+                  getClass().getResource("/wsdl/IncidentManagement.wsdl").toString());
         connector.setConfiguration(props);
         connector.open();
         Format services = connector.getFormats();
@@ -99,7 +98,6 @@ public class ConnectorTest
         {
             for (Format message : service.getChildren())
                 connector.getFormat(message);
-            break;
         }
         xml.write(System.out);
         Format RetrieveIncident = services.getChild("RetrieveIncident");
@@ -114,5 +112,22 @@ public class ConnectorTest
         DataElementXmlSerializer serializer = new DataElementXmlSerializer(result.get(0), "UTF-8",
                                                                            true);
         serializer.write(System.out);
+        connector.close();
+
+        props.put(WebServiceConnector.WSDL,
+                  getClass().getResource("/wsdl/ChinaOpenFundWS.asmx").toString());
+        connector.setConfiguration(props);
+        connector.open();
+        services = connector.getFormats();
+        xml = new DataFormatXmlSerializer(services, "UTF-8",
+                                          true);
+        xml.write(System.out);
+        for (Format service : services.getChildren())
+        {
+            for (Format message : service.getChildren())
+                connector.getFormat(message);
+        }
+        xml.write(System.out);
+        Format getOpenFundString = services.getChild("getOpenFundString");
     }
 }
