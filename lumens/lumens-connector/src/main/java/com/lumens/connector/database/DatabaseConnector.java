@@ -5,6 +5,7 @@ package com.lumens.connector.database;
 
 import com.lumens.connector.Configurable;
 import com.lumens.connector.Connector;
+import com.lumens.connector.Usage;
 import com.lumens.connector.Reader;
 import com.lumens.connector.Writer;
 import com.lumens.connector.database.client.oracle.OracleClient;
@@ -48,13 +49,13 @@ public class DatabaseConnector implements Connector, Configurable
     }
 
     @Override
-    public Format getFormats()
+    public Format getFormats(Usage usage)
     {
         return tables;
     }
 
     @Override
-    public Format getFormat(Format format)
+    public Format getFormat(Format format, Usage usage)
     {
         return dbClient.getFormat(format);
     }

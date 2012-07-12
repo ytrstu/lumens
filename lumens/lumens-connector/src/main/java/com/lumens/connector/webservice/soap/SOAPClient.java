@@ -3,6 +3,7 @@
  */
 package com.lumens.connector.webservice.soap;
 
+import com.lumens.connector.Usage;
 import com.lumens.model.Element;
 import com.lumens.model.Format;
 
@@ -16,7 +17,6 @@ public class SOAPClient
     private String wsdlURL;
     private String user;
     private String password;
-    private Format services;
 
     public SOAPClient(String wsdlURL, String user, String password)
     {
@@ -29,7 +29,6 @@ public class SOAPClient
     {
         builder = new FormatFromWSDLBuilder(wsdlURL);
         builder.loadWSDL();
-        services = builder.buildFormats();
     }
 
     public void close()
@@ -37,14 +36,14 @@ public class SOAPClient
         builder = null;
     }
 
-    public Format getFormats()
+    public Format buildServiceFormats(Usage usage)
     {
-        return services;
+        return builder.buildServiceFormats(usage);
     }
 
     public Format getFormat(Format format)
     {
-        return builder.buildFormat(format);
+        return builder.buildMessageFormat(format);
     }
 
     public Element execute(Element element)
