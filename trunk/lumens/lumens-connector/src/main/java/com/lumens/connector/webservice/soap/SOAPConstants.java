@@ -9,6 +9,10 @@ package com.lumens.connector.webservice.soap;
  */
 public interface SOAPConstants
 {
+    public int SOAP11 = 11;
+    public int SOAP12 = 12;
+    public int SOAPMESSAGE_IN = 0;
+    public int SOAPMESSAGE_OUT = 1;
     public String SOAPSERVICES = "SOAPServices";
     public String SOAPMESSAGE = "SOAPMessage";
     public String SOAPENDPOINT = "SOAPAddress";

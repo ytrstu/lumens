@@ -25,19 +25,26 @@ public class SOAPMessageBuilder implements SOAPConstants
 
     public SOAPMessageBuilder()
     {
-        soapFactory = OMAbstractFactory.getSOAP11Factory();
+        this(SOAP11);
+    }
+
+    public SOAPMessageBuilder(int soapVersion)
+    {
+        if (soapVersion == SOAP11)
+            soapFactory = OMAbstractFactory.getSOAP11Factory();
     }
 
     public SOAPEnvelope buildSOAPMessage(Element element)
     {
-        if (element == null)
+        // TODO not handle binary and attachment
+        if (element == null || element.getChildren() == null)
             return null;
         List<Element> children = element.getChildren();
         for (Element message : children)
         {
             Format messageFmt = message.getFormat();
-            Object isMessage = messageFmt.getProperty(SOAPMESSAGE);
-            if (isMessage != null)
+            Integer isMessage = (Integer) messageFmt.getProperty(SOAPMESSAGE);
+            if (isMessage != null && isMessage.intValue() == SOAPMESSAGE_IN)
             {
                 String targetNamespace = (String) messageFmt.getProperty(TARGETNAMESPACE);
                 OMNamespace omNs = soapFactory.createOMNamespace(targetNamespace,

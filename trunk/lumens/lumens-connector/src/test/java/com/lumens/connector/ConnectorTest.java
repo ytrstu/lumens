@@ -3,6 +3,8 @@ package com.lumens.connector;
 import com.lumens.connector.Writer.Operate;
 import com.lumens.connector.database.DatabaseConnector;
 import com.lumens.connector.webservice.WebServiceConnector;
+import com.lumens.connector.webservice.soap.SOAPClient;
+import com.lumens.connector.webservice.soap.SOAPConstants;
 import com.lumens.connector.webservice.soap.SOAPMessageBuilder;
 import com.lumens.model.DataElement;
 import com.lumens.model.DataFormat;
@@ -26,8 +28,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 /**
  * Unit test for simple App.
  */
-public class ConnectorTest
-        extends TestCase
+public class ConnectorTest extends TestCase implements SOAPConstants
 {
     /**
      * Create the test case
@@ -118,11 +119,12 @@ public class ConnectorTest
         SOAPMessageBuilder soapBuilder = new SOAPMessageBuilder();
         SOAPEnvelope envelope = soapBuilder.buildSOAPMessage(result.get(0));
         System.out.println(envelope);
+
         props.put(WebServiceConnector.WSDL,
                   getClass().getResource("/wsdl/ChinaOpenFundWS.asmx").toString());
         connector.setConfiguration(props);
         connector.open();
-        services = connector.getFormats(Usage.INPUT);
+        services = connector.getFormats(Usage.BOTH);
         xml = new DataFormatXmlSerializer(services, "UTF-8", true);
         xml.write(System.out);
         for (Format service : services.getChildren())
@@ -138,9 +140,11 @@ public class ConnectorTest
         result = (List<Element>) transformProcessor.process(null);
         serializer = new DataElementXmlSerializer(result.get(0), "UTF-8", true);
         serializer.write(System.out);
-        connector.close();
 
-        envelope = soapBuilder.buildSOAPMessage(result.get(0));
-        System.out.println(envelope);
+        SOAPClient client = connector.getClient();
+        Element responseElement = client.execute(result.get(0), getOpenFundString);
+        serializer = new DataElementXmlSerializer(responseElement, "UTF-8", true);
+        serializer.write(System.out);
+
     }
 }

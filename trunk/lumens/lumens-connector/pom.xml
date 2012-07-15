@@ -46,12 +46,6 @@
             <artifactId>xercesImpl</artifactId>
             <version>2.10.0</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2</artifactId>
-            <version>1.6.1</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
@@ -61,6 +55,26 @@
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-impl</artifactId>
             <version>1.2.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-kernel</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-http</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-local</artifactId>
+            <version>1.6.1</version>
         </dependency>
     </dependencies>
 </project>

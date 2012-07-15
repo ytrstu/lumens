@@ -271,7 +271,7 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
                 Format format = parent.getChild(name);
                 if (format == null)
                 {
-                    Form form = isArray ? Form.ARRAY : Form.STRUCT;
+                    Form form = isArray ? Form.ARRAYOFSTRUCT : Form.STRUCT;
                     format = parent.addChild(name, form);
                     format.setProperty(TARGETNAMESPACE, namespace);
                     buildFieldFromXSAttributeList(format, xsComplex);
@@ -292,7 +292,7 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
             Format format = parent.getChild(name);
             if (format == null)
             {
-                Form form = isArray ? Form.ARRAY : Form.FIELD;
+                Form form = isArray ? Form.ARRAYOFFIELD : Form.FIELD;
                 format = parent.addChild(name, form);
                 format.setProperty(TARGETNAMESPACE, namespace);
                 String simpleName = xsSimple.getName();
@@ -474,21 +474,27 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
                 {
                     Input input = operation.getInput();
                     message = input.getMessage();
+                    buildFormatFormMessage(message, port, SOAPMESSAGE_IN);
                 }
-                else if (usage == Usage.OUTPUT || usage == Usage.BOTH)
+                if (usage == Usage.OUTPUT || usage == Usage.BOTH)
                 {
                     Output output = operation.getOutput();
                     message = output.getMessage();
-                }
-                Collection<Part> parts = message.getParts().values();
-                for (Part part : parts)
-                {
-                    QName qName = part.getElementName();
-                    Format msgFmt = port.addChild(qName.getLocalPart(), Form.STRUCT);
-                    msgFmt.setProperty(TARGETNAMESPACE, qName.getNamespaceURI());
-                    msgFmt.setProperty(SOAPMESSAGE, true);
+                    buildFormatFormMessage(message, port, SOAPMESSAGE_OUT);
                 }
             }
+        }
+    }
+
+    private static void buildFormatFormMessage(Message message, Format port, int soapMessageMode)
+    {
+        Collection<Part> parts = message.getParts().values();
+        for (Part part : parts)
+        {
+            QName qName = part.getElementName();
+            Format msgFmt = port.addChild(qName.getLocalPart(), Form.STRUCT);
+            msgFmt.setProperty(TARGETNAMESPACE, qName.getNamespaceURI());
+            msgFmt.setProperty(SOAPMESSAGE, soapMessageMode);
         }
     }
 
@@ -532,19 +538,6 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
                 HTTPAddress httpAddress = (HTTPAddress) extElem;
                 return httpAddress.getLocationURI();
             }
-        }
-        return null;
-    }
-
-    private static PortType getPortType(Collection<PortType> portTypes, String bindingName,
-                                        String namespace)
-    {
-        for (PortType portType : portTypes)
-        {
-            QName qName = portType.getQName();
-            if (qName.getLocalPart().equals(bindingName) && qName.getNamespaceURI().
-                    equals(namespace))
-                return portType;
         }
         return null;
     }
