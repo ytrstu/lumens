@@ -57,7 +57,7 @@ public class ProcessorTest
         // Create format
         Format person = new DataFormat("Person", Form.STRUCT);
         person.addChild("name", Format.Form.FIELD, Type.STRING);
-        Format personAsset = person.addChild("asset", Format.Form.ARRAY);
+        Format personAsset = person.addChild("asset", Format.Form.ARRAYOFSTRUCT);
         personAsset.addChild("name", Format.Form.FIELD, Type.STRING);
         personAsset.addChild("price", Format.Form.FIELD, Type.FLOAT);
         Format name = personAsset.addChild("vendor", Format.Form.STRUCT).addChild("name",
@@ -83,10 +83,10 @@ public class ProcessorTest
         assetDataItem.addChild("vendor").addChild("name").setValue("HP");
 
         Format asset = new DataFormat("Asset", Form.STRUCT);
-        Format computer = asset.addChild("Computer", Form.ARRAY);
+        Format computer = asset.addChild("Computer", Form.ARRAYOFSTRUCT);
         //Format computer = asset.addChild("Computer", Form.STRUCT);
         computer.addChild("name", Form.FIELD, Type.STRING);
-        Format cpu = computer.addChild("CPU", Form.ARRAY);
+        Format cpu = computer.addChild("CPU", Form.ARRAYOFSTRUCT);
         cpu.addChild("name", Form.FIELD, Type.STRING);
         cpu.addChild("corenumber", Form.FIELD, Type.INT);
         cpu.addChild("speed", Form.FIELD, Type.STRING);
@@ -116,12 +116,12 @@ public class ProcessorTest
         // a.@b.c.@d.e.f --> a1.@a2.a3.@a4.a5 (@b-@a4) (wrong logic, what will happen ?)
         // a.@b.c.@d.e.f --> a1.@a2.a3.@a4.a5 (none)
         Format a = new DataFormat("a", Form.STRUCT);
-        a.addChild("b", Form.ARRAY).addChild("c", Form.STRUCT).addChild("d", Form.ARRAY).addChild(
+        a.addChild("b", Form.ARRAYOFSTRUCT).addChild("c", Form.STRUCT).addChild("d", Form.ARRAYOFSTRUCT).addChild(
                 "e", Form.STRUCT).addChild("f", Form.FIELD, Type.STRING);
         Format a1 = new DataFormat("a1", Form.STRUCT);
-        Format a3 = a1.addChild("a2", Form.ARRAY).addChild("a3", Form.STRUCT);
-        a3.addChild("a4", Form.ARRAY).addChild("a5", Form.FIELD, Type.STRING);
-        a3.addChild("aa4", Form.ARRAY).addChild("aa5", Form.FIELD, Type.STRING);
+        Format a3 = a1.addChild("a2", Form.ARRAYOFSTRUCT).addChild("a3", Form.STRUCT);
+        a3.addChild("a4", Form.ARRAYOFSTRUCT).addChild("a5", Form.FIELD, Type.STRING);
+        a3.addChild("aa4", Form.ARRAYOFSTRUCT).addChild("aa5", Form.FIELD, Type.STRING);
         // Fill data into a
         Element a_data = new DataElement(a);
         // array b
