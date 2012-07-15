@@ -424,19 +424,31 @@ public class DataElement implements Element
     @Override
     public boolean isField()
     {
-        return format.isField();
+        return format.isField() || (isArrayItem() && format.isArrayOfField());
     }
 
     @Override
     public boolean isStruct()
     {
-        return format.isStruct() || isArrayItem();
+        return format.isStruct() || (isArrayItem() && format.isArrayOfStruct());
     }
 
     @Override
     public boolean isArray()
     {
         return format.isArray() && !isArrayItem();
+    }
+
+    @Override
+    public boolean isArrayOfField()
+    {
+        return format.isArrayOfField();
+    }
+
+    @Override
+    public boolean isArrayOfStruct()
+    {
+        return format.isArrayOfStruct();
     }
 
     @Override

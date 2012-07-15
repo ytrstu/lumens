@@ -93,6 +93,10 @@ public interface Element
 
     public boolean isArray();
 
+    public boolean isArrayOfField();
+
+    public boolean isArrayOfStruct();
+
     public boolean isArrayItem();
 
     public boolean isEmpty();
