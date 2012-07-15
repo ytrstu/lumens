@@ -19,7 +19,8 @@ public interface Format
         NONE("None"),
         FIELD("Field"),
         STRUCT("Struct"),
-        ARRAY("Array");
+        ARRAYOFFIELD("ArrayOfField"),
+        ARRAYOFSTRUCT("ArrayOfStruct");
         private String name;
 
         private Form(String name)
@@ -76,4 +77,8 @@ public interface Format
     public boolean isStruct();
 
     public boolean isArray();
+
+    public boolean isArrayOfField();
+
+    public boolean isArrayOfStruct();
 }

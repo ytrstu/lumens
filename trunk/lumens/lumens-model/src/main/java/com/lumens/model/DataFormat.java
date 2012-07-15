@@ -184,6 +184,18 @@ public class DataFormat implements Format
     @Override
     public boolean isArray()
     {
-        return form == Form.ARRAY;
+        return form == Form.ARRAYOFFIELD || form == Form.ARRAYOFSTRUCT;
+    }
+
+    @Override
+    public boolean isArrayOfField()
+    {
+        return form == Form.ARRAYOFFIELD;
+    }
+
+    @Override
+    public boolean isArrayOfStruct()
+    {
+        return form == Form.ARRAYOFSTRUCT;
     }
 }

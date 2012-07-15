@@ -49,13 +49,10 @@ public class DataElementXmlSerializer implements XmlSerializer
         Format format = element.getFormat();
         out.print(indent.toString()).print("<Element name=\"").print(format.getName()).print("\" ").
                 print("form=\"");
-        if (element.isArrayItem())
-            out.print(Form.STRUCT.toString());
-        else
-            out.print(format.getForm().toString());
+        out.print(format.getForm().toString());
         out.print("\" ").print("type=\"").print(format.getType().toString()).print("\"");
 
-        if (format.getType() != Type.NONE)
+        if (!element.isArray() && format.getType() != Type.NONE)
         {
             if (!closeTag)
                 out.print(">");

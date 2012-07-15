@@ -62,7 +62,7 @@ public class ModelTest
         Format root = new DataFormat("root");
         Format person = root.addChild("Person", Form.STRUCT);
         person.addChild("name", Form.FIELD, Type.STRING);
-        Format asset = person.addChild("asset", Form.ARRAY);
+        Format asset = person.addChild("asset", Form.ARRAYOFSTRUCT);
         asset.addChild("name", Form.FIELD, Type.STRING);
         asset.addChild("price", Form.FIELD, Type.FLOAT);
         asset.addChild("vendor", Form.STRUCT).addChild("name", Form.FIELD, Type.STRING);
@@ -119,7 +119,7 @@ public class ModelTest
         Format root = new DataFormat("root");
         Format person = root.addChild("Person", Form.STRUCT);
         person.addChild("name", Form.FIELD, Type.STRING);
-        Format asset = person.addChild("asset", Form.ARRAY);
+        Format asset = person.addChild("asset", Form.ARRAYOFSTRUCT);
         asset.addChild("name", Form.FIELD, Type.STRING);
         asset.addChild("price", Form.FIELD, Type.FLOAT);
         Format name = asset.addChild("vendor", Form.STRUCT).addChild("name", Form.FIELD, Type.STRING);
