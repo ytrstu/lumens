@@ -14,6 +14,7 @@ import java.util.Map;
 
 /**
  * TODO need to enhance to handle complex xsd element
+ *
  * @author shaofeng wang
  */
 public class WebServiceConnector implements Connector, Configurable
@@ -74,5 +75,10 @@ public class WebServiceConnector implements Connector, Configurable
             user = (String) configuration.get(USER);
         if (configuration.containsKey(PASSWORD))
             password = (String) configuration.get(PASSWORD);
+    }
+
+    public SOAPClient getClient()
+    {
+        return soapClient;
     }
 }
