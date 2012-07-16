@@ -1,0 +1,31 @@
+/*
+    Document   :
+    Created on : Sep 1, 2010, 3:30:43 PM
+    Author     : Shaofeng Wang
+    Description:
+        Purpose of the stylesheet follows.
+*/
+body {
+  overflow: hidden;
+  background-color: #fbfbfb;
+}
+
+/****************/
+html,body {
+  height: 100%;
+  width: 100%;
+  margin: 0 0 0 0;
+}
+
+.lumens_title {
+  font-family: Arial,Verdana,tahoma,serif;
+  color:white;
+  background-color: #005699;
+  font-size:15px;
+  font-weight: bold;
+  text-shadow: 1px 1px #000000
+}
+
+.lumens_headerbar {
+  background-color: #005699;
+}
