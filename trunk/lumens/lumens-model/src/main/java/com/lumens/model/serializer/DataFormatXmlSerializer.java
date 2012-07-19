@@ -59,7 +59,7 @@ public class DataFormatXmlSerializer implements XmlSerializer
         {
             out.print(indent.toString() + "  ").print("<Property name=\"").print(en.getKey()).print(
                     "\">");
-            out.print((String) en.getValue()).println("</Property>");
+            out.print(en.getValue().toString()).println("</Property>");
         }
         out.print(indent.toString()).println("</Properties>");
     }

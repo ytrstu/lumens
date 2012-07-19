@@ -3,7 +3,6 @@
  */
 package com.lumens.model;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.time.DateUtils;
 
 /**
  *
@@ -474,14 +474,7 @@ public class DataElement implements Element
         else if (isDouble())
             return Double.parseDouble(value);
         else if (isDate())
-            try
-            {
-                return Format.DATETIME_FORMAT.parse(value);
-            }
-            catch (ParseException ex)
-            {
-                throw new RuntimeException(ex);
-            }
+            return DateTime.parse(value);
         else if (isBinary())
             return Base64.decodeBase64(value);
 

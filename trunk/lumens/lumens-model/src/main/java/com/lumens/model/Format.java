@@ -34,9 +34,6 @@ public interface Format
             return name;
         }
     }
-    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    public static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
-    public static final DateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public Type getType();
 
