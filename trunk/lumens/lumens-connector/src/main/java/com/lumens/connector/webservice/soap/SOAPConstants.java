@@ -24,4 +24,5 @@ public interface SOAPConstants
     public String NAMESPACE = "Namespace";
     public String TARGETNAMESPACE = "targetNamespace";
     public String XMLSCHEMAXSD = "http://www.w3.org/2001/XMLSchema";
+    public String EMPTY_STRING = "";
 }

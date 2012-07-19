@@ -6,7 +6,9 @@ package com.lumens.connector.webservice.soap;
 import com.lumens.model.Element;
 import com.lumens.model.Format;
 import com.lumens.model.Type;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -21,6 +23,7 @@ import org.apache.axiom.soap.SOAPFactory;
 public class SOAPMessageBuilder implements SOAPConstants
 {
     private SOAPFactory soapFactory;
+    private Map<String, OMNamespace> namespaceCache;
     private int nsCount;
 
     public SOAPMessageBuilder()
@@ -37,39 +40,48 @@ public class SOAPMessageBuilder implements SOAPConstants
     public SOAPEnvelope buildSOAPMessage(Element element)
     {
         // TODO not handle binary and attachment
-        if (element == null || element.getChildren() == null)
-            return null;
-        List<Element> children = element.getChildren();
-        for (Element message : children)
+        try
         {
-            Format messageFmt = message.getFormat();
-            Integer isMessage = (Integer) messageFmt.getProperty(SOAPMESSAGE);
-            if (isMessage != null && isMessage.intValue() == SOAPMESSAGE_IN)
+            namespaceCache = new HashMap<String, OMNamespace>();
+            if (element == null || element.getChildren() == null)
+                return null;
+            List<Element> children = element.getChildren();
+            for (Element message : children)
             {
-                String targetNamespace = (String) messageFmt.getProperty(TARGETNAMESPACE);
-                OMNamespace omNs = soapFactory.createOMNamespace(targetNamespace,
-                                                                 NAMESPACEPREFIX + nsCount);
-                ++nsCount;
-                OMElement soapBody = soapFactory.createOMElement(messageFmt.getName(), omNs);
-                if (messageFmt.getType() != Type.NONE)
+                Format messageFmt = message.getFormat();
+                Integer isMessage = (Integer) messageFmt.getProperty(SOAPMESSAGE);
+                if (isMessage != null && isMessage.intValue() == SOAPMESSAGE_IN)
                 {
-                    String value = message.getString();
-                    if (value != null)
-                        soapBody.setText(value);
-                }
-                if (!message.isField() && message.getChildren() != null)
-                {
-                    for (Element e : message.getChildren())
+                    String targetNamespace = (String) messageFmt.getProperty(TARGETNAMESPACE);
+                    OMNamespace omNs = soapFactory.createOMNamespace(targetNamespace,
+                                                                     NAMESPACEPREFIX + nsCount);
+                    namespaceCache.put(targetNamespace, omNs);
+                    ++nsCount;
+                    OMElement soapBody = soapFactory.createOMElement(messageFmt.getName(), omNs);
+                    if (messageFmt.getType() != Type.NONE)
                     {
-                        buildSOAPElement(soapBody, e, omNs);
+                        String value = message.getString();
+                        if (value != null)
+                            soapBody.setText(value);
                     }
-                }
+                    if (!message.isField() && message.getChildren() != null)
+                    {
+                        for (Element e : message.getChildren())
+                        {
+                            buildSOAPElement(soapBody, e, omNs);
+                        }
+                    }
 
-                SOAPEnvelope envelope = soapFactory.createSOAPEnvelope();
-                SOAPBody body = soapFactory.createSOAPBody(envelope);
-                body.addChild(soapBody);
-                return envelope;
+                    SOAPEnvelope envelope = soapFactory.createSOAPEnvelope();
+                    SOAPBody body = soapFactory.createSOAPBody(envelope);
+                    body.addChild(soapBody);
+                    return envelope;
+                }
             }
+        }
+        finally
+        {
+            namespaceCache = null;
         }
 
         return null;
@@ -79,9 +91,19 @@ public class SOAPMessageBuilder implements SOAPConstants
     {
         Format elemFmt = element.getFormat();
         String targetNamespace = (String) elemFmt.getProperty(TARGETNAMESPACE);
-        if (omNs.getNamespaceURI().equals(targetNamespace))
+        if (!element.isArray())
         {
+            if (!omNs.getNamespaceURI().equals(targetNamespace))
+            {
+                omNs = namespaceCache.get(targetNamespace);
+                if (omNs == null)
+                {
+                    omNs = soapFactory.createOMNamespace(targetNamespace, NAMESPACEPREFIX + nsCount);
+                    namespaceCache.put(targetNamespace, omNs);
+                }
+            }
             OMElement soapElem = soapFactory.createOMElement(elemFmt.getName(), omNs, parent);
+
             if (elemFmt.getType() != Type.NONE)
             {
                 String value = element.getString();
@@ -91,10 +113,13 @@ public class SOAPMessageBuilder implements SOAPConstants
             if (!elemFmt.isField() && element.getChildren() != null)
             {
                 for (Element e : element.getChildren())
-                {
                     buildSOAPElement(soapElem, e, omNs);
-                }
             }
+        }
+        else if (element.isArray() && element.getChildren() != null)
+        {
+            for (Element e : element.getChildren())
+                buildSOAPElement(parent, e, omNs);
         }
     }
 }

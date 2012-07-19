@@ -60,7 +60,7 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         writer.write(Operate.CREATE, e);
     }
 
-    public static void TtestOracleConnector() throws Exception
+    public static void testOracleConnector() throws Exception
     {
         DatabaseConnector cntr = null;
         try
@@ -85,7 +85,7 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         }
     }
 
-    public void testWebServiceConnector() throws Exception
+    public void TtestWebServiceConnector() throws Exception
     {
         WebServiceConnector connector = new WebServiceConnector();
         HashMap<String, Object> props = new HashMap<String, Object>();
@@ -100,7 +100,9 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         for (Format service : services.getChildren())
         {
             for (Format message : service.getChildren())
+            {
                 connector.getFormat(message, null);
+            }
         }
         xml.write(System.out);
         Format RetrieveIncident = services.getChild("RetrieveIncident");
@@ -130,7 +132,9 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         for (Format service : services.getChildren())
         {
             for (Format message : service.getChildren())
+            {
                 connector.getFormat(message, null);
+            }
         }
         xml.write(System.out);
         Format getOpenFundString = services.getChild("getOpenFundString");
@@ -145,6 +149,43 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         Element responseElement = client.execute(result.get(0), getOpenFundString);
         serializer = new DataElementXmlSerializer(responseElement, "UTF-8", true);
         serializer.write(System.out);
+    }
 
+    public void testPPMWS() throws Exception
+    {
+        String ppmWSDL = "http://16.173.232.74:16800/itg/ppmservices/DemandService?wsdl";
+        WebServiceConnector connector = new WebServiceConnector();
+        HashMap<String, Object> props = new HashMap<String, Object>();
+        props.put(WebServiceConnector.WSDL, ppmWSDL);
+        props.put(DatabaseConnector.USER, "admin");
+        props.put(DatabaseConnector.PASSWORD, "admin");
+        connector.setConfiguration(props);
+        connector.open();
+        Format services = connector.getFormats(Usage.BOTH);
+        for (Format service : services.getChildren())
+        {
+            for (Format message : service.getChildren())
+            {
+                connector.getFormat(message, null);
+            }
+        }
+        Format getRequests = services.getChild("getRequests");
+        DataFormatXmlSerializer xml = new DataFormatXmlSerializer(getRequests, "UTF-8", true);
+        xml.setCareProperties(true);
+        xml.write(System.out);
+        TransformRule rule = new TransformRule(getRequests);
+        rule.getRuleItem("getRequests.requestIds.id").setScript("\"30392\"");
+        TransformProcessor transformProcessor = new TransformProcessor(rule);
+        List<Element> result = (List<Element>) transformProcessor.process(null);
+        DataElementXmlSerializer elemXml = new DataElementXmlSerializer(result.get(0), "UTF-8", true);
+        elemXml.write(System.out);
+        SOAPMessageBuilder builder = new SOAPMessageBuilder();
+
+        System.out.println(builder.buildSOAPMessage(result.get(0)));
+
+        SOAPClient client = connector.getClient();
+        Element responseElement = client.execute(result.get(0), getRequests);
+        elemXml = new DataElementXmlSerializer(responseElement, "UTF-8", true);
+        elemXml.write(System.out);
     }
 }
