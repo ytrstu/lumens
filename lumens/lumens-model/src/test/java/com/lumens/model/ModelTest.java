@@ -6,6 +6,7 @@ package com.lumens.model;
 import com.lumens.model.Format.Form;
 import com.lumens.model.serializer.DataElementXmlSerializer;
 import java.io.ByteArrayOutputStream;
+import java.text.ParseException;
 import java.util.Iterator;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -160,5 +161,15 @@ public class ModelTest
     {
         //var name = @asset.'vendor.info'[0].name+,-,*,/,%,>,<"Hello"
         //var name = @asset.'vendor.info'[0].name; "Hello"
+    }
+
+    public void testDateTime() throws ParseException
+    {
+        Format dateFormat = new DataFormat("Date", Form.FIELD, Type.DATE);
+        Element dateElement = new DataElement(dateFormat);
+        dateElement.setValue("2012-04-12T10:22:12Z");
+        System.out.println(dateElement.getString());
+        dateElement.setValue("2012-04-12 10:22:12");
+        System.out.println(dateElement.getString());
     }
 }
