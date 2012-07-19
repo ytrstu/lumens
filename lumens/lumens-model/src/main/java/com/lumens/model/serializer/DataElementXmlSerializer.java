@@ -5,7 +5,6 @@ package com.lumens.model.serializer;
 
 import com.lumens.model.Element;
 import com.lumens.model.Format;
-import com.lumens.model.Format.Form;
 import com.lumens.model.Type;
 import java.io.DataOutputStream;
 import java.io.InputStream;
@@ -52,7 +51,7 @@ public class DataElementXmlSerializer implements XmlSerializer
         out.print(format.getForm().toString());
         out.print("\" ").print("type=\"").print(format.getType().toString()).print("\"");
 
-        if (!element.isArray() && format.getType() != Type.NONE)
+        if (!element.isArray() && format.getType() != Type.NONE && !element.getString().isEmpty())
         {
             if (!closeTag)
                 out.print(">");
