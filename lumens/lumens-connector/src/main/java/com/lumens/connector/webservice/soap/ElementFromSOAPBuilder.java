@@ -57,16 +57,14 @@ public class ElementFromSOAPBuilder implements SOAPConstants
         {
             for (Format child : children)
             {
-                Element childElement = element.addChild(child.getName());
-                String namespace = (String) format.getProperty(TARGETNAMESPACE);
-                Iterator<OMElement> it = omElem.getChildrenWithLocalName(child.getName());
-                if (it != null)
+                String namespace = (String) child.getProperty(TARGETNAMESPACE);
+                Iterator<OMElement> it = omElem.getChildrenWithName(new QName(namespace, child.getName()));
+                if (it != null && it.hasNext())
                 {
+                    Element childElement = element.addChild(child.getName());
                     while (it.hasNext())
                     {
                         OMElement omChild = it.next();
-                        if (!omChild.getNamespaceURI().equals(namespace))
-                            break;
                         if (child.isArray())
                         {
                             Element arrayItem = childElement.addArrayItem();

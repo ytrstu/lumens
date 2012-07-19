@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.wsdl.Binding;
+import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
 import javax.wsdl.Input;
 import javax.wsdl.Message;
@@ -440,17 +442,25 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
                 for (BindingOperation bindingOperation : bindingOperations)
                 {
                     String name = bindingOperation.getName();
+                    if (services.getChild(name) != null)
+                        continue;
                     Format portFmt = services.addChild(name, Form.STRUCT);
                     portFmt.setProperty(SOAPENDPOINT, endPoint);
                     String soapAction = getSOAPAction(bindingOperation);
                     if (soapAction != null)
                         portFmt.setProperty(SOAPACTION, soapAction);
-                    String inputName = bindingOperation.getBindingInput().getName();
-                    if (inputName != null)
-                        portFmt.setProperty(BINDINGINPUT, inputName);
-                    String outputName = bindingOperation.getBindingOutput().getName();
-                    if (outputName != null)
-                        portFmt.setProperty(BINDINGOUTPUT, outputName);
+                    BindingInput input = bindingOperation.getBindingInput();
+                    if (input != null)
+                    {
+                        String inputName = input.getName();
+                        portFmt.setProperty(BINDINGINPUT, inputName == null ? EMPTY_STRING : inputName);
+                    }
+                    BindingOutput output = bindingOperation.getBindingOutput();
+                    if (output != null)
+                    {
+                        String outputName = output.getName();
+                        portFmt.setProperty(BINDINGOUTPUT, outputName == null ? EMPTY_STRING : outputName);
+                    }
                     portFmt.setProperty(TARGETNAMESPACE, binding.getQName().getNamespaceURI());
                     buildMessages(portFmt, binding.getPortType(), usage);
                 }
@@ -464,7 +474,11 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
         if (portType != null)
         {
             String inputName = (String) port.getProperty(BINDINGINPUT);
+            if (EMPTY_STRING.equals(inputName))
+                inputName = null;
             String outputName = (String) port.getProperty(BINDINGOUTPUT);
+            if (EMPTY_STRING.equals(outputName))
+                outputName = null;
             Operation operation = portType.getOperation(port.getName(), inputName,
                                                         outputName);
             if (operation != null)
