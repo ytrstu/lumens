@@ -113,7 +113,7 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         rule.getRuleItem("RetrieveIncidentRequest.model.instance.ClosedTime").setScript(
                 "dateFormat(now(), \"yyyy-MM-dd HH:mm:ss\")");
         Processor transformProcessor = new TransformProcessor(rule);
-        List<Element> result = (List<Element>) transformProcessor.process(null);
+        List<Element> result = (List<Element>) transformProcessor.execute(null);
         DataElementXmlSerializer serializer = new DataElementXmlSerializer(result.get(0), "UTF-8",
                                                                            true);
         serializer.write(System.out);
@@ -141,7 +141,7 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         rule = new TransformRule(getOpenFundString);
         rule.getRuleItem("getOpenFundString.userID").setScript("\"13482718164\"");
         transformProcessor = new TransformProcessor(rule);
-        result = (List<Element>) transformProcessor.process(null);
+        result = (List<Element>) transformProcessor.execute(null);
         serializer = new DataElementXmlSerializer(result.get(0), "UTF-8", true);
         serializer.write(System.out);
 
@@ -176,7 +176,7 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         TransformRule rule = new TransformRule(getRequests);
         rule.getRuleItem("getRequests.requestIds.id").setScript("\"30392\"");
         TransformProcessor transformProcessor = new TransformProcessor(rule);
-        List<Element> result = (List<Element>) transformProcessor.process(null);
+        List<Element> result = (List<Element>) transformProcessor.execute(null);
         DataElementXmlSerializer elemXml = new DataElementXmlSerializer(result.get(0), "UTF-8", true);
         elemXml.write(System.out);
         SOAPMessageBuilder builder = new SOAPMessageBuilder();
