@@ -31,7 +31,7 @@ public class TransformProcessor extends AbstractProcessor
     }
 
     @Override
-    public Object process(Object input)
+    public Object execute(Object input)
     {
         if (input instanceof Element || input == null)
         {
