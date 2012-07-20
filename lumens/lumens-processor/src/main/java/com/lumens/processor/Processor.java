@@ -9,5 +9,5 @@ public interface Processor
 
     public String getName();
 
-    public Object process(Object input);
+    public Object execute(Object input);
 }
