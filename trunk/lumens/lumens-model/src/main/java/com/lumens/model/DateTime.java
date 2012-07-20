@@ -1,6 +1,5 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright Lumens Team, Inc. All Rights Reserved.
  */
 package com.lumens.model;
 
@@ -8,12 +7,10 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
- * @author washaofe
+ * @author shaofeng wang
  */
 public class DateTime
 {
