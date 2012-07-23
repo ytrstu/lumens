@@ -3,11 +3,9 @@
  */
 package com.lumens.connector.database;
 
-import com.lumens.connector.Configurable;
 import com.lumens.connector.Connector;
-import com.lumens.connector.Usage;
-import com.lumens.connector.Reader;
-import com.lumens.connector.Writer;
+import com.lumens.connector.Operation;
+import com.lumens.connector.Param;
 import com.lumens.connector.database.client.oracle.OracleClient;
 import com.lumens.model.Format;
 import java.util.Map;
@@ -16,7 +14,7 @@ import java.util.Map;
  *
  * @author shaofeng wang
  */
-public class DatabaseConnector implements Connector, Configurable
+public class DatabaseConnector implements Connector
 {
     public static final String OJDBC = "OJDBC";
     public static final String CONNECTION_URL = "ConnectionURL";
@@ -49,31 +47,25 @@ public class DatabaseConnector implements Connector, Configurable
     }
 
     @Override
-    public Format getFormats(Usage usage)
+    public Format getFormats(Param param)
     {
         return tables;
     }
 
     @Override
-    public Format getFormat(Format format, Usage usage)
+    public Format getFormat(Format format, Param param)
     {
         return dbClient.getFormat(format);
     }
 
     @Override
-    public Reader createReader()
+    public Operation getOperation()
     {
-        return new DatabaseReader(dbClient);
+        return new DatabaseOperation(dbClient);
     }
 
     @Override
-    public Writer createWriter()
-    {
-        return new DatabaseWriter(dbClient);
-    }
-
-    @Override
-    public void setConfiguration(Map<String, Object> configuration)
+    public void configure(Map<String, Object> configuration)
     {
         if (configuration.containsKey(OJDBC))
             ojdbcURL = (String) configuration.get(OJDBC);

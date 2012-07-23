@@ -1,24 +1,18 @@
 package com.lumens.connector;
 
-import com.lumens.connector.Writer.Operate;
 import com.lumens.connector.database.DatabaseConnector;
 import com.lumens.connector.webservice.WebServiceConnector;
 import com.lumens.connector.webservice.soap.SOAPClient;
 import com.lumens.connector.webservice.soap.SOAPConstants;
 import com.lumens.connector.webservice.soap.SOAPMessageBuilder;
-import com.lumens.model.DataElement;
-import com.lumens.model.DataFormat;
 import com.lumens.model.Element;
 import com.lumens.model.Format;
-import com.lumens.model.Format.Form;
-import com.lumens.model.Type;
 import com.lumens.model.serializer.DataElementXmlSerializer;
 import com.lumens.model.serializer.DataFormatXmlSerializer;
 import com.lumens.processor.Processor;
 import com.lumens.processor.transform.TransformProcessor;
 import com.lumens.processor.transform.TransformRule;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -48,19 +42,7 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         return new TestSuite(ConnectorTest.class);
     }
 
-    public void testConnector()
-    {
-        Connector connector = new DatabaseConnector();
-        Reader reader = connector.createReader();
-        int recordCount = reader.read();
-        Iterator<Element> it = reader.iterator();
-        Writer writer = connector.createWriter();
-        Element e = new DataElement(new DataFormat("test", Form.FIELD, Type.STRING));
-        e.setValue("Hello Lumens");
-        writer.write(Operate.CREATE, e);
-    }
-
-    public static void testOracleConnector() throws Exception
+    public static void TtestOracleConnector() throws Exception
     {
         DatabaseConnector cntr = null;
         try
@@ -73,7 +55,7 @@ public class ConnectorTest extends TestCase implements SOAPConstants
             props.put(DatabaseConnector.USER, "sh");
             props.put(DatabaseConnector.PASSWORD, "accit");
             props.put(DatabaseConnector.FULL_LOAD, true);
-            cntr.setConfiguration(props);
+            cntr.configure(props);
             cntr.open();
             DataFormatXmlSerializer xml = new DataFormatXmlSerializer(cntr.getFormats(null), "UTF-8",
                                                                       true);
@@ -91,9 +73,9 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         HashMap<String, Object> props = new HashMap<String, Object>();
         props.put(WebServiceConnector.WSDL,
                   getClass().getResource("/wsdl/IncidentManagement.wsdl").toString());
-        connector.setConfiguration(props);
+        connector.configure(props);
         connector.open();
-        Format services = connector.getFormats(Usage.INPUT);
+        Format services = connector.getFormats(Param.IN);
         DataFormatXmlSerializer xml = new DataFormatXmlSerializer(services, "UTF-8",
                                                                   true);
         xml.write(System.out);
@@ -112,8 +94,8 @@ public class ConnectorTest extends TestCase implements SOAPConstants
                 setScript("\'test\'");
         rule.getRuleItem("RetrieveIncidentRequest.model.instance.ClosedTime").setScript(
                 "dateFormat(now(), \"yyyy-MM-dd HH:mm:ss\")");
-        Processor transformProcessor = new TransformProcessor(rule);
-        List<Element> result = (List<Element>) transformProcessor.execute(null);
+        Processor transformProcessor = new TransformProcessor();
+        List<Element> result = (List<Element>) transformProcessor.execute(rule);
         DataElementXmlSerializer serializer = new DataElementXmlSerializer(result.get(0), "UTF-8",
                                                                            true);
         serializer.write(System.out);
@@ -124,9 +106,9 @@ public class ConnectorTest extends TestCase implements SOAPConstants
 
         props.put(WebServiceConnector.WSDL,
                   getClass().getResource("/wsdl/ChinaOpenFundWS.asmx").toString());
-        connector.setConfiguration(props);
+        connector.configure(props);
         connector.open();
-        services = connector.getFormats(Usage.BOTH);
+        services = connector.getFormats(Param.BOTH);
         xml = new DataFormatXmlSerializer(services, "UTF-8", true);
         xml.write(System.out);
         for (Format service : services.getChildren())
@@ -140,14 +122,15 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         Format getOpenFundString = services.getChild("getOpenFundString");
         rule = new TransformRule(getOpenFundString);
         rule.getRuleItem("getOpenFundString.userID").setScript("\"13482718164\"");
-        transformProcessor = new TransformProcessor(rule);
-        result = (List<Element>) transformProcessor.execute(null);
+        transformProcessor = new TransformProcessor();
+        result = (List<Element>) transformProcessor.execute(rule);
         serializer = new DataElementXmlSerializer(result.get(0), "UTF-8", true);
         serializer.write(System.out);
 
-        SOAPClient client = connector.getClient();
-        Element responseElement = client.execute(result.get(0), getOpenFundString);
-        serializer = new DataElementXmlSerializer(responseElement, "UTF-8", true);
+        Operation op = connector.getOperation();
+        List<Element> response = op.execute(result.get(0), getOpenFundString);
+
+        serializer = new DataElementXmlSerializer(response.get(0), "UTF-8", true);
         serializer.write(System.out);
     }
 
@@ -159,9 +142,9 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         props.put(WebServiceConnector.WSDL, ppmWSDL);
         props.put(DatabaseConnector.USER, "admin");
         props.put(DatabaseConnector.PASSWORD, "admin");
-        connector.setConfiguration(props);
+        connector.configure(props);
         connector.open();
-        Format services = connector.getFormats(Usage.BOTH);
+        Format services = connector.getFormats(Param.BOTH);
         for (Format service : services.getChildren())
         {
             for (Format message : service.getChildren())
@@ -175,17 +158,14 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         xml.write(System.out);
         TransformRule rule = new TransformRule(getRequests);
         rule.getRuleItem("getRequests.requestIds.id").setScript("\"30392\"");
-        TransformProcessor transformProcessor = new TransformProcessor(rule);
-        List<Element> result = (List<Element>) transformProcessor.execute(null);
+        TransformProcessor transformProcessor = new TransformProcessor();
+        List<Element> result = (List<Element>) transformProcessor.execute(rule);
         DataElementXmlSerializer elemXml = new DataElementXmlSerializer(result.get(0), "UTF-8", true);
         elemXml.write(System.out);
-        SOAPMessageBuilder builder = new SOAPMessageBuilder();
 
-        System.out.println(builder.buildSOAPMessage(result.get(0)));
-
-        SOAPClient client = connector.getClient();
-        Element responseElement = client.execute(result.get(0), getRequests);
-        elemXml = new DataElementXmlSerializer(responseElement, "UTF-8", true);
+        Operation op = connector.getOperation();
+        List<Element> response = op.execute(result.get(0), getRequests);
+        elemXml = new DataElementXmlSerializer(response.get(0), "UTF-8", true);
         elemXml.write(System.out);
     }
 }

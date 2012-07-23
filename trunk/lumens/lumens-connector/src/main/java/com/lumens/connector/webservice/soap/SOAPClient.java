@@ -3,10 +3,9 @@
  */
 package com.lumens.connector.webservice.soap;
 
-import com.lumens.connector.Usage;
+import com.lumens.connector.Param;
 import com.lumens.model.Element;
 import com.lumens.model.Format;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.namespace.QName;
@@ -54,14 +53,19 @@ public class SOAPClient implements SOAPConstants
         {
             client = new ServiceClient();
             Options options = client.getOptions();
-            basicAuth = new HttpTransportProperties.Authenticator();
-            List auth = new ArrayList();
-            auth.add(Authenticator.BASIC);
-            basicAuth.setAuthSchemes(auth);
-            basicAuth.setUsername(user);
-            basicAuth.setPassword(password);
-            basicAuth.setPreemptiveAuthentication(true);
-            options.setProperty(HTTPConstants.AUTHENTICATE, basicAuth);
+            if (user != null)
+            {
+                basicAuth = new HttpTransportProperties.Authenticator();
+                List auth = new ArrayList();
+                auth.add(Authenticator.BASIC);
+                basicAuth.setAuthSchemes(auth);
+                basicAuth.setUsername(user);
+                if (password == null)
+                    password = EMPTY_STRING;
+                basicAuth.setPassword(password);
+                basicAuth.setPreemptiveAuthentication(true);
+                options.setProperty(HTTPConstants.AUTHENTICATE, basicAuth);
+            }
             options.setProperty(HTTPConstants.REUSE_HTTP_CLIENT, true);
         }
         catch (AxisFault ex)
@@ -85,9 +89,9 @@ public class SOAPClient implements SOAPConstants
         }
     }
 
-    public Format buildServiceFormats(Usage usage)
+    public Format buildServiceFormats(Param param)
     {
-        return formatBuilder.buildServiceFormats(usage);
+        return formatBuilder.buildServiceFormats(param);
     }
 
     public Format getFormat(Format format)

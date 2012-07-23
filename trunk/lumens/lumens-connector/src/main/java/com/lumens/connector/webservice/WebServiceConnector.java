@@ -3,11 +3,9 @@
  */
 package com.lumens.connector.webservice;
 
-import com.lumens.connector.Configurable;
 import com.lumens.connector.Connector;
-import com.lumens.connector.Reader;
-import com.lumens.connector.Usage;
-import com.lumens.connector.Writer;
+import com.lumens.connector.Operation;
+import com.lumens.connector.Param;
 import com.lumens.connector.webservice.soap.SOAPClient;
 import com.lumens.model.Format;
 import java.util.Map;
@@ -17,7 +15,7 @@ import java.util.Map;
  *
  * @author shaofeng wang
  */
-public class WebServiceConnector implements Connector, Configurable
+public class WebServiceConnector implements Connector
 {
     public static final String WSDL = "WSDL";
     public static final String USER = "User";
@@ -43,31 +41,19 @@ public class WebServiceConnector implements Connector, Configurable
     }
 
     @Override
-    public Reader createReader()
+    public Format getFormats(Param param)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return soapClient.buildServiceFormats(param);
     }
 
     @Override
-    public Writer createWriter()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Format getFormats(Usage usage)
-    {
-        return soapClient.buildServiceFormats(usage);
-    }
-
-    @Override
-    public Format getFormat(Format format, Usage usage)
+    public Format getFormat(Format format, Param param)
     {
         return soapClient.getFormat(format);
     }
 
     @Override
-    public void setConfiguration(Map<String, Object> configuration)
+    public void configure(Map<String, Object> configuration)
     {
         if (configuration.containsKey(WSDL))
             wsdlURL = (String) configuration.get(WSDL);
@@ -77,7 +63,13 @@ public class WebServiceConnector implements Connector, Configurable
             password = (String) configuration.get(PASSWORD);
     }
 
-    public SOAPClient getClient()
+    @Override
+    public Operation getOperation()
+    {
+        return new WebServiceOperation(getClient());
+    }
+
+    protected SOAPClient getClient()
     {
         return soapClient;
     }

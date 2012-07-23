@@ -11,5 +11,5 @@ import java.util.Map;
  */
 public interface Configurable
 {
-    public void setConfiguration(Map<String, Object> configuration);
+    public void configure(Map<String, Object> configuration);
 }

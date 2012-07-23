@@ -9,17 +9,15 @@ import com.lumens.model.Format;
  *
  * @author shaofeng wang
  */
-public interface Connector
+public interface Connector extends Configurable
 {
     public void open();
 
     public void close();
 
-    public Reader createReader();
+    public Operation getOperation();
 
-    public Writer createWriter();
+    public Format getFormats(Param param);
 
-    public Format getFormats(Usage usage);
-
-    public Format getFormat(Format format, Usage usage);
+    public Format getFormat(Format format, Param param);
 }
