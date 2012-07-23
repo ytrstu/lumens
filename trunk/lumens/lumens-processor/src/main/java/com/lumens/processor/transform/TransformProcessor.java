@@ -23,19 +23,13 @@ import java.util.List;
 public class TransformProcessor extends AbstractProcessor
 {
     // private boolean ignoreNull = Boolean.getBoolean("transform.ignore.null");
-    private TransformRule rule;
-
-    public TransformProcessor(TransformRule rule)
-    {
-        this.rule = rule;
-    }
-
     @Override
-    public Object execute(Object input)
+    public Object execute(Object... args)
     {
-        if (input instanceof Element || input == null)
+        if (TransformUtils.checkTransformParameters(args))
         {
-            Element inputElement = (Element) input;
+            TransformRule rule = (TransformRule) args[0];
+            Element inputElement = args.length < 2 ? null : (Element) args[1];
             List<Element> results = new ArrayList<Element>();
             TransformRuleItem ruleItem = rule.getRuleEntry();
             String arrayIterationPath = ruleItem.getArrayIterationPath();
@@ -70,7 +64,7 @@ public class TransformProcessor extends AbstractProcessor
 
             return results;
         }
-        throw new IllegalArgumentException("Incorrect input data type \"" + input + "\"");
+        throw new IllegalArgumentException("Incorrect arguments data");
     }
 
     private void processRuleItems(TransformContext ctx, TransformPair item)

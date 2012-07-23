@@ -13,7 +13,7 @@ public class RouteProcessor extends AbstractProcessor
     }
 
     @Override
-    public Object execute(Object input)
+    public Object execute(Object... args)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }

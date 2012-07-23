@@ -51,6 +51,7 @@ public class ProcessorTest
     {
         return ProcessorTest.class.getClassLoader().getResourceAsStream(name);
     }
+    private static Processor transformProcessor = new TransformProcessor();
 
     public void testTransform() throws Exception
     {
@@ -96,8 +97,7 @@ public class ProcessorTest
         rule.getRuleItem("Computer").setArrayIterationPath("asset");
         assertEquals("@asset.name", rule.getRuleItem("Computer.name").getScriptString());
 
-        Processor transformProcessor = new TransformProcessor(rule);
-        List<Element> result = (List<Element>) transformProcessor.execute(personData);
+        List<Element> result = (List<Element>) transformProcessor.execute(rule, personData);
         assertEquals("Mac air book", result.get(0).getChildByPath("Computer.name").getString());
         assertEquals("HP computer", result.get(0).getChildByPath("Computer[1].name").getString());
 
@@ -179,9 +179,8 @@ public class ProcessorTest
         rule.getRuleItem("a2").setArrayIterationPath("b");
         rule.getRuleItem("a2.a3.a4").setArrayIterationPath("b.c.d");
         rule.getRuleItem("a2.a3.aa4").setArrayIterationPath("b.c.d");
-        Processor transformProcessor = new TransformProcessor(rule);
 
-        List<Element> result = (List<Element>) transformProcessor.execute(data);
+        List<Element> result = (List<Element>) transformProcessor.execute(rule, data);
 
         DataElementXmlSerializer serializer = new DataElementXmlSerializer(result.get(0), "UTF-8",
                                                                            true);
@@ -202,8 +201,7 @@ public class ProcessorTest
         rule.getRuleItem("a2.a3.a4.a5").setScript("@b.c.d.e.f");
         rule.getRuleItem("a2.a3.aa4.aa5").setScript("@b.c.d.e.f");
         rule.getRuleItem("a2").setArrayIterationPath("b");
-        Processor transformProcessor = new TransformProcessor(rule);
-        List<Element> result = (List<Element>) transformProcessor.execute(data);
+        List<Element> result = (List<Element>) transformProcessor.execute(rule, data);
 
         DataElementXmlSerializer serializer = new DataElementXmlSerializer(result.get(0), "UTF-8",
                                                                            true);
@@ -222,8 +220,7 @@ public class ProcessorTest
         rule.getRuleItem("a2.a3.a4.a5").setScript("@b.c.d.e.f");
         rule.getRuleItem("a2.a3.aa4.aa5").setScript("@b.c.d.e.f");
         rule.getRuleItem("a2.a3.a4").setArrayIterationPath("b.c.d");
-        Processor transformProcessor = new TransformProcessor(rule);
-        List<Element> result = (List<Element>) transformProcessor.execute(data);
+        List<Element> result = (List<Element>) transformProcessor.execute(rule, data);
 
         DataElementXmlSerializer serializer = new DataElementXmlSerializer(result.get(0), "UTF-8",
                                                                            true);
@@ -241,8 +238,7 @@ public class ProcessorTest
         rule.getRuleItem("a2.a3.a4.a5").setScript("@b.c.d.e.f");
         rule.getRuleItem("a2.a3.aa4.aa5").setScript("@b.c.d.e.f");
         rule.getRuleEntry().setArrayIterationPath("b.c.d");
-        Processor transformProcessor = new TransformProcessor(rule);
-        List<Element> result = (List<Element>) transformProcessor.execute(data);
+        List<Element> result = (List<Element>) transformProcessor.execute(rule, data);
 
         for (Element elem : result)
         {
@@ -313,8 +309,7 @@ public class ProcessorTest
         rule.getRuleItem("a2").setArrayIterationPath("b");
         rule.getRuleItem("a2.a3.a4").setArrayIterationPath("b.c.d");
         rule.getRuleItem("a2.a3.aa4").setArrayIterationPath("b.c.d");
-        Processor transformProcessor = new TransformProcessor(rule);
-        List<Element> result = (List<Element>) transformProcessor.execute(data);
+        List<Element> result = (List<Element>) transformProcessor.execute(rule, data);
 
         DataElementXmlSerializer serializer = new DataElementXmlSerializer(result.get(0), "UTF-8",
                                                                            true);
@@ -331,9 +326,9 @@ public class ProcessorTest
                                   Element data) throws Exception
     {
         RouteProcessor router = new RouteProcessor();
-        Processor t1 = new TransformProcessor(null);
+        Processor t1 = new TransformProcessor();
         router.addRoutePoint(t1, new RouteRule("scipt here"));
-        Processor t2 = new TransformProcessor(null);
+        Processor t2 = new TransformProcessor();
         router.addRoutePoint(t2, new RouteRule("scipt here"));
         //router.execute(data);
     }
