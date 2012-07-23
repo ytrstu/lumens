@@ -3,7 +3,7 @@
  */
 package com.lumens.connector.webservice.soap;
 
-import com.lumens.connector.Usage;
+import com.lumens.connector.Param;
 import com.lumens.model.DataFormat;
 import com.lumens.model.Format;
 import com.lumens.model.Format.Form;
@@ -125,9 +125,9 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
         }
     }
 
-    public Format buildServiceFormats(Usage usage)
+    public Format buildServiceFormats(Param param)
     {
-        Format services = buildServices(definition, usage);
+        Format services = buildServices(definition, param);
 
         // Caching the schema information
         List schemas = definition.getTypes().getExtensibilityElements();
@@ -411,18 +411,23 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
         {
             XSAttributeUse attrUse = (XSAttributeUse) o;
             XSAttributeDeclaration attrDecl = attrUse.getAttrDeclaration();
+            String namespace = attrDecl.getNamespace();
             String attrName = attrDecl.getName();
             String typeName = attrUse.getAttrDeclaration().getTypeDefinition().getName();
             if (format.getChild(attrName) == null)
             {
                 Type type = buildinTypes.get(typeName);
                 if (type != null)
-                    format.addChild(attrName, Form.FIELD, type).setProperty(SOAPATTRIBUTE, true);
+                {
+                    Format attr = format.addChild(attrName, Form.FIELD, type);
+                    attr.setProperty(SOAPATTRIBUTE, true);
+                    attr.setProperty(TARGETNAMESPACE, namespace);
+                }
             }
         }
     }
 
-    private static Format buildServices(Definition definition, Usage usage)
+    private static Format buildServices(Definition definition, Param param)
     {
         Format services = new DataFormat(SOAPSERVICES, Form.STRUCT);
         Collection<Service> wsServices = definition.getServices().values();
@@ -462,14 +467,14 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
                         portFmt.setProperty(BINDINGOUTPUT, outputName == null ? EMPTY_STRING : outputName);
                     }
                     portFmt.setProperty(TARGETNAMESPACE, binding.getQName().getNamespaceURI());
-                    buildMessages(portFmt, binding.getPortType(), usage);
+                    buildMessages(portFmt, binding.getPortType(), param);
                 }
             }
         }
         return services;
     }
 
-    private static void buildMessages(Format port, PortType portType, Usage usage)
+    private static void buildMessages(Format port, PortType portType, Param param)
     {
         if (portType != null)
         {
@@ -484,13 +489,13 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
             if (operation != null)
             {
                 Message message = null;
-                if (usage == Usage.INPUT || usage == Usage.BOTH)
+                if (param == Param.IN || param == Param.BOTH)
                 {
                     Input input = operation.getInput();
                     message = input.getMessage();
                     buildFormatFormMessage(message, port, SOAPMESSAGE_IN);
                 }
-                if (usage == Usage.OUTPUT || usage == Usage.BOTH)
+                if (param == Param.OUT || param == Param.BOTH)
                 {
                     Output output = operation.getOutput();
                     message = output.getMessage();

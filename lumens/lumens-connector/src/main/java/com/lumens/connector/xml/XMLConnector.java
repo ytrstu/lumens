@@ -4,9 +4,8 @@
 package com.lumens.connector.xml;
 
 import com.lumens.connector.Connector;
-import com.lumens.connector.Reader;
-import com.lumens.connector.Usage;
-import com.lumens.connector.Writer;
+import com.lumens.connector.Operation;
+import com.lumens.connector.Param;
 import com.lumens.model.Format;
 
 /**
@@ -15,7 +14,6 @@ import com.lumens.model.Format;
  */
 public class XMLConnector implements Connector
 {
-
     @Override
     public void open()
     {
@@ -29,27 +27,20 @@ public class XMLConnector implements Connector
     }
 
     @Override
-    public Reader createReader()
+    public Format getFormats(Param param)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Writer createWriter()
+    public Format getFormat(Format format, Param param)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Format getFormats(Usage usage)
+    public Operation getOperation()
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    @Override
-    public Format getFormat(Format format, Usage usage)
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

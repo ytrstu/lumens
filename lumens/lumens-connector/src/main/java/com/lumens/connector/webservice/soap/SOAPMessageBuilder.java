@@ -91,17 +91,28 @@ public class SOAPMessageBuilder implements SOAPConstants
     {
         Format elemFmt = element.getFormat();
         String targetNamespace = (String) elemFmt.getProperty(TARGETNAMESPACE);
+        boolean isXmlAttribute = elemFmt.getProperty(SOAPATTRIBUTE) != null;
         if (!element.isArray())
         {
             if (!omNs.getNamespaceURI().equals(targetNamespace))
             {
                 omNs = namespaceCache.get(targetNamespace);
-                if (omNs == null)
+                if (omNs == null && targetNamespace != null)
                 {
                     omNs = soapFactory.createOMNamespace(targetNamespace, NAMESPACEPREFIX + nsCount);
                     namespaceCache.put(targetNamespace, omNs);
                 }
             }
+            if (isXmlAttribute)
+            {
+                String value = null;
+                if (elemFmt.getType() != Type.NONE)
+                    value = element.getString();
+                if (value != null)
+                    parent.addAttribute(elemFmt.getName(), value, omNs);
+                return;
+            }
+
             OMElement soapElem = soapFactory.createOMElement(elemFmt.getName(), omNs, parent);
 
             if (elemFmt.getType() != Type.NONE)
