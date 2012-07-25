@@ -69,14 +69,7 @@ public class DataElementXmlSerializer implements XmlSerializer
                 out.println(">");
             closeTag = true;
             for (Element child : children)
-            {
-                if (child.isArray())
-                    writeElementToXml(child, new StringBuilder(indent).append("  "), out);
-                else if (child.isStruct())
-                    writeElementToXml(child, new StringBuilder(indent).append("  "), out);
-                else if (child.isField())
-                    writeElementToXml(child, new StringBuilder(indent).append("  "), out);
-            }
+                writeElementToXml(child, new StringBuilder(indent).append("  "), out);
         }
         if (closeTag)
         {
