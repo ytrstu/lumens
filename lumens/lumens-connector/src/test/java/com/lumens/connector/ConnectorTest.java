@@ -57,7 +57,7 @@ public class ConnectorTest extends TestCase implements SOAPConstants
             props.put(DatabaseConnector.FULL_LOAD, true);
             cntr.configure(props);
             cntr.open();
-            DataFormatXmlSerializer xml = new DataFormatXmlSerializer(cntr.getFormats(null), "UTF-8",
+            DataFormatXmlSerializer xml = new DataFormatXmlSerializer(cntr.getFormatList(null), "UTF-8",
                                                                       true);
             xml.write(System.out);
         }
@@ -67,7 +67,15 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         }
     }
 
-    public void TtestWebServiceConnector() throws Exception
+    public void webserviceFormatExpand(Connector connector, int level, Format service, Param param)
+    {
+        for (int i = 0; i < level; ++i)
+        {
+            connector.getFormat(service, param);
+        }
+    }
+
+    public void testWebServiceConnector() throws Exception
     {
         WebServiceConnector connector = new WebServiceConnector();
         HashMap<String, Object> props = new HashMap<String, Object>();
@@ -75,19 +83,17 @@ public class ConnectorTest extends TestCase implements SOAPConstants
                   getClass().getResource("/wsdl/IncidentManagement.wsdl").toString());
         connector.configure(props);
         connector.open();
-        Format services = connector.getFormats(Param.IN);
+        Format services = connector.getFormatList(Param.IN);
         DataFormatXmlSerializer xml = new DataFormatXmlSerializer(services, "UTF-8",
                                                                   true);
         xml.write(System.out);
         for (Format service : services.getChildren())
         {
-            for (Format message : service.getChildren())
-            {
-                connector.getFormat(message, null);
-            }
+            connector.getFormat(service, Param.IN);
         }
         xml.write(System.out);
         Format RetrieveIncident = services.getChild("RetrieveIncident");
+        webserviceFormatExpand(connector, 4, RetrieveIncident, Param.IN);
         TransformRule rule = new TransformRule(RetrieveIncident);
         rule.getRuleItem("RetrieveIncidentRequest.attachmentData").setScript("true");
         rule.getRuleItem("RetrieveIncidentRequest.model.instance.AssigneeName").
@@ -106,20 +112,20 @@ public class ConnectorTest extends TestCase implements SOAPConstants
 
         props.put(WebServiceConnector.WSDL,
                   getClass().getResource("/wsdl/ChinaOpenFundWS.asmx").toString());
+        //props.put(WebServiceConnector.PROXY_ADDR, "web-proxy.atl.hp.com");
+        //props.put(WebServiceConnector.PROXY_PORT, 8080);
         connector.configure(props);
         connector.open();
-        services = connector.getFormats(Param.BOTH);
+        services = connector.getFormatList(Param.BOTH);
         xml = new DataFormatXmlSerializer(services, "UTF-8", true);
         xml.write(System.out);
         for (Format service : services.getChildren())
         {
-            for (Format message : service.getChildren())
-            {
-                connector.getFormat(message, null);
-            }
+            connector.getFormat(service, Param.BOTH);
         }
         xml.write(System.out);
         Format getOpenFundString = services.getChild("getOpenFundString");
+        webserviceFormatExpand(connector, 1, getOpenFundString, Param.BOTH);
         rule = new TransformRule(getOpenFundString);
         rule.getRuleItem("getOpenFundString.userID").setScript("\"13482718164\"");
         transformProcessor = new TransformProcessor();
@@ -134,7 +140,7 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         serializer.write(System.out);
     }
 
-    public void testPPMWS() throws Exception
+    public void TtestPPMWS() throws Exception
     {
         String ppmWSDL = "http://16.173.232.74:16800/itg/ppmservices/DemandService?wsdl";
         WebServiceConnector connector = new WebServiceConnector();
@@ -144,13 +150,10 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         props.put(DatabaseConnector.PASSWORD, "admin");
         connector.configure(props);
         connector.open();
-        Format services = connector.getFormats(Param.BOTH);
+        Format services = connector.getFormatList(Param.BOTH);
         for (Format service : services.getChildren())
         {
-            for (Format message : service.getChildren())
-            {
-                connector.getFormat(message, null);
-            }
+            connector.getFormat(service, Param.BOTH);
         }
         Format getRequests = services.getChild("getRequests");
         DataFormatXmlSerializer xml = new DataFormatXmlSerializer(getRequests, "UTF-8", true);

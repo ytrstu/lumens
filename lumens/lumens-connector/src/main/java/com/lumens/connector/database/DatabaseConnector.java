@@ -47,7 +47,7 @@ public class DatabaseConnector implements Connector
     }
 
     @Override
-    public Format getFormats(Param param)
+    public Format getFormatList(Param param)
     {
         return tables;
     }

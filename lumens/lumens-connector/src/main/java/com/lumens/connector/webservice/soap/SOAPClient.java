@@ -3,7 +3,9 @@
  */
 package com.lumens.connector.webservice.soap;
 
+import com.lumens.connector.FormatBuilder;
 import com.lumens.connector.Param;
+import com.lumens.connector.webservice.WebServiceConnector;
 import com.lumens.model.Element;
 import com.lumens.model.Format;
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.axis2.transport.http.HttpTransportProperties.Authenticator;
+import org.apache.axis2.transport.http.HttpTransportProperties.ProxyProperties;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 /**
@@ -32,20 +35,16 @@ public class SOAPClient implements SOAPConstants
     private ElementFromSOAPBuilder elementBuilder;
     private Authenticator basicAuth;
     private ServiceClient client;
-    private String wsdlURL;
-    private String user;
-    private String password;
+    private WebServiceConnector connector;
 
-    public SOAPClient(String wsdlURL, String user, String password)
+    public SOAPClient(WebServiceConnector connector)
     {
-        this.wsdlURL = wsdlURL;
-        this.user = user;
-        this.password = password;
+        this.connector = connector;
     }
 
     public void open()
     {
-        formatBuilder = new FormatFromWSDLBuilder(wsdlURL);
+        formatBuilder = new FormatFromWSDLBuilder(connector.getWsdlURL());
         formatBuilder.loadWSDL();
         soapBuilder = new SOAPMessageBuilder();
         elementBuilder = new ElementFromSOAPBuilder();
@@ -53,6 +52,7 @@ public class SOAPClient implements SOAPConstants
         {
             client = new ServiceClient();
             Options options = client.getOptions();
+            String user = connector.getUser();
             if (user != null)
             {
                 basicAuth = new HttpTransportProperties.Authenticator();
@@ -60,13 +60,26 @@ public class SOAPClient implements SOAPConstants
                 auth.add(Authenticator.BASIC);
                 basicAuth.setAuthSchemes(auth);
                 basicAuth.setUsername(user);
-                if (password == null)
-                    password = EMPTY_STRING;
-                basicAuth.setPassword(password);
+                if (connector.getPassword() != null)
+                    basicAuth.setPassword(connector.getPassword());
                 basicAuth.setPreemptiveAuthentication(true);
                 options.setProperty(HTTPConstants.AUTHENTICATE, basicAuth);
             }
             options.setProperty(HTTPConstants.REUSE_HTTP_CLIENT, true);
+            ProxyProperties pp = new ProxyProperties();
+            String proxyAddr = connector.getProxyAddr();
+            if (proxyAddr != null && !proxyAddr.isEmpty())
+            {
+                pp.setProxyName(proxyAddr);
+                pp.setProxyPort(connector.getProxyPort());
+                if (connector.getProxyUser() != null)
+                {
+                    pp.setUserName(connector.getProxyUser());
+                    if (connector.getProxyPassword() != null)
+                        pp.setPassWord(connector.getProxyPassword());
+                }
+                options.setProperty(HTTPConstants.PROXY, pp);
+            }
         }
         catch (AxisFault ex)
         {
@@ -89,14 +102,9 @@ public class SOAPClient implements SOAPConstants
         }
     }
 
-    public Format buildServiceFormats(Param param)
+    public FormatBuilder getFormatBuilder()
     {
-        return formatBuilder.buildServiceFormats(param);
-    }
-
-    public Format getFormat(Format format)
-    {
-        return formatBuilder.buildMessageFormat(format);
+        return formatBuilder;
     }
 
     public Element execute(Element requestElement, Format responseFormat) throws Exception
