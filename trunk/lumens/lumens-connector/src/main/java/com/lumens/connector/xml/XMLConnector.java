@@ -7,6 +7,7 @@ import com.lumens.connector.Connector;
 import com.lumens.connector.Operation;
 import com.lumens.connector.Param;
 import com.lumens.model.Format;
+import java.util.Map;
 
 /**
  *
@@ -27,7 +28,7 @@ public class XMLConnector implements Connector
     }
 
     @Override
-    public Format getFormats(Param param)
+    public Format getFormatList(Param param)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -40,6 +41,12 @@ public class XMLConnector implements Connector
 
     @Override
     public Operation getOperation()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void configure(Map<String, Object> configuration)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }

@@ -17,7 +17,7 @@ public interface Connector extends Configurable
 
     public Operation getOperation();
 
-    public Format getFormats(Param param);
+    public Format getFormatList(Param param);
 
     public Format getFormat(Format format, Param param);
 }

@@ -61,16 +61,18 @@ public class ElementFromSOAPBuilder implements SOAPConstants
                 Iterator<OMElement> it = omElem.getChildrenWithName(new QName(namespace, child.getName()));
                 if (it != null && it.hasNext())
                 {
-                    Element childElement = element.addChild(child.getName());
+                    Element childElement = element.newChild(child);
                     while (it.hasNext())
                     {
                         OMElement omChild = it.next();
                         if (child.isArray())
                         {
-                            Element arrayItem = childElement.addArrayItem();
+                            Element arrayItem = childElement.newArrayItem();
                             if (child.getType() != Type.NONE && arrayItem.isArrayItem())
                                 arrayItem.setValue(omChild.getText());
                             buildElementFromOMElement(arrayItem, omChild);
+                            if (arrayItem.getChildren() != null || arrayItem.isField())
+                                childElement.addArrayItem(arrayItem);
                         }
                         else
                         {
@@ -79,6 +81,8 @@ public class ElementFromSOAPBuilder implements SOAPConstants
                             buildElementFromOMElement(childElement, omChild);
                         }
                     }
+                    if (childElement.getChildren() != null || childElement.isField())
+                        element.addChild(childElement);
                 }
             }
         }

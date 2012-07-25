@@ -3,6 +3,7 @@
  */
 package com.lumens.connector.webservice.soap;
 
+import com.lumens.connector.FormatBuilder;
 import com.lumens.connector.Param;
 import com.lumens.model.DataFormat;
 import com.lumens.model.Format;
@@ -72,13 +73,14 @@ import org.xml.sax.InputSource;
  *
  * @author shaofeng wang
  */
-public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
+public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLEntityResolver
 {
     private String wsdlURL;
     private Definition definition;
     private XSModel xsModel;
     private Map<String, Element> schemaCache;
     private static final Map<String, Type> buildinTypes = new HashMap<String, Type>();
+    private Format services;
 
     static
     {
@@ -116,6 +118,7 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
     {
         try
         {
+            services = null;
             WSDLReader wsdlReader11 = WSDLFactory.newInstance().newWSDLReader();
             definition = wsdlReader11.readWSDL(wsdlURL);
         }
@@ -125,78 +128,101 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
         }
     }
 
-    public Format buildServiceFormats(Param param)
+    @Override
+    public Format getFormatList(Param param)
     {
-        Format services = buildServices(definition, param);
-
-        // Caching the schema information
-        List schemas = definition.getTypes().getExtensibilityElements();
-        Set<Map.Entry<String, String>> namespaceSet = definition.getNamespaces().entrySet();
-        if (schemas.size() > 1)
+        if (services == null)
         {
-            throw new RuntimeException("Not support multiple schema in one WSDL");
-        }
-        for (Object o : schemas)
-        {
-            if (o instanceof Schema)
+            services = buildServices(definition, param);
+            // Caching the schema information
+            List schemas = definition.getTypes().getExtensibilityElements();
+            Set<Map.Entry<String, String>> namespaceSet = definition.getNamespaces().entrySet();
+            if (schemas.size() > 1)
             {
-                try
+                throw new RuntimeException("Not support multiple schema in one WSDL");
+            }
+            for (Object o : schemas)
+            {
+                if (o instanceof Schema)
                 {
-                    Schema s = (Schema) o;
-                    Element schema = s.getElement();
-                    for (Map.Entry<String, String> entry : namespaceSet)
+                    try
                     {
-                        StringBuilder b = new StringBuilder();
-                        if (entry.getKey().isEmpty())
-                            b.append("xmlns");
-                        else
-                            b.append("xmlns:").append(entry.getKey());
-                        String attrNS = b.toString();
-                        if (!schema.hasAttribute(attrNS))
-                            schema.setAttribute(attrNS, entry.getValue());
-                    }
-                    schemaCache = new HashMap<String, Element>();
-                    Map imports = s.getImports();
-                    for (Object importO : imports.values())
-                    {
-                        Collection schemaVec = (Collection) importO;
-                        for (Object vecO : schemaVec)
+                        Schema s = (Schema) o;
+                        Element schema = s.getElement();
+                        for (Map.Entry<String, String> entry : namespaceSet)
                         {
-                            SchemaImport sImport = (SchemaImport) vecO;
-                            buildSchemaCache(sImport.getReferencedSchema());
+                            StringBuilder b = new StringBuilder();
+                            if (entry.getKey().isEmpty())
+                                b.append("xmlns");
+                            else
+                                b.append("xmlns:").append(entry.getKey());
+                            String attrNS = b.toString();
+                            if (!schema.hasAttribute(attrNS))
+                                schema.setAttribute(attrNS, entry.getValue());
                         }
+                        schemaCache = new HashMap<String, Element>();
+                        Map imports = s.getImports();
+                        for (Object importO : imports.values())
+                        {
+                            Collection schemaVec = (Collection) importO;
+                            for (Object vecO : schemaVec)
+                            {
+                                SchemaImport sImport = (SchemaImport) vecO;
+                                buildSchemaCache(sImport.getReferencedSchema());
+                            }
+                        }
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        toString(schema, out);
+                        XMLSchemaLoader loader = new XMLSchemaLoader();
+                        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+                        domFactory.setNamespaceAware(true);
+                        domFactory.setValidating(false);
+                        DocumentBuilder builder = domFactory.newDocumentBuilder();
+                        DOMImplementationLS domLS = (DOMImplementationLS) builder.getDOMImplementation();
+                        LSInput input = domLS.createLSInput();
+                        ByteArrayInputStream bais = new ByteArrayInputStream(out.toByteArray());
+                        InputSource is = new InputSource(bais);
+                        input.setEncoding(is.getEncoding());
+                        input.setPublicId(is.getPublicId());
+                        input.setSystemId(is.getSystemId());
+                        input.setCharacterStream(is.getCharacterStream());
+                        input.setByteStream(is.getByteStream());
+                        loader.setEntityResolver(this);
+                        xsModel = loader.load(input);
+                        schemaCache = null;
                     }
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    toString(schema, out);
-                    XMLSchemaLoader loader = new XMLSchemaLoader();
-                    DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-                    domFactory.setNamespaceAware(true);
-                    domFactory.setValidating(false);
-                    DocumentBuilder builder = domFactory.newDocumentBuilder();
-                    DOMImplementationLS domLS = (DOMImplementationLS) builder.getDOMImplementation();
-                    LSInput input = domLS.createLSInput();
-                    ByteArrayInputStream bais = new ByteArrayInputStream(out.toByteArray());
-                    InputSource is = new InputSource(bais);
-                    input.setEncoding(is.getEncoding());
-                    input.setPublicId(is.getPublicId());
-                    input.setSystemId(is.getSystemId());
-                    input.setCharacterStream(is.getCharacterStream());
-                    input.setByteStream(is.getByteStream());
-                    loader.setEntityResolver(this);
-                    xsModel = loader.load(input);
-                    schemaCache = null;
-                }
-                catch (Exception ex)
-                {
-                    throw new RuntimeException(ex);
+                    catch (Exception ex)
+                    {
+                        throw new RuntimeException(ex);
+                    }
                 }
             }
         }
         return services;
     }
 
-    public Format buildMessageFormat(Format format)
+    @Override
+    public Format getFormat(Format format, Param param)
     {
+        if (param == Param.IN || param == Param.BOTH)
+            getFormatForMessage(format, SOAPMESSAGE_IN);
+        if (param == Param.OUT || param == Param.BOTH)
+            getFormatForMessage(format, SOAPMESSAGE_OUT);
+        return format;
+    }
+
+    private void getFormatForMessage(Format format, int param)
+    {
+        List<Format> children = format.getChildren();
+        for (Format child : children)
+        {
+            Object prop = child.getProperty(SOAPMESSAGE);
+            if (prop != null && param == (Integer) prop)
+            {
+                format = child;
+                break;
+            }
+        }
         String name = format.getName();
         String namespace = (String) format.getProperty(TARGETNAMESPACE);
         XSElementDeclaration xsElement = xsModel.getElementDeclaration(name, namespace);
@@ -207,19 +233,18 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
             {
                 XSComplexTypeDefinition xsComplex = (XSComplexTypeDefinition) xsTypeDef;
                 buildFieldFromXSAttributeList(format, xsComplex);
-                buildFormatFromXSComplexType(format, null, null, xsComplex, false);
+                buildFormatFromXSComplexType(format, null, null, xsComplex, false, 1);
             }
             else if (xsTypeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE)
             {
                 XSSimpleTypeDefinition xsSimple = (XSSimpleTypeDefinition) xsTypeDef;
-                buildFormatFromXSSimpleType(format, name, namespace, xsSimple, false);
+                buildFormatFromXSSimpleType(format, name, namespace, null, xsSimple, false);
             }
         }
-        return null;
     }
 
     private static void buildFromatFromElement(Format parent, XSElementDeclaration xsElement,
-                                               boolean isArray)
+                                               boolean isArray, int level)
     {
         String name = xsElement.getName();
         String namespace = xsElement.getNamespace();
@@ -229,19 +254,19 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
         {
 
             XSComplexTypeDefinition xsComplex = (XSComplexTypeDefinition) xsTypeDef;
-            buildFormatFromXSComplexType(parent, name, namespace, xsComplex, isArray);
+            buildFormatFromXSComplexType(parent, name, namespace, xsComplex, isArray, level);
         }
         else if (xsTypeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE)
         {
 
             XSSimpleTypeDefinition xsSimple = (XSSimpleTypeDefinition) xsTypeDef;
-            buildFormatFromXSSimpleType(parent, name, namespace, xsSimple, isArray);
+            buildFormatFromXSSimpleType(parent, name, namespace, null, xsSimple, isArray);
         }
     }
 
     private static void buildFormatFromXSComplexType(Format parent, String name, String namespace,
                                                      XSComplexTypeDefinition xsComplex,
-                                                     boolean isArray)
+                                                     boolean isArray, int level)
     {
         short contentType = xsComplex.getContentType();
         if (contentType == XSComplexTypeDefinition.CONTENTTYPE_SIMPLE)
@@ -253,18 +278,21 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
             {
                 baseType = baseType.getBaseType();
             }
-            Format format = buildFormatFromXSSimpleType(parent, name, namespace,
-                                                        (XSSimpleTypeDefinition) baseType,
-                                                        isArray);
+            Format format = parent.getChild(name);
+            if (format == null)
+            {
+                format = buildFormatFromXSSimpleType(parent, name, namespace, xsComplex,
+                                                     (XSSimpleTypeDefinition) baseType,
+                                                     isArray);
+                if (level > 0 && --level == 0)
+                    return;
+            }
             buildFieldFromXSAttributeList(format, xsComplex);
-
-            if (format.getChildren() != null && format.isField())
-                format.setForm(Form.STRUCT);
-
         }
         else if (contentType == XSComplexTypeDefinition.SIMPLE_TYPE)
         {
-            buildFormatFromXSSimpleType(parent, name, namespace, xsComplex.getSimpleType(), isArray);
+            buildFormatFromXSSimpleType(parent, name, namespace, xsComplex,
+                                        xsComplex.getSimpleType(), isArray);
         }
         else if (contentType == XSComplexTypeDefinition.CONTENTTYPE_ELEMENT)
         {
@@ -276,48 +304,53 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
                     Form form = isArray ? Form.ARRAYOFSTRUCT : Form.STRUCT;
                     format = parent.addChild(name, form);
                     format.setProperty(TARGETNAMESPACE, namespace);
-                    buildFieldFromXSAttributeList(format, xsComplex);
+                    if (level > 0 && --level == 0)
+                        return;
                 }
+                buildFieldFromXSAttributeList(format, xsComplex);
                 parent = format;
+
             }
             XSParticle xsPartice = xsComplex.getParticle();
-            buildFromFromXSParticle(parent, xsPartice);
+            buildFromFromXSParticle(parent, xsPartice, level);
         }
     }
 
     private static Format buildFormatFromXSSimpleType(Format parent, String name, String namespace,
+                                                      XSComplexTypeDefinition xsComplex,
                                                       XSSimpleTypeDefinition xsSimple,
                                                       boolean isArray)
     {
-        if (name != null)
+        Format format = parent.getChild(name);
+        if (format == null)
         {
-            Format format = parent.getChild(name);
-            if (format == null)
+            Form form = null;
+            if (xsComplex == null || xsComplex.getAttributeUses().size() == 0)
+                form = isArray ? Form.ARRAYOFFIELD : Form.FIELD;
+            else
+                form = isArray ? Form.ARRAYOFSTRUCT : Form.STRUCT;
+            format = parent.addChild(name, form);
+            format.setProperty(TARGETNAMESPACE, namespace);
+            String simpleName = xsSimple.getName();
+            if (XMLSCHEMAXSD.equalsIgnoreCase(xsSimple.getNamespace()))
             {
-                Form form = isArray ? Form.ARRAYOFFIELD : Form.FIELD;
-                format = parent.addChild(name, form);
-                format.setProperty(TARGETNAMESPACE, namespace);
-                String simpleName = xsSimple.getName();
-                if (XMLSCHEMAXSD.equalsIgnoreCase(xsSimple.getNamespace()))
+                Type type = buildinTypes.get(simpleName);
+                if (type != null)
                 {
-                    Type type = buildinTypes.get(simpleName);
-                    if (type != null)
-                    {
-                        format.setType(type);
-                        return format;
-                    }
+                    format.setType(type);
+                    return format;
                 }
-
-                // TODO it should log an error not throw an exception
-                throw new RuntimeException(
-                        "Not supported type \"" + xsSimple.getNamespace() + ':' + simpleName + "\"");
-
             }
+
+            // TODO it should log an error not throw an exception
+            throw new RuntimeException(
+                    "Not supported type \"" + xsSimple.getNamespace() + ':' + simpleName + "\"");
+
         }
-        return null;
+        return format;
     }
 
-    private static void buildFromFromXSParticle(Format parent, XSParticle xsParticle)
+    private static void buildFromFromXSParticle(Format parent, XSParticle xsParticle, int level)
     {
         boolean isUnbounded = xsParticle.getMaxOccursUnbounded();
         int maxOccurs = xsParticle.getMaxOccurs();
@@ -326,7 +359,7 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
         if (term instanceof XSElementDeclaration)
         {
             XSElementDeclaration xsElement = (XSElementDeclaration) term;
-            buildFromatFromElement(parent, xsElement, isArray);
+            buildFromatFromElement(parent, xsElement, isArray, level);
         }
         else if (term instanceof XSModelGroup)
         {
@@ -336,11 +369,12 @@ public class FormatFromWSDLBuilder implements SOAPConstants, XMLEntityResolver
             for (Object xsObj : list)
             {
                 XSParticle xsPart = (XSParticle) xsObj;
-                buildFromFromXSParticle(parent, xsPart);
+                buildFromFromXSParticle(parent, xsPart, level);
             }
         }
         else if (term instanceof XSWildcard)
         {
+            // Ignore such nodes
         }
         assert term != null;
     }
