@@ -63,6 +63,10 @@ public interface Format
 
     public Format getChild(String name);
 
+    public Format getChildByPath(String path);
+
+    public Format getChildByPath(Path path);
+
     public List<Format> getChildren();
 
     public Path getFullPath();

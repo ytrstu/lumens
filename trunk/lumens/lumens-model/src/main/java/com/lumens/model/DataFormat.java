@@ -5,6 +5,7 @@ package com.lumens.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -133,6 +134,22 @@ public class DataFormat implements Format
     public Format getChild(String name)
     {
         return children == null ? null : children.get(name);
+    }
+
+    @Override
+    public Format getChildByPath(String path)
+    {
+        return getChildByPath(new AccessPath(path));
+    }
+
+    @Override
+    public Format getChildByPath(Path path)
+    {
+        Iterator<PathToken> it = path.iterator();
+        Format format = this;
+        while (format != null && it.hasNext())
+            format = format.getChild(it.next().toString());
+        return format;
     }
 
     @Override

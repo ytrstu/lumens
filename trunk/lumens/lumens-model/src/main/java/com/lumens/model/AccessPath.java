@@ -22,7 +22,8 @@ public class AccessPath implements Path
 
     public AccessPath(List<PathToken> tokens)
     {
-        this.tokens = tokens;
+        if (tokens != null)
+            this.tokens = tokens;
     }
 
     @Override
@@ -81,32 +82,26 @@ public class AccessPath implements Path
     @Override
     public Path removeLeft(int count)
     {
-        if (count >= tokens.size())
-            return null;
+        if (count < 0)
+            return this;
 
         List<PathToken> removed = null;
-        if (count > 0)
-            removed = new LinkedList<PathToken>();
-        while (0 < count--)
-        {
-            removed.add(tokens.remove(0));
-        }
+        if (count > 0 && count < tokens.size())
+            removed = tokens.subList(count, tokens.size());
+
         return new AccessPath(removed);
     }
 
     @Override
     public Path removeRight(int count)
     {
-        if (count >= tokens.size())
-            return null;
+        if (count < 0)
+            return this;
 
-        LinkedList<PathToken> removed = null;
-        if (count > 0)
-            removed = new LinkedList<PathToken>();
-        while (0 < count--)
-        {
-            removed.addFirst(tokens.remove(tokens.size() - 1));
-        }
+        List<PathToken> removed = null;
+        if (count > 0 && count < tokens.size())
+            removed = tokens.subList(0, tokens.size() - count);
+
         return new AccessPath(removed);
     }
 

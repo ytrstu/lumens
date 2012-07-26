@@ -78,7 +78,8 @@ public class ModelTest
         assetDataItem.addChild("name").setValue("Mac air book");
         assetDataItem.addChild("price").setValue(12000.05f);
         assetDataItem.addChild("vendor").addChild("name").setValue("Apple");
-        assertEquals(12000.05f, personData.getChild("asset").getChildren().get(0).getChild("price").getFloat());
+        assertEquals(12000.05f, personData.getChild("asset").getChildren().get(0).getChild("price").
+                getFloat());
     }
 
     public void testElementPath()
@@ -96,10 +97,9 @@ public class ModelTest
         assertEquals("name", it.next().toString());
 
         Path removed = path.removeLeft(2);
-        assertEquals("asset.'vendor.info'", removed.toString());
-        path = new AccessPath("asset.'vendor.info'.name");
+        assertEquals("name", removed.toString());
         removed = path.removeRight(2);
-        assertEquals("'vendor.info'.name", removed.toString());
+        assertEquals("asset", removed.toString());
 
         PathToken token = new PathToken("abc");
         assertTrue(!token.isIndexed());
@@ -123,8 +123,10 @@ public class ModelTest
         Format asset = person.addChild("asset", Form.ARRAYOFSTRUCT);
         asset.addChild("name", Form.FIELD, Type.STRING);
         asset.addChild("price", Form.FIELD, Type.FLOAT);
-        Format name = asset.addChild("vendor", Form.STRUCT).addChild("name", Form.FIELD, Type.STRING);
+        Format name = asset.addChild("vendor", Form.STRUCT).
+                addChild("name", Form.FIELD, Type.STRING);
         assertEquals("Person.asset.vendor.name", name.getFullPath().toString());
+        assertEquals(name, root.getChildByPath("Person.asset.vendor.name"));
 
         // Fill data
         Element personData = new DataElement(person);
