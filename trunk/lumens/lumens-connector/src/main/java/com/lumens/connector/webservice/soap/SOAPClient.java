@@ -4,7 +4,7 @@
 package com.lumens.connector.webservice.soap;
 
 import com.lumens.connector.FormatBuilder;
-import com.lumens.connector.Param;
+import com.lumens.connector.Usage;
 import com.lumens.connector.webservice.WebServiceConnector;
 import com.lumens.model.Element;
 import com.lumens.model.Format;

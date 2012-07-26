@@ -12,6 +12,8 @@ import com.lumens.model.Type;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -37,9 +39,9 @@ public class OracleClient extends AbstractClient implements OracleConstants
     }
 
     @Override
-    public Format getFormats(boolean fullLoad)
+    public Map<String, Format> getFormatList(boolean fullLoad)
     {
-        Format tables = new DataFormat("Tables", Form.STRUCT);
+        Map<String, Format> tables = new HashMap<String, Format>();
         Statement stat = null;
         PreparedStatement preparedStat = null;
         ResultSet ret = null;
@@ -55,14 +57,15 @@ public class OracleClient extends AbstractClient implements OracleConstants
                     String tableName = ret.getString(1);
                     String description = ret.getString(2);
                     String type = ret.getString(3);
-                    Format table = tables.addChild(tableName, Form.STRUCT);
+                    Format table = new DataFormat(tableName, Form.STRUCT);
+                    tables.put(tableName, table);
                     table.setProperty(DESCRIPTION, description);
                     table.setProperty(TYPE, type);
                 }
                 if (fullLoad)
                 {
                     preparedStat = conn.prepareStatement(TABLECOLUMNS + '?');
-                    for (Format format : tables.getChildren())
+                    for (Format format : tables.values())
                     {
                         preparedStat.setString(1, format.getName());
                         preparedRet = preparedStat.executeQuery();

@@ -4,10 +4,12 @@
 package com.lumens.connector.webservice.soap;
 
 import com.lumens.connector.FormatBuilder;
-import com.lumens.connector.Param;
+import com.lumens.connector.Usage;
+import com.lumens.model.AccessPath;
 import com.lumens.model.DataFormat;
 import com.lumens.model.Format;
 import com.lumens.model.Format.Form;
+import com.lumens.model.Path;
 import com.lumens.model.Type;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -80,7 +82,8 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
     private XSModel xsModel;
     private Map<String, Element> schemaCache;
     private static final Map<String, Type> buildinTypes = new HashMap<String, Type>();
-    private Format services;
+    private Map<String, Format> consumeServices;
+    private Map<String, Format> produceServices;
 
     static
     {
@@ -118,9 +121,11 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
     {
         try
         {
-            services = null;
+            consumeServices = null;
+            produceServices = null;
             WSDLReader wsdlReader11 = WSDLFactory.newInstance().newWSDLReader();
             definition = wsdlReader11.readWSDL(wsdlURL);
+            buildSchemaModel();
         }
         catch (Exception ex)
         {
@@ -129,11 +134,43 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
     }
 
     @Override
-    public Format getFormatList(Param param)
+    public Map<String, Format> getFormatList(Usage param)
     {
-        if (services == null)
+        if (param == Usage.CONSUME)
         {
-            services = buildServices(definition, param);
+            if (consumeServices == null)
+                consumeServices = buildServices(definition, param);
+            return consumeServices;
+        }
+        else
+        {
+            if (produceServices == null)
+                produceServices = buildServices(definition, param);
+            return produceServices;
+        }
+    }
+
+    @Override
+    public Format getFormat(Format format, String path, Usage use)
+    {
+        int soapMessageType = SOAPMESSAGE_IN;
+        if (use == Usage.PRODUCE)
+        {
+            soapMessageType = SOAPMESSAGE_OUT;
+        }
+        Path accessPath = new AccessPath(path);
+        int count = accessPath.tokenCount() == 0 ? 1 : accessPath.tokenCount();
+        while (count >= 0)
+        {
+            getFormatForMessage(format, accessPath.removeRight(--count), soapMessageType);
+        }
+        return format;
+    }
+
+    private void buildSchemaModel()
+    {
+        if (xsModel == null)
+        {
             // Caching the schema information
             List schemas = definition.getTypes().getExtensibilityElements();
             Set<Map.Entry<String, String>> namespaceSet = definition.getNamespaces().entrySet();
@@ -178,7 +215,8 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
                         domFactory.setNamespaceAware(true);
                         domFactory.setValidating(false);
                         DocumentBuilder builder = domFactory.newDocumentBuilder();
-                        DOMImplementationLS domLS = (DOMImplementationLS) builder.getDOMImplementation();
+                        DOMImplementationLS domLS = (DOMImplementationLS) builder.
+                                getDOMImplementation();
                         LSInput input = domLS.createLSInput();
                         ByteArrayInputStream bais = new ByteArrayInputStream(out.toByteArray());
                         InputSource is = new InputSource(bais);
@@ -198,26 +236,16 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
                 }
             }
         }
-        return services;
     }
 
-    @Override
-    public Format getFormat(Format format, Param param)
-    {
-        if (param == Param.IN || param == Param.BOTH)
-            getFormatForMessage(format, SOAPMESSAGE_IN);
-        if (param == Param.OUT || param == Param.BOTH)
-            getFormatForMessage(format, SOAPMESSAGE_OUT);
-        return format;
-    }
-
-    private void getFormatForMessage(Format format, int param)
+    private void getFormatForMessage(Format format, Path accessPath, int param)
     {
         List<Format> children = format.getChildren();
         for (Format child : children)
         {
             Object prop = child.getProperty(SOAPMESSAGE);
-            if (prop != null && param == (Integer) prop)
+            if (prop != null && param == (Integer) prop
+                && (accessPath.isEmpty() || child.getName().equals(accessPath.left(1).toString())))
             {
                 format = child;
                 break;
@@ -233,7 +261,8 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
             {
                 XSComplexTypeDefinition xsComplex = (XSComplexTypeDefinition) xsTypeDef;
                 buildFieldFromXSAttributeList(format, xsComplex);
-                buildFormatFromXSComplexType(format, null, null, xsComplex, false, 1);
+                buildFormatFromXSComplexType(format, null, null, accessPath.removeLeft(1), xsComplex,
+                                             false, 2);
             }
             else if (xsTypeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE)
             {
@@ -244,7 +273,7 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
     }
 
     private static void buildFromatFromElement(Format parent, XSElementDeclaration xsElement,
-                                               boolean isArray, int level)
+                                               Path accessPath, boolean isArray, int level)
     {
         String name = xsElement.getName();
         String namespace = xsElement.getNamespace();
@@ -254,7 +283,8 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         {
 
             XSComplexTypeDefinition xsComplex = (XSComplexTypeDefinition) xsTypeDef;
-            buildFormatFromXSComplexType(parent, name, namespace, xsComplex, isArray, level);
+            buildFormatFromXSComplexType(parent, name, namespace, accessPath, xsComplex, isArray,
+                                         level);
         }
         else if (xsTypeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE)
         {
@@ -265,6 +295,7 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
     }
 
     private static void buildFormatFromXSComplexType(Format parent, String name, String namespace,
+                                                     Path accessPath,
                                                      XSComplexTypeDefinition xsComplex,
                                                      boolean isArray, int level)
     {
@@ -278,14 +309,18 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
             {
                 baseType = baseType.getBaseType();
             }
+
+            if (!acceptFormat(name, accessPath))
+                return;
+            if (!accessPath.isEmpty())
+                accessPath = accessPath.removeLeft(1);
+
             Format format = parent.getChild(name);
             if (format == null)
             {
                 format = buildFormatFromXSSimpleType(parent, name, namespace, xsComplex,
                                                      (XSSimpleTypeDefinition) baseType,
                                                      isArray);
-                if (level > 0 && --level == 0)
-                    return;
             }
             buildFieldFromXSAttributeList(format, xsComplex);
         }
@@ -298,22 +333,38 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         {
             if (name != null)
             {
+                if (!acceptFormat(name, accessPath))
+                    return;
+                if (!accessPath.isEmpty())
+                    accessPath = accessPath.removeLeft(1);
+
                 Format format = parent.getChild(name);
                 if (format == null)
                 {
                     Form form = isArray ? Form.ARRAYOFSTRUCT : Form.STRUCT;
                     format = parent.addChild(name, form);
                     format.setProperty(TARGETNAMESPACE, namespace);
-                    if (level > 0 && --level == 0)
-                        return;
+
                 }
                 buildFieldFromXSAttributeList(format, xsComplex);
                 parent = format;
-
+                if (accessPath.isEmpty() && level > 0 && --level == 0)
+                    return;
             }
             XSParticle xsPartice = xsComplex.getParticle();
-            buildFromFromXSParticle(parent, xsPartice, level);
+            buildFromFromXSParticle(parent, xsPartice, accessPath, level);
         }
+    }
+
+    private static boolean acceptFormat(String name, Path accessPath)
+    {
+        if (!accessPath.isEmpty())
+        {
+            String pathToken = accessPath.left(1).toString();
+            if (name != null && !name.equals(pathToken))
+                return false;
+        }
+        return true;
     }
 
     private static Format buildFormatFromXSSimpleType(Format parent, String name, String namespace,
@@ -350,7 +401,8 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         return format;
     }
 
-    private static void buildFromFromXSParticle(Format parent, XSParticle xsParticle, int level)
+    private static void buildFromFromXSParticle(Format parent, XSParticle xsParticle,
+                                                Path accessPath, int level)
     {
         boolean isUnbounded = xsParticle.getMaxOccursUnbounded();
         int maxOccurs = xsParticle.getMaxOccurs();
@@ -359,7 +411,7 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         if (term instanceof XSElementDeclaration)
         {
             XSElementDeclaration xsElement = (XSElementDeclaration) term;
-            buildFromatFromElement(parent, xsElement, isArray, level);
+            buildFromatFromElement(parent, xsElement, accessPath, isArray, level);
         }
         else if (term instanceof XSModelGroup)
         {
@@ -369,7 +421,7 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
             for (Object xsObj : list)
             {
                 XSParticle xsPart = (XSParticle) xsObj;
-                buildFromFromXSParticle(parent, xsPart, level);
+                buildFromFromXSParticle(parent, xsPart, accessPath, level);
             }
         }
         else if (term instanceof XSWildcard)
@@ -461,9 +513,9 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         }
     }
 
-    private static Format buildServices(Definition definition, Param param)
+    private static Map<String, Format> buildServices(Definition definition, Usage param)
     {
-        Format services = new DataFormat(SOAPSERVICES, Form.STRUCT);
+        Map<String, Format> services = new HashMap<String, Format>();
         Collection<Service> wsServices = definition.getServices().values();
         for (Service service : wsServices)
         {
@@ -481,9 +533,10 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
                 for (BindingOperation bindingOperation : bindingOperations)
                 {
                     String name = bindingOperation.getName();
-                    if (services.getChild(name) != null)
+                    if (services.get(name) != null)
                         continue;
-                    Format portFmt = services.addChild(name, Form.STRUCT);
+                    Format portFmt = new DataFormat(name, Form.STRUCT);
+                    services.put(name, portFmt);
                     portFmt.setProperty(SOAPENDPOINT, endPoint);
                     String soapAction = getSOAPAction(bindingOperation);
                     if (soapAction != null)
@@ -492,13 +545,15 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
                     if (input != null)
                     {
                         String inputName = input.getName();
-                        portFmt.setProperty(BINDINGINPUT, inputName == null ? EMPTY_STRING : inputName);
+                        portFmt.setProperty(BINDINGINPUT,
+                                            inputName == null ? EMPTY_STRING : inputName);
                     }
                     BindingOutput output = bindingOperation.getBindingOutput();
                     if (output != null)
                     {
                         String outputName = output.getName();
-                        portFmt.setProperty(BINDINGOUTPUT, outputName == null ? EMPTY_STRING : outputName);
+                        portFmt.setProperty(BINDINGOUTPUT,
+                                            outputName == null ? EMPTY_STRING : outputName);
                     }
                     portFmt.setProperty(TARGETNAMESPACE, binding.getQName().getNamespaceURI());
                     buildMessages(portFmt, binding.getPortType(), param);
@@ -508,7 +563,7 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         return services;
     }
 
-    private static void buildMessages(Format port, PortType portType, Param param)
+    private static void buildMessages(Format port, PortType portType, Usage param)
     {
         if (portType != null)
         {
@@ -523,13 +578,13 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
             if (operation != null)
             {
                 Message message = null;
-                if (param == Param.IN || param == Param.BOTH)
+                if (param == Usage.CONSUME)
                 {
                     Input input = operation.getInput();
                     message = input.getMessage();
                     buildFormatFormMessage(message, port, SOAPMESSAGE_IN);
                 }
-                if (param == Param.OUT || param == Param.BOTH)
+                if (param == Usage.PRODUCE)
                 {
                     Output output = operation.getOutput();
                     message = output.getMessage();
