@@ -5,7 +5,7 @@ package com.lumens.connector.xml;
 
 import com.lumens.connector.Connector;
 import com.lumens.connector.Operation;
-import com.lumens.connector.Param;
+import com.lumens.connector.Usage;
 import com.lumens.model.Format;
 import java.util.Map;
 
@@ -28,13 +28,13 @@ public class XMLConnector implements Connector
     }
 
     @Override
-    public Format getFormatList(Param param)
+    public Map<String, Format> getFormatList(Usage param)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Format getFormat(Format format, Param param)
+    public Format getFormat(Format format, String path, Usage param)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }

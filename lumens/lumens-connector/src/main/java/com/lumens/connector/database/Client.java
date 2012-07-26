@@ -4,6 +4,7 @@
 package com.lumens.connector.database;
 
 import com.lumens.model.Format;
+import java.util.Map;
 
 /**
  *
@@ -15,7 +16,7 @@ public interface Client
 
     public void close();
 
-    public Format getFormats(boolean fullLoad);
+    public Map<String, Format> getFormatList(boolean fullLoad);
 
     public Format getFormat(Format format);
 }

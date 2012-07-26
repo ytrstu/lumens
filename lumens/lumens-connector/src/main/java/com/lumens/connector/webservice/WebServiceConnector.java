@@ -6,7 +6,7 @@ package com.lumens.connector.webservice;
 import com.lumens.connector.Connector;
 import com.lumens.connector.FormatBuilder;
 import com.lumens.connector.Operation;
-import com.lumens.connector.Param;
+import com.lumens.connector.Usage;
 import com.lumens.connector.webservice.soap.SOAPClient;
 import com.lumens.model.Format;
 import java.util.Map;
@@ -52,15 +52,15 @@ public class WebServiceConnector implements Connector
     }
 
     @Override
-    public Format getFormatList(Param param)
+    public Map<String, Format> getFormatList(Usage use)
     {
-        return formatBuilder.getFormatList(param);
+        return formatBuilder.getFormatList(use);
     }
 
     @Override
-    public Format getFormat(Format format, Param param)
+    public Format getFormat(Format format, String path, Usage use)
     {
-        return formatBuilder.getFormat(format, param);
+        return formatBuilder.getFormat(format, path, use);
     }
 
     @Override

@@ -5,6 +5,7 @@ package com.lumens.connector.database.client.sqlserver;
 
 import com.lumens.connector.database.client.AbstractClient;
 import com.lumens.model.Format;
+import java.util.Map;
 
 /**
  *
@@ -30,13 +31,13 @@ public class SQLServerClient extends AbstractClient implements SQLServerConstant
     }
 
     @Override
-    public Format getFormats(boolean fullLoad)
+    public Format getFormat(Format format)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Format getFormat(Format format)
+    public Map<String, Format> getFormatList(boolean fullLoad)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }

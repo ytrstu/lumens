@@ -8,9 +8,8 @@ package com.lumens.connector;
  *
  * @author shaofeng wang
  */
-public enum Param
+public enum Usage
 {
-    IN,
-    OUT,
-    BOTH
+    CONSUME,
+    PRODUCE
 }

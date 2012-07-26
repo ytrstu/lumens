@@ -4,6 +4,7 @@
 package com.lumens.connector;
 
 import com.lumens.model.Format;
+import java.util.Map;
 
 /**
  *
@@ -17,7 +18,7 @@ public interface Connector extends Configurable
 
     public Operation getOperation();
 
-    public Format getFormatList(Param param);
+    public Map<String, Format> getFormatList(Usage param);
 
-    public Format getFormat(Format format, Param param);
+    public Format getFormat(Format format, String path, Usage use);
 }
