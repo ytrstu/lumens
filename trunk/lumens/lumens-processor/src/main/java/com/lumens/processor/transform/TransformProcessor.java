@@ -126,7 +126,7 @@ public class TransformProcessor extends AbstractProcessor
         Path arrayIterationPath = new AccessPath(arrayIterationPathStr);
 
         if (elementSearchEntry != null && elementSearchEntry.getLevel() > 0)
-            arrayIterationPath.removeLeft(elementSearchEntry.getLevel());
+            arrayIterationPath = arrayIterationPath.removeLeft(elementSearchEntry.getLevel());
 
         return getAllElementsFromEntry(elementSearchEntry, arrayIterationPath);
     }
