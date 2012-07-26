@@ -4,27 +4,14 @@
 package com.lumens.processor.transform;
 
 import com.lumens.model.Element;
+import com.lumens.processor.ProcessorUtils;
 
 /**
  *
  * @author shaofeng wang
  */
-public class TransformUtils
+public class TransformUtils extends ProcessorUtils
 {
-    public static boolean isPathFormat(String input)
-    {
-        if (input != null && !input.isEmpty() && input.charAt(0) == '@')
-            return true;
-        return false;
-    }
-
-    public static String getAccessPath(String input)
-    {
-        if (isPathFormat(input))
-            return input.substring(1);
-        return null;
-    }
-
     public static boolean checkTransformParameters(Object... args)
     {
         if (args == null || args.length < 1)
