@@ -5,6 +5,7 @@
 package com.lumens.connector;
 
 import com.lumens.model.Element;
+import com.lumens.model.Format;
 import java.util.List;
 
 /**
@@ -13,5 +14,5 @@ import java.util.List;
  */
 public interface Operation
 {
-    public List<Element> execute(Object... args) throws Exception;
+    public List<Element> execute(Element input, Format resultFormat) throws Exception;
 }

@@ -25,13 +25,9 @@ public class WebServiceOperation implements Operation
     }
 
     @Override
-    public List<Element> execute(Object... args) throws Exception
+    public List<Element> execute(Element input, Format resultFormat) throws Exception
     {
-        if (args == null || args.length != 2)
-            throw new IllegalArgumentException("Argument can't be null or its length must be 2");
-        if (!(args[0] instanceof Element) || !(args[1] instanceof Format))
-            throw new IllegalArgumentException("Argument type are not support, it must be 'Element' and 'Format'");
-        Element response = client.execute((Element) args[0], (Format) args[1]);
+        Element response = client.execute(input, resultFormat);
         List<Element> result = new ArrayList<Element>();
         result.add(response);
         return result;

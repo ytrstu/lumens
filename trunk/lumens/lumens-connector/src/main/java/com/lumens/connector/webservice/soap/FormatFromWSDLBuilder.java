@@ -46,6 +46,9 @@ import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.xerces.impl.xs.XMLSchemaLoader;
 import org.apache.xerces.xni.XMLResourceIdentifier;
 import org.apache.xerces.xni.XNIException;
@@ -136,18 +139,7 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
     @Override
     public Map<String, Format> getFormatList(Usage param)
     {
-        if (param == Usage.CONSUME)
-        {
-            if (consumeServices == null)
-                consumeServices = buildServices(definition, param);
-            return consumeServices;
-        }
-        else
-        {
-            if (produceServices == null)
-                produceServices = buildServices(definition, param);
-            return produceServices;
-        }
+        return buildServices(definition, param);
     }
 
     @Override
@@ -155,15 +147,13 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
     {
         int soapMessageType = SOAPMESSAGE_IN;
         if (use == Usage.PRODUCE)
-        {
             soapMessageType = SOAPMESSAGE_OUT;
-        }
         Path accessPath = new AccessPath(path);
-        int count = accessPath.tokenCount() == 0 ? 1 : accessPath.tokenCount();
-        while (count >= 0)
-        {
-            getFormatForMessage(format, accessPath.removeRight(--count), soapMessageType);
-        }
+        int count = accessPath.tokenCount();
+        Format child = format.getChildByPath(accessPath);
+        if (child == null || path.endsWith(child.getName()))
+            while (count >= 0)
+                getFormatForMessage(format, accessPath.removeRight(--count), soapMessageType);
         return format;
     }
 
@@ -497,17 +487,16 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         {
             XSAttributeUse attrUse = (XSAttributeUse) o;
             XSAttributeDeclaration attrDecl = attrUse.getAttrDeclaration();
-            String namespace = attrDecl.getNamespace();
             String attrName = attrDecl.getName();
-            String typeName = attrUse.getAttrDeclaration().getTypeDefinition().getName();
             if (format.getChild(attrName) == null)
             {
+                String typeName = attrUse.getAttrDeclaration().getTypeDefinition().getName();
                 Type type = buildinTypes.get(typeName);
                 if (type != null)
                 {
                     Format attr = format.addChild(attrName, Form.FIELD, type);
                     attr.setProperty(SOAPATTRIBUTE, true);
-                    attr.setProperty(TARGETNAMESPACE, namespace);
+                    attr.setProperty(TARGETNAMESPACE, attrDecl.getNamespace());
                 }
             }
         }
@@ -599,6 +588,7 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         Collection<Part> parts = message.getParts().values();
         for (Part part : parts)
         {
+            // TODO does not handle http call here, the qname is null for http call
             QName qName = part.getElementName();
             Format msgFmt = port.addChild(qName.getLocalPart(), Form.STRUCT);
             msgFmt.setProperty(TARGETNAMESPACE, qName.getNamespaceURI());

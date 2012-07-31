@@ -4,7 +4,6 @@
 package com.lumens.connector.webservice.soap;
 
 import com.lumens.connector.FormatBuilder;
-import com.lumens.connector.Usage;
 import com.lumens.connector.webservice.WebServiceConnector;
 import com.lumens.model.Element;
 import com.lumens.model.Format;
@@ -44,8 +43,8 @@ public class SOAPClient implements SOAPConstants
 
     public void open()
     {
+        // TODO need to handle SSL
         formatBuilder = new FormatFromWSDLBuilder(connector.getWsdlURL());
-        formatBuilder.loadWSDL();
         soapBuilder = new SOAPMessageBuilder();
         elementBuilder = new ElementFromSOAPBuilder();
         try
@@ -79,7 +78,14 @@ public class SOAPClient implements SOAPConstants
                         pp.setPassWord(connector.getProxyPassword());
                 }
                 options.setProperty(HTTPConstants.PROXY, pp);
+                System.setProperty("http.useProxy", Boolean.toString(true));
+                System.setProperty("http.proxyHost", pp.getProxyHostName());
+                System.setProperty("http.proxyPort", Integer.toString(pp.getProxyPort()));
             }
+            else
+                System.setProperty("http.useProxy", Boolean.toString(false));
+
+            formatBuilder.loadWSDL();
         }
         catch (AxisFault ex)
         {
@@ -134,6 +140,8 @@ public class SOAPClient implements SOAPConstants
         MessageContext responseMsgCtx = opClient.getMessageContext(
                 WSDLConstants.MESSAGE_LABEL_IN_VALUE);
         SOAPEnvelope responseEnvelope = responseMsgCtx.getEnvelope();
-        return elementBuilder.buildElement(responseFormat, responseEnvelope);
+        if (responseFormat != null)
+            return elementBuilder.buildElement(responseFormat, responseEnvelope);
+        return null;
     }
 }
