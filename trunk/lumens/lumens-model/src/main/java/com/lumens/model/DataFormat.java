@@ -46,6 +46,28 @@ public class DataFormat implements Format
     }
 
     @Override
+    public Format clone()
+    {
+        DataFormat cloned = new DataFormat(getName(), getForm(), getType());
+        if (properties != null)
+            cloned.properties = new HashMap<String, Object>(properties);
+        return cloned;
+    }
+
+    @Override
+    public Format deepClone()
+    {
+        Format cloned = clone();
+        if (childrenList != null)
+        {
+            for (Format child : childrenList)
+                cloned.addChild(child.deepClone());
+        }
+
+        return cloned;
+    }
+
+    @Override
     public Type getType()
     {
         return type;
@@ -145,6 +167,9 @@ public class DataFormat implements Format
     @Override
     public Format getChildByPath(Path path)
     {
+        if (path == null || path.isEmpty())
+            return null;
+
         Iterator<PathToken> it = path.iterator();
         Format format = this;
         while (format != null && it.hasNext())

@@ -80,4 +80,8 @@ public interface Format
     public boolean isArrayOfField();
 
     public boolean isArrayOfStruct();
+
+    public Format clone();
+
+    public Format deepClone();
 }
