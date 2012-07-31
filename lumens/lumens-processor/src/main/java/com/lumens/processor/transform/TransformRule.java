@@ -7,13 +7,14 @@ import com.lumens.model.AccessPath;
 import com.lumens.model.Format;
 import com.lumens.model.Path;
 import com.lumens.model.PathToken;
+import com.lumens.processor.Rule;
 import java.util.Iterator;
 
 /**
  *
  * @author shaofeng wang
  */
-public class TransformRule
+public class TransformRule implements Rule
 {
     private Format dstFmt;
     private TransformRuleItem root;

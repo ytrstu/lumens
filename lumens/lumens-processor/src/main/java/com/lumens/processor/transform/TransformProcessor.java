@@ -10,6 +10,7 @@ import com.lumens.model.Path;
 import com.lumens.model.PathToken;
 import com.lumens.model.Type;
 import com.lumens.processor.AbstractProcessor;
+import com.lumens.processor.Rule;
 import com.lumens.processor.Script;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -24,14 +25,14 @@ public class TransformProcessor extends AbstractProcessor
 {
     // private boolean ignoreNull = Boolean.getBoolean("transform.ignore.null");
     @Override
-    public Object execute(Object... args)
+    public Object execute(Rule rule, Element element)
     {
-        if (TransformUtils.checkTransformParameters(args))
+        if (rule instanceof TransformRule)
         {
-            TransformRule rule = (TransformRule) args[0];
-            Element inputElement = args.length < 2 ? null : (Element) args[1];
+            TransformRule transformRule = (TransformRule) rule;
+            Element inputElement = element;
             List<Element> results = new ArrayList<Element>();
-            TransformRuleItem ruleItem = rule.getRuleEntry();
+            TransformRuleItem ruleItem = transformRule.getRuleEntry();
             String arrayIterationPath = ruleItem.getArrayIterationPath();
             List<Element> items;
             if (arrayIterationPath != null)

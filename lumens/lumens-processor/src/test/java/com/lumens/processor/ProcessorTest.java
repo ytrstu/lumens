@@ -116,7 +116,9 @@ public class ProcessorTest
         // a.@b.c.@d.e.f --> a1.@a2.a3.@a4.a5 (@b-@a4) (wrong logic, what will happen ?)
         // a.@b.c.@d.e.f --> a1.@a2.a3.@a4.a5 (none)
         Format a = new DataFormat("a", Form.STRUCT);
-        a.addChild("b", Form.ARRAYOFSTRUCT).addChild("c", Form.STRUCT).addChild("d", Form.ARRAYOFSTRUCT).addChild(
+        a.addChild("b", Form.ARRAYOFSTRUCT).addChild("c", Form.STRUCT).addChild("d",
+                                                                                Form.ARRAYOFSTRUCT).
+                addChild(
                 "e", Form.STRUCT).addChild("f", Form.FIELD, Type.STRING);
         Format a1 = new DataFormat("a1", Form.STRUCT);
         Format a3 = a1.addChild("a2", Form.ARRAYOFSTRUCT).addChild("a3", Form.STRUCT);
