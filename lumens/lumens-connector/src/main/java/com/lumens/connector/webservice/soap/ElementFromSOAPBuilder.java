@@ -51,8 +51,7 @@ public class ElementFromSOAPBuilder implements SOAPConstants
 
     private void buildElementFromOMElement(Element element, OMElement omElem)
     {
-        Format format = element.getFormat();
-        List<Format> children = format.getChildren();
+        List<Format> children = element.getFormat().getChildren();
         if (children != null)
         {
             for (Format child : children)
