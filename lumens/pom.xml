@@ -7,12 +7,12 @@
   <packaging>pom</packaging>
   <name>lumens</name>
       <modules>
-        <module>lumens-model</module>        
+        <module>lumens-model</module>
         <module>lumens-processor</module>
         <module>lumens-connector</module>
         <module>lumens-engine</module>
         <module>lumens-server</module>
-        <module>lumens-editor</module>
+        <module>lumens-client</module>
       </modules>
     <url>http://maven.apache.org</url>
      <build>
