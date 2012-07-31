@@ -65,22 +65,22 @@ public class WebClientEntryView extends VLayout implements ClickHandler
 
     private void buildToolBar()
     {
-        toolbar = new ToolStrip();
+        toolbar = new ToolStrip();toolbar.setWidth100();
+        toolbar.setHeight(32);
+        addMember(toolbar);
         buttonManagement = new ToolStripButton();
         buttonManagement.setActionType(SelectionType.RADIO);
         buttonManagement.setRadioGroup("Console");
         buttonManagement.setTitle("Management");
         buttonManagement.addClickHandler(this);
         toolbar.addButton(buttonManagement);
+        toolbar.addSpacer(5);
         buttonDataTransformationDesigner = new ToolStripButton();
-        buttonDataTransformationDesigner.setTitle("Transform Designer");
         buttonDataTransformationDesigner.setActionType(SelectionType.RADIO);
         buttonDataTransformationDesigner.setRadioGroup("Console");
+        buttonDataTransformationDesigner.setTitle("Transform Designer");
         buttonDataTransformationDesigner.addClickHandler(this);
         toolbar.addButton(buttonDataTransformationDesigner);
-        toolbar.setWidth100();
-        toolbar.setHeight(40);
-        addMember(toolbar);
     }
 
     @Override
@@ -120,8 +120,5 @@ public class WebClientEntryView extends VLayout implements ClickHandler
     {
         dataTransformationBuilderView = DataTransformationBuilderView.build();
         dataTransformationBuilderView.setLayoutContainer(this);
-        //dataTransformationBuilderView.setActive(true);
-        //buttonDataTransformationDesigner.setSelected(true);
-        //currentView = dataTransformationBuilderView;
     }
 }

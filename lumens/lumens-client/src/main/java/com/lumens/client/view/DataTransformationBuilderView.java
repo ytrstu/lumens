@@ -27,7 +27,7 @@ public class DataTransformationBuilderView extends HLayout implements WebClientV
     private VLayout dtBuilderLayout;
     private boolean active;
     private Layout layoutContainer;
-    private DataTransformationBuilderPane DataTransformationBuilderPane;
+    private DataTransformationBuilderPane dataTransformationBuilderPane;
 
     private DataTransformationBuilderView()
     {
@@ -80,7 +80,7 @@ public class DataTransformationBuilderView extends HLayout implements WebClientV
         this.active = active;
         if (active && !layoutContainer.hasMember(this))
         {
-            DataTransformationBuilderPane.buildDrawItems();
+            dataTransformationBuilderPane.buildDrawItems();
             layoutContainer.addMember(this);
         }
         else if (!active && layoutContainer.hasMember(this))
@@ -134,31 +134,30 @@ public class DataTransformationBuilderView extends HLayout implements WebClientV
         TransformationElement worker2 = buildMockConnector("transform.png", "Transform");
         worker2.setLeft(300);
         worker2.setTop(200);
-        DataTransformationBuilderPane.addElement(worker1);
-        DataTransformationBuilderPane.addElement(worker2);
-
+        dataTransformationBuilderPane.addElement(worker1);
+        dataTransformationBuilderPane.addElement(worker2);
         ElementLink link = buildLink();
         link.set(worker1, worker2);
-        DataTransformationBuilderPane.addElement(link);
+        dataTransformationBuilderPane.addElement(link);
 
-        /*TransformationElement worker3 = buildMockConnector("http.png", "WebService");
+        TransformationElement worker3 = buildMockConnector("http.png", "WebService");
          worker3.setLeft(500);
          worker3.setTop(300);
          ElementLink link2 = buildLink();
          link2.set(worker2, worker3);
-         DataTransformationBuilderPane.addElement(worker3);
-         DataTransformationBuilderPane.addElement(link2);*/
+         dataTransformationBuilderPane.addElement(worker3);
+         dataTransformationBuilderPane.addElement(link2);
     }
 
     private DataTransformationBuilderPane buildScenarioBuilerPane()
     {
-        DataTransformationBuilderPane = new DataTransformationBuilderPane();
-        DataTransformationBuilderPane.setHeight100();
-        DataTransformationBuilderPane.setWidth100();
-        DataTransformationBuilderPane.setBackgroundColor(ViewConstants.BACKGROUD_COLOR);
-        DataTransformationBuilderPane.setOverflow(Overflow.HIDDEN);
-        DataTransformationBuilderPane.setCursor(Cursor.AUTO);
-        return DataTransformationBuilderPane;
+        dataTransformationBuilderPane = new DataTransformationBuilderPane();
+        dataTransformationBuilderPane.setHeight100();
+        dataTransformationBuilderPane.setWidth100();
+        dataTransformationBuilderPane.setBackgroundColor(ViewConstants.BACKGROUD_COLOR);
+        dataTransformationBuilderPane.setOverflow(Overflow.HIDDEN);
+        dataTransformationBuilderPane.setCursor(Cursor.AUTO);
+        return dataTransformationBuilderPane;
     }
 
     private ElementLink buildLink()
