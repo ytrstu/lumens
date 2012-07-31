@@ -51,6 +51,9 @@ public class DataTransformationBuilderPane extends Canvas
         for (TransformationElement e : workers)
             drawPane.addChild((Canvas) e);
         for (ElementLink e : links)
+        {
             drawPane.addDrawItem((DrawPath) e, true);
+            drawPane.addDrawItem(e.getAnchorPoint(), true);
+        }
     }
 }

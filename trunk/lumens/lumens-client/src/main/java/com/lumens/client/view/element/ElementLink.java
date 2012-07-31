@@ -4,8 +4,9 @@
  */
 package com.lumens.client.view.element;
 
-import com.lumens.client.WebClientEntryPoint;
+import com.smartgwt.client.widgets.drawing.DrawItem;
 import com.smartgwt.client.widgets.drawing.DrawPath;
+import com.smartgwt.client.widgets.drawing.DrawRect;
 import com.smartgwt.client.widgets.drawing.Point;
 
 /**
@@ -16,12 +17,24 @@ public class ElementLink extends DrawPath
 {
     private TransformationElement outElement;
     private TransformationElement inElement;
-    private static int deltaLength = 12;
-    private static int deltaOffset = 2;
+    private DrawRect anchorPoint;
+    private final static int anchorSize = 8;
+    private final static int deltaLength = 12;
+    private final static int deltaOffset = 2;
 
     public ElementLink()
     {
         this.setLineWidth(2);
+        anchorPoint = new DrawRect();
+        anchorPoint.setWidth(anchorSize);
+        anchorPoint.setHeight(anchorSize);
+        anchorPoint.setFillColor("#FF9900");
+        anchorPoint.setLineWidth(1);
+    }
+
+    public DrawItem getAnchorPoint()
+    {
+        return anchorPoint;
     }
 
     public void set(TransformationElement in, TransformationElement out)
@@ -35,7 +48,9 @@ public class ElementLink extends DrawPath
 
     public void updatePosition()
     {
-        setPoints(buildLinkPath());
+        Point[] points = buildLinkPath();
+        setPoints(points);
+        anchorPoint.setCenter(points[0].getX(), points[0].getY());
     }
 
     public TransformationElement getIn()
@@ -67,10 +82,6 @@ public class ElementLink extends DrawPath
         }
         points[i] = pathPoints[pathPoints.length - 1];
 
-        String pointvalue = "";
-        for (i = 0; i < points.length; ++i)
-            pointvalue += "x=" + points[i].getX() + "," + "y=" + points[i].getY() + ";";
-        WebClientEntryPoint.window.setTitle(pointvalue);
         return points;
     }
 

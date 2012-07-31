@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>com.smartgwt</groupId>
 			<artifactId>smartgwt</artifactId>
-			<version>3.0</version>
+			<version>3.1d</version>
 		</dependency>
 	</dependencies>
 	<description>Lumens Web Client</description>
