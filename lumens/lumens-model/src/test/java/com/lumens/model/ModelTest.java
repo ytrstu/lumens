@@ -82,6 +82,22 @@ public class ModelTest
                 getFloat());
     }
 
+    public void testClone()
+    {
+        // Create format
+        Format root = new DataFormat("root");
+        Format person = root.addChild("Person", Form.STRUCT);
+        person.addChild("name", Form.FIELD, Type.STRING);
+        Format asset = person.addChild("asset", Form.ARRAYOFSTRUCT);
+        asset.addChild("name", Form.FIELD, Type.STRING);
+        asset.addChild("price", Form.FIELD, Type.FLOAT);
+        asset.addChild("vendor", Form.STRUCT).addChild("name", Form.FIELD, Type.STRING);
+
+        Format clonedRoot = root.deepClone();
+        assertEquals("name", clonedRoot.getChildByPath("Person.name").getName());
+        assertEquals("name", clonedRoot.getChildByPath("Person.asset.vendor.name").getName());
+    }
+
     public void testElementPath()
     {
         Path path = new AccessPath("asset.vendor.name");
