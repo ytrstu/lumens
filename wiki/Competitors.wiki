@@ -13,6 +13,12 @@
  # Etl-tools
  # 灵蜂纵横
  # http://www.apatarforge.org
+ # WebMethods
+ # seeByond
+ # TongIntegrator
+ # tibico
+ # Vitria
+ # 东方通科技的TongIntegrator、TongIntegrator-ESB、TongWorkflow
 
 *Target*
  # Lightweight
