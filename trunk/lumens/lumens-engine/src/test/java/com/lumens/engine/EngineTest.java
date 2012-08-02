@@ -20,6 +20,7 @@ import junit.framework.TestCase;
  */
 public class EngineTest extends TestCase
 {
+
     private static int counter = 0;
 
     public EngineTest(String testName)
