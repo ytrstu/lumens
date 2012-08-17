@@ -44,9 +44,38 @@ public class Transformation implements Component
     public List<ExecuteContext> execute(ExecuteContext context)
     {
         List<ExecuteContext> execList = new ArrayList<ExecuteContext>();
-        TransformRule rule = rules.get(context.getResultFormatName());
-        Object result = processor.execute(rule, (Element) context.getInput());
-        execList.add(new ExecuteContextImpl(to, result, context.getResultFormatName()));
+        List<Element> results = new ArrayList<Element>();
+        String target = context.getTarget();
+        TransformRule rule = rules.get(target);
+        target = rule.getName();
+        Object input = context.getInput();
+        if (to.accept(target))
+        {
+            if (input instanceof List)
+            {
+                List list = (List) input;
+                if (!list.isEmpty() && list.get(0) instanceof Element)
+                {
+                    List<Element> inputs = (List<Element>) input;
+                    for (Element data : inputs)
+                    {
+                        List<Element> result = (List<Element>) processor.execute(rule, data);
+                        if (!result.isEmpty())
+                            results.addAll(result);
+                    }
+                }
+            }
+            else if (input instanceof Element || input == null)
+            {
+                Element data = input == null ? null : (Element) input;
+                List<Element> result = (List<Element>) processor.execute(rule, data);
+                if (!result.isEmpty())
+                    results.addAll(result);
+            }
+
+            if (!results.isEmpty())
+                execList.add(new ExecuteContextImpl(to, results, target));
+        }
         return execList;
     }
 
@@ -72,5 +101,11 @@ public class Transformation implements Component
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    @Override
+    public boolean accept(String name)
+    {
+        return rules.containsKey(name);
     }
 }

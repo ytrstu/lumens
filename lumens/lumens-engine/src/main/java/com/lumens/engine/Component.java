@@ -20,6 +20,8 @@ public interface Component
 
     public List<ExecuteContext> execute(ExecuteContext context);
 
+    public boolean accept(String name);
+
     public String getName();
 
     public void setName(String name);

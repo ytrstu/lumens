@@ -61,7 +61,8 @@ public class DataSource implements Component
         try
         {
             Operation operation = connector.getOperation();
-            Format resultFormat = produceFormats.get(context.getResultFormatName());
+            String target = context.getTarget();
+            Format targetFormat = produceFormats.get(target);
             List<Element> result = new ArrayList<Element>();
             Object input = context.getInput();
             if (input instanceof List)
@@ -71,18 +72,18 @@ public class DataSource implements Component
                 {
                     List<Element> inputDataList = (List<Element>) list;
                     for (Element data : inputDataList)
-                        result.addAll(operation.execute(data, resultFormat));
+                        result.addAll(operation.execute(data, targetFormat));
                 }
             }
             else if (input instanceof Element)
-                result.addAll(operation.execute((Element) input, resultFormat));
+                result.addAll(operation.execute((Element) input, targetFormat));
             // TODO need to check which target need this result
             List<ExecuteContext> execList = new ArrayList<ExecuteContext>();
             if (!result.isEmpty())
             {
                 for (Component comp : toList.values())
-                    execList.add(new ExecuteContextImpl(comp, result, context.
-                            getResultFormatName()));
+                    if (comp.accept(target))
+                        execList.add(new ExecuteContextImpl(comp, result, target));
             }
             return execList;
         }
@@ -141,5 +142,11 @@ public class DataSource implements Component
     void registerProduceFormat(String produceName, Format format)
     {
         produceFormats.put(produceName, format);
+    }
+
+    @Override
+    public boolean accept(String name)
+    {
+        return consumeFormats.containsKey(name);
     }
 }

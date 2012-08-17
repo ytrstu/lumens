@@ -48,4 +48,10 @@ public class Router implements Component
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public boolean accept(String name)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
