@@ -34,7 +34,7 @@ public class ExecuteContextImpl implements ExecuteContext
     }
 
     @Override
-    public String getResultFormatName()
+    public String getTarget()
     {
         return resultFormatName;
     }

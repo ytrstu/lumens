@@ -10,7 +10,7 @@ package com.lumens.engine;
  */
 public interface ExecuteContext
 {
-    public String getResultFormatName();
+    public String getTarget();
 
     public Object getInput();
 
