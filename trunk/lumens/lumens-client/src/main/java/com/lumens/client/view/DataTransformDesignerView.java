@@ -3,54 +3,69 @@
  */
 package com.lumens.client.view;
 
-import com.lumens.client.view.element.ElementLink;
-import com.lumens.client.view.element.TransformationElement;
+import com.lumens.client.view.transformdesign.DataSourceServiceClickHandler;
+import com.lumens.client.view.transformdesign.DataTransformDesignerPane;
+import com.lumens.client.view.transformdesign.ElementLink;
+import com.lumens.client.view.transformdesign.TransformationElement;
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.VisibilityMode;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.SectionStack;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
 import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.layout.events.OnSectionHeaderClickHandler;
 import com.smartgwt.client.widgets.menu.Menu;
 import com.smartgwt.client.widgets.menu.MenuItem;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripMenuButton;
+import com.smartgwt.client.widgets.tree.TreeGrid;
 
-public class DataTransformationBuilderView extends HLayout implements WebClientView
+public class DataTransformDesignerView extends HLayout implements
+        ActiveView, ViewConstants
 {
     private SectionStack sectionStack;
     private ToolStrip toolBar;
     private VLayout dtBuilderLayout;
     private boolean active;
     private Layout layoutContainer;
-    private DataTransformationBuilderPane dataTransformationBuilderPane;
+    private DataTransformDesignerPane dataTransformationBuilderPane;
 
-    private DataTransformationBuilderView()
+    private DataTransformDesignerView()
     {
         super();
     }
 
-    public static DataTransformationBuilderView build()
+    public static DataTransformDesignerView build()
     {
-        DataTransformationBuilderView view = new DataTransformationBuilderView();
+        DataTransformDesignerView view = new DataTransformDesignerView();
         view.setWidth100();
         view.setHeight100();
 
         // Build connector navigation
         view.sectionStack = new SectionStack();
         view.sectionStack.setVisibilityMode(VisibilityMode.MULTIPLE);
+        view.sectionStack.setOverflow(Overflow.HIDDEN);
         view.sectionStack.setHeight100();
         view.sectionStack.setWidth(260);
+        OnSectionHeaderClickHandler click = new DataSourceServiceClickHandler(
+                view.sectionStack);
+        view.sectionStack.addOnSectionHeaderClickHandler(click);
 
-        SectionStackSection cntrsSection = new SectionStackSection("Connectors");
-        view.sectionStack.addSection(cntrsSection);
-        SectionStackSection controlSection = new SectionStackSection("Processors");
-        view.sectionStack.addSection(controlSection);
+        SectionStackSection dataSourceSection = new SectionStackSection(messages.datasource_section());
+        dataSourceSection.setID(DATASOURCE_SECTION_ID);
+        dataSourceSection.setShowHeader(true);
+        view.sectionStack.addSection(dataSourceSection);
+        dataSourceSection.addItem(initDataSourceCatalog("datasource/"));
+
+        SectionStackSection processorSection = new SectionStackSection(
+                messages.processor_section());
+        processorSection.setID(PROCESSOR_SECTION_ID);
+        view.sectionStack.addSection(processorSection);
         view.sectionStack.setShowResizeBar(true);
+        processorSection.addItem(initDataSourceCatalog("processor/"));
 
         // Build layout for toolbar and scenario area
         view.dtBuilderLayout = new VLayout();
@@ -60,7 +75,7 @@ public class DataTransformationBuilderView extends HLayout implements WebClientV
 
         // Build toolbar
         view.buildToolBar();
-        view.buildScenario();
+        view.buildTransformWork();
         // Add to parent panel
         view.addMember(view.sectionStack);
         view.addMember(view.dtBuilderLayout);
@@ -82,8 +97,7 @@ public class DataTransformationBuilderView extends HLayout implements WebClientV
         {
             dataTransformationBuilderPane.buildDrawItems();
             layoutContainer.addMember(this);
-        }
-        else if (!active && layoutContainer.hasMember(this))
+        } else if (!active && layoutContainer.hasMember(this))
         {
             layoutContainer.removeMember(this);
         }
@@ -124,14 +138,16 @@ public class DataTransformationBuilderView extends HLayout implements WebClientV
         dtBuilderLayout.addMember(toolBar);
     }
 
-    private void buildScenario()
+    private void buildTransformWork()
     {
         dtBuilderLayout.addMember(buildScenarioBuilerPane());
         // Build workers
-        TransformationElement worker1 = buildMockConnector("xml-file.png", "XML File");
+        TransformationElement worker1 = buildMockConnector("datasource/32/database.png",
+                                                           "Database");
         worker1.setLeft(100);
         worker1.setTop(100);
-        TransformationElement worker2 = buildMockConnector("transform.png", "Transform");
+        TransformationElement worker2 = buildMockConnector("processor/32/transform.png",
+                                                           "Transform");
         worker2.setLeft(300);
         worker2.setTop(200);
         dataTransformationBuilderPane.addElement(worker1);
@@ -140,21 +156,23 @@ public class DataTransformationBuilderView extends HLayout implements WebClientV
         link.set(worker1, worker2);
         dataTransformationBuilderPane.addElement(link);
 
-        TransformationElement worker3 = buildMockConnector("http.png", "WebService");
-         worker3.setLeft(500);
-         worker3.setTop(300);
-         ElementLink link2 = buildLink();
-         link2.set(worker2, worker3);
-         dataTransformationBuilderPane.addElement(worker3);
-         dataTransformationBuilderPane.addElement(link2);
+        TransformationElement worker3 = buildMockConnector("datasource/32/soap.png",
+                                                           "WebService");
+        worker3.setLeft(500);
+        worker3.setTop(300);
+        ElementLink link2 = buildLink();
+        link2.set(worker2, worker3);
+        dataTransformationBuilderPane.addElement(worker3);
+        dataTransformationBuilderPane.addElement(link2);
     }
 
-    private DataTransformationBuilderPane buildScenarioBuilerPane()
+    private DataTransformDesignerPane buildScenarioBuilerPane()
     {
-        dataTransformationBuilderPane = new DataTransformationBuilderPane();
+        dataTransformationBuilderPane = new DataTransformDesignerPane();
         dataTransformationBuilderPane.setHeight100();
         dataTransformationBuilderPane.setWidth100();
-        dataTransformationBuilderPane.setBackgroundColor(ViewConstants.BACKGROUD_COLOR);
+        dataTransformationBuilderPane.setBackgroundColor(
+                ViewConstants.BACKGROUD_COLOR);
         dataTransformationBuilderPane.setOverflow(Overflow.HIDDEN);
         dataTransformationBuilderPane.setCursor(Cursor.AUTO);
         return dataTransformationBuilderPane;
@@ -170,5 +188,22 @@ public class DataTransformationBuilderView extends HLayout implements WebClientV
         TransformationElement e = new TransformationElement(ico);
         e.setLabel(label);
         return e;
+    }
+
+    private static Canvas initDataSourceCatalog(String iconFolder)
+    {
+        TreeGrid treeGrid = new TreeGrid();
+        treeGrid.setWidth100();
+        treeGrid.setHeight100();
+        treeGrid.setShowHeader(false);
+        treeGrid.setShowResizeBar(false);
+        treeGrid.setAppImgDir(iconFolder);
+        treeGrid.setCanReorderRecords(true);
+        treeGrid.setCanAcceptDroppedRecords(false);
+        treeGrid.setShowOpenIcons(false);
+        treeGrid.setOpenIconSuffix("");
+        treeGrid.setDropIconSuffix("");
+        treeGrid.setClosedIconSuffix("");
+        return treeGrid;
     }
 }
