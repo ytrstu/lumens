@@ -8,6 +8,7 @@
  */
 package com.lumens.client.view;
 
+import com.lumens.client.view.transformmanage.AgentManagePane;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
@@ -16,21 +17,21 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
  *
  * @author washaofe
  */
-public class WebClientManagementView extends VLayout implements WebClientView
+public class DataTransformManageView extends VLayout implements ActiveView
 {
     private ToolStrip statBar;
     private AgentManagePane agentManagePane;
     private boolean active;
     private Layout layoutContainer;
 
-    private WebClientManagementView()
+    private DataTransformManageView()
     {
         super();
     }
 
-    public static WebClientManagementView build()
+    public static DataTransformManageView build()
     {
-        WebClientManagementView view = new WebClientManagementView();
+        DataTransformManageView view = new DataTransformManageView();
         view.setWidth100();
         view.setHeight100();
         view.setBackgroundColor(ViewConstants.BACKGROUD_COLOR);
