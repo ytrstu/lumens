@@ -7,7 +7,7 @@ package com.lumens.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.lumens.client.view.WebClientEntryView;
+import com.lumens.client.view.WebClientView;
 
 /**
  * Main entry point.
@@ -29,6 +29,6 @@ public class WebClientEntryPoint implements EntryPoint
     {
         Window.enableScrolling(false);
         Window.setMargin("0px");
-        RootPanel.get().add(WebClientEntryView.build());
+        RootPanel.get().add(WebClientView.build());
     }
 }
