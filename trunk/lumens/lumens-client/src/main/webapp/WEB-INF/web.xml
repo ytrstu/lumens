@@ -3,8 +3,17 @@
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-	<display-name>Lumens Web Client</display-name>
-	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-	</welcome-file-list>
+    <display-name>Lumens Web Client</display-name>
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+    <servlet> 
+        <servlet-name>LumensServiceImpl</servlet-name> 
+        <servlet-class>com.lumens.service.LumensServiceImpl</servlet-class>
+        <load-on-startup>0</load-on-startup> 
+    </servlet> 
+    <servlet-mapping> 
+        <servlet-name>LumensServiceImpl</servlet-name> 
+        <url-pattern>/lumens/datasource</url-pattern> 
+    </servlet-mapping>
 </web-app>
