@@ -1,32 +1,36 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package com.lumens.service;
+package com.lumens.client.service;
 
 import com.lumens.client.rpc.beans.ComponentRegistry;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
- * @author washaofe
+ * @author shaofeng wang
  */
 public class ComponentRegistryManager
 {
     private Map<String, ComponentRegistry> datasourceCatalog = new HashMap<String, ComponentRegistry>();
     private Map<String, ComponentRegistry> processorCatalog = new HashMap<String, ComponentRegistry>();
 
-    public void registerDataSource(String id,
-                                   ComponentRegistry connectorRegistry)
+    public void registerDataSource(ComponentRegistry connectorRegistry)
     {
-        datasourceCatalog.put(id, connectorRegistry);
+        datasourceCatalog.put(connectorRegistry.getID(), connectorRegistry);
     }
 
-    public void registerProcessor(String id, ComponentRegistry connectorRegistry)
+    public void registerProcessor(ComponentRegistry connectorRegistry)
     {
-        processorCatalog.put(id, connectorRegistry);
+        processorCatalog.put(connectorRegistry.getID(), connectorRegistry);
+    }
+
+    public int getDataSourceCount()
+    {
+        return datasourceCatalog.size();
+    }
+
+    public int getProcessorCount()
+    {
+        return processorCatalog.size();
     }
 
     public ComponentRegistry[] getDataSourceList()

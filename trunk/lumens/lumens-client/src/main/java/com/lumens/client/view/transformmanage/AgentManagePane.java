@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates and open the template in
- * the editor.
- */
 package com.lumens.client.view.transformmanage;
 
 import com.lumens.client.demo.DataLoader;
@@ -35,7 +31,7 @@ import com.smartgwt.client.widgets.tree.TreeGridField;
 
 /**
  *
- * @author washaofe
+ * @author shaofeng wang
  */
 public class AgentManagePane extends SectionStack implements
         RecordDoubleClickHandler, HoverCustomizer

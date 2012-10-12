@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.lumens.client.rpc;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -9,7 +5,7 @@ import com.lumens.client.rpc.beans.ComponentRegistry;
 
 /**
  *
- * @author washaofe
+ * @author shaofeng wang
  */
 public interface DataSourceServiceAsync
 {

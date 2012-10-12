@@ -1,6 +1,3 @@
-/*
- * (C) Copyright Hewlett-Packard Development Company, L.P. All Rights Reserved.
- */
 package com.lumens.client.view;
 
 import com.smartgwt.client.types.SelectionType;
@@ -15,7 +12,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 /**
  *
- * TODO Build the root panel Web view
+ * @author shaofeng wang
  */
 public class WebClientView extends VLayout implements ClickHandler
 {
