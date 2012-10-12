@@ -40,6 +40,31 @@
             <artifactId>smartgwt</artifactId>
             <version>3.1d</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>javax.persistence</artifactId>
+            <version>2.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-grizzly2</artifactId>
+            <version>1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-servlet</artifactId>
+            <version>1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.lumens.engine</groupId>
+            <artifactId>lumens-engine</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
     <description>Lumens Web Client</description>
     <build>
@@ -48,6 +73,9 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <version>${gwt.version}</version>
+                <configuration>
+                    <logLevel>INFO</logLevel>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -81,4 +109,12 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <url>http://download.eclipse.org/rt/eclipselink/maven.repo/</url>
+            <id>jpa20-persistence</id>
+            <layout>default</layout>
+            <name>Repository for library Persistence (JPA 2.0)</name>
+        </repository>
+    </repositories>
 </project>

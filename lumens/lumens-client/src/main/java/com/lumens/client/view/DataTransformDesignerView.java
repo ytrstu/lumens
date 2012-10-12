@@ -1,6 +1,3 @@
-/*
- * (C) Copyright Hewlett-Packard Development Company, L.P. All Rights Reserved.
- */
 package com.lumens.client.view;
 
 import com.lumens.client.view.transformdesign.DataSourceServiceClickHandler;
@@ -23,6 +20,10 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripMenuButton;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 
+/**
+ *
+ * @author shaofeng wang
+ */
 public class DataTransformDesignerView extends HLayout implements
         ActiveView, ViewConstants
 {
@@ -75,7 +76,7 @@ public class DataTransformDesignerView extends HLayout implements
 
         // Build toolbar
         view.buildToolBar();
-        view.buildTransformWork();
+        view.buildTransformWorker();
         // Add to parent panel
         view.addMember(view.sectionStack);
         view.addMember(view.dtBuilderLayout);
@@ -138,9 +139,9 @@ public class DataTransformDesignerView extends HLayout implements
         dtBuilderLayout.addMember(toolBar);
     }
 
-    private void buildTransformWork()
+    private void buildTransformWorker()
     {
-        dtBuilderLayout.addMember(buildScenarioBuilerPane());
+        dtBuilderLayout.addMember(buildScenarioBuilerPane());/*
         // Build workers
         TransformationElement worker1 = buildMockConnector("datasource/32/database.png",
                                                            "Database");
@@ -163,7 +164,7 @@ public class DataTransformDesignerView extends HLayout implements
         ElementLink link2 = buildLink();
         link2.set(worker2, worker3);
         dataTransformationBuilderPane.addElement(worker3);
-        dataTransformationBuilderPane.addElement(link2);
+        dataTransformationBuilderPane.addElement(link2);//*/
     }
 
     private DataTransformDesignerPane buildScenarioBuilerPane()
@@ -175,6 +176,8 @@ public class DataTransformDesignerView extends HLayout implements
                 ViewConstants.BACKGROUD_COLOR);
         dataTransformationBuilderPane.setOverflow(Overflow.HIDDEN);
         dataTransformationBuilderPane.setCursor(Cursor.AUTO);
+        dataTransformationBuilderPane.setCanAcceptDrop(true);
+        dataTransformationBuilderPane.addDropHandler(dataTransformationBuilderPane);
         return dataTransformationBuilderPane;
     }
 
@@ -198,8 +201,7 @@ public class DataTransformDesignerView extends HLayout implements
         treeGrid.setShowHeader(false);
         treeGrid.setShowResizeBar(false);
         treeGrid.setAppImgDir(iconFolder);
-        treeGrid.setCanReorderRecords(true);
-        treeGrid.setCanAcceptDroppedRecords(false);
+        treeGrid.setCanDragRecordsOut(true);  
         treeGrid.setShowOpenIcons(false);
         treeGrid.setOpenIconSuffix("");
         treeGrid.setDropIconSuffix("");

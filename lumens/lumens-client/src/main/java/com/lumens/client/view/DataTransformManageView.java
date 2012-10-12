@@ -1,11 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.lumens.client.view;
 
 import com.lumens.client.view.transformmanage.AgentManagePane;
@@ -15,7 +7,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
 
 /**
  *
- * @author washaofe
+ * @author shaofeng wang
  */
 public class DataTransformManageView extends VLayout implements ActiveView
 {

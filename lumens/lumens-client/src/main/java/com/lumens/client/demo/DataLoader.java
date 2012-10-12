@@ -1,14 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.lumens.client.demo;
 
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 /**
  *
- * @author washaofe
+ * @author Shaofeng Wang
  */
 public class DataLoader
 {

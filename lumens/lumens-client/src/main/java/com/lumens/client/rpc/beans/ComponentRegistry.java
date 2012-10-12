@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.lumens.client.rpc.beans;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -9,7 +5,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author washaofe
+ * @author shaofeng wang
  */
 public class ComponentRegistry implements Serializable, IsSerializable
 {

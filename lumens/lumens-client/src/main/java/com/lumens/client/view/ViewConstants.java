@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.lumens.client.view;
 
 import com.google.gwt.core.client.GWT;
@@ -9,7 +5,7 @@ import com.lumens.client.i18n.Clienti18nConstants;
 
 /**
  *
- * @author washaofe
+ * @author shaofeng wang
  */
 public interface ViewConstants
 {

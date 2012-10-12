@@ -1,14 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.lumens.client.view.transformdesign;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.lumens.client.rpc.beans.ComponentRegistry;
+import com.lumens.client.WebClientController;
 import com.lumens.client.rpc.DataSourceService;
 import com.lumens.client.rpc.DataSourceServiceAsync;
+import com.lumens.client.rpc.beans.ComponentRegistry;
 import com.lumens.client.view.ViewConstants;
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.grid.CellFormatter;
@@ -22,20 +19,16 @@ import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeGridField;
 import com.smartgwt.client.widgets.tree.TreeNode;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
- * @author washaofe
+ * @author shaofeng wang
  */
 public class DataSourceServiceClickHandler implements
         OnSectionHeaderClickHandler,
         ViewConstants
 {
     private SectionStack sectionStack;
-    private Map<String, DataSourceNode> dataSourceList = new HashMap<String, DataSourceNode>();
-    private Map<String, DataSourceNode> processorList = new HashMap<String, DataSourceNode>();
 
     public DataSourceServiceClickHandler(SectionStack sectionStack)
     {
@@ -47,7 +40,7 @@ public class DataSourceServiceClickHandler implements
     {
         SectionHeader header = event.getSection();
         if (DATASOURCE_SECTION_ID.equals(header.getSection().getID())
-            && dataSourceList.isEmpty())
+            && WebClientController.componentManager.getDataSourceCount() == 0)
         {
             SectionStackSection section = header.getSection();
             TreeGrid tree = (TreeGrid) section.getItems()[0];
@@ -85,11 +78,10 @@ public class DataSourceServiceClickHandler implements
             int index = 0;
             for (ComponentRegistry registry : result)
             {
-                ds[index++] = new DataSourceNode(registry.getID(), registry.
-                        getName(), registry.getIcon());
+                ds[index++] = new DataSourceNode(registry);
+                WebClientController.componentManager.
+                        registerDataSource(registry);
             }
-            for (DataSourceNode dsn : ds)
-                dataSourceList.put(dsn.getDataSourceName(), dsn);
             TreeNode root = new TreeNode("Root", ds);
 
             Tree dataSourceTree = new Tree();

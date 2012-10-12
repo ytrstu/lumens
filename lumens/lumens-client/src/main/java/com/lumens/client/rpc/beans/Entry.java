@@ -1,12 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.lumens.client.rpc.beans;
 
 /**
  *
- * @author washaofe
+ * @author shaofeng wang
  */
 public class Entry<K, V>
 {

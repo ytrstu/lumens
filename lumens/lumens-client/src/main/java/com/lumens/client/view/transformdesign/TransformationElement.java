@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.lumens.client.view.transformdesign;
 
 import com.smartgwt.client.types.Alignment;
@@ -15,7 +11,7 @@ import java.util.List;
 
 /**
  *
- * @author washaofe
+ * @author shaofeng wang
  */
 public class TransformationElement extends ToolStrip implements DragMoveHandler
 {

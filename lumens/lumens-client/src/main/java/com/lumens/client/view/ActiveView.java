@@ -1,14 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.lumens.client.view;
 
 import com.smartgwt.client.widgets.layout.Layout;
 
 /**
  *
- * @author washaofe
+ * @author shaofeng wang
  */
 public interface ActiveView
 {
