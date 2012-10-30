@@ -45,7 +45,8 @@ public class ModelTest
         Format asset = person.addChild("asset", Form.STRUCT, Type.NONE);
         asset.addChild("name", Form.FIELD, Type.STRING);
         asset.addChild("price", Form.FIELD, Type.FLOAT);
-        assertEquals(Type.STRING, person.getChild("asset").getChild("name").getType());
+        assertEquals(Type.STRING, person.getChild("asset").getChild("name").
+                getType());
 
         Element personData = new DataElement(person);
         Element nameData = personData.addChild("name");
@@ -54,7 +55,8 @@ public class ModelTest
         Element assetData = personData.addChild("asset");
         assetData.addChild("name").setValue("Mac air book");
         assetData.addChild("price").setValue(12000.05f);
-        assertEquals(12000.05f, personData.getChild("asset").getChild("price").getFloat());
+        assertEquals(12000.05f, personData.getChild("asset").getChild("price").
+                getFloat());
     }
 
     public void testCollection()
@@ -66,7 +68,8 @@ public class ModelTest
         Format asset = person.addChild("asset", Form.ARRAYOFSTRUCT);
         asset.addChild("name", Form.FIELD, Type.STRING);
         asset.addChild("price", Form.FIELD, Type.FLOAT);
-        asset.addChild("vendor", Form.STRUCT).addChild("name", Form.FIELD, Type.STRING);
+        asset.addChild("vendor", Form.STRUCT).addChild("name", Form.FIELD,
+                                                       Type.STRING);
 
         // Fill data
         Element personData = new DataElement(person);
@@ -78,7 +81,8 @@ public class ModelTest
         assetDataItem.addChild("name").setValue("Mac air book");
         assetDataItem.addChild("price").setValue(12000.05f);
         assetDataItem.addChild("vendor").addChild("name").setValue("Apple");
-        assertEquals(12000.05f, personData.getChild("asset").getChildren().get(0).getChild("price").
+        assertEquals(12000.05f, personData.getChild("asset").getChildren().
+                get(0).getChild("price").
                 getFloat());
     }
 
@@ -91,11 +95,13 @@ public class ModelTest
         Format asset = person.addChild("asset", Form.ARRAYOFSTRUCT);
         asset.addChild("name", Form.FIELD, Type.STRING);
         asset.addChild("price", Form.FIELD, Type.FLOAT);
-        asset.addChild("vendor", Form.STRUCT).addChild("name", Form.FIELD, Type.STRING);
+        asset.addChild("vendor", Form.STRUCT).addChild("name", Form.FIELD,
+                                                       Type.STRING);
 
         Format clonedRoot = root.deepClone();
         assertEquals("name", clonedRoot.getChildByPath("Person.name").getName());
-        assertEquals("name", clonedRoot.getChildByPath("Person.asset.vendor.name").getName());
+        assertEquals("name", clonedRoot.getChildByPath(
+                "Person.asset.vendor.name").getName());
     }
 
     public void testElementPath()
@@ -137,6 +143,7 @@ public class ModelTest
         Format person = root.addChild("Person", Form.STRUCT);
         person.addChild("name", Form.FIELD, Type.STRING);
         Format asset = person.addChild("asset", Form.ARRAYOFSTRUCT);
+        asset.addChild("test", Form.ARRAYOFFIELD, Type.STRING);
         asset.addChild("name", Form.FIELD, Type.STRING);
         asset.addChild("price", Form.FIELD, Type.FLOAT);
         Format name = asset.addChild("vendor", Form.STRUCT).
@@ -151,6 +158,8 @@ public class ModelTest
         assertEquals("James wang", nameData.getString());
         Element assetData = personData.addChild("asset");
         Element assetDataItem = assetData.addArrayItem();
+        assetDataItem.addChild("test").addArrayItem().setValue(
+                "test collection default index");
         assetDataItem.addChild("name").setValue("Mac air book");
         assetDataItem.addChild("price").setValue(12000.05f);
         assetDataItem.addChild("vendor").addChild("name").setValue("Apple");
@@ -167,9 +176,12 @@ public class ModelTest
         assertNotNull(nameData);
         nameData = personData.getChildByPath("asset[1].vendor.name");
         assertNotNull(nameData);
+        Element test = personData.getChildByPath("asset.test");
+        assertEquals("test collection default index", test.getString());
 
         // test xml
-        DataElementXmlSerializer serializer = new DataElementXmlSerializer(personData, "UTF-8", true);
+        DataElementXmlSerializer serializer = new DataElementXmlSerializer(
+                personData, "UTF-8", true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         serializer.write(baos);
         System.out.println(baos.toString());
