@@ -12,7 +12,6 @@
             <s:element minOccurs="0" maxOccurs="1" name="getFundCodeNameDataSetResult">
               <s:complexType>
                 <s:sequence>
-                  <s:element ref="s:schema" />
                   <s:any />
                 </s:sequence>
               </s:complexType>
@@ -48,7 +47,6 @@
             <s:element minOccurs="0" maxOccurs="1" name="getOpenFundDataSetResult">
               <s:complexType>
                 <s:sequence>
-                  <s:element ref="s:schema" />
                   <s:any />
                 </s:sequence>
               </s:complexType>
@@ -84,7 +82,6 @@
             <s:element minOccurs="0" maxOccurs="1" name="getOpenFundDataSetByCodeResult">
               <s:complexType>
                 <s:sequence>
-                  <s:element ref="s:schema" />
                   <s:any />
                 </s:sequence>
               </s:complexType>
@@ -110,7 +107,6 @@
       <s:element name="DataSet" nillable="true">
         <s:complexType>
           <s:sequence>
-            <s:element ref="s:schema" />
             <s:any />
           </s:sequence>
         </s:complexType>

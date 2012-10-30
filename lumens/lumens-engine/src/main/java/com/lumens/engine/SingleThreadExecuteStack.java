@@ -11,10 +11,10 @@ import java.util.List;
  *
  * @author shaofeng wang
  */
-public class SingleThreadExecuteStack extends LinkedList<ExecuteContext>
+public class SingleThreadExecuteStack extends LinkedList<Executor>
 {
-    public void push(List<ExecuteContext> contextList)
+    public void push(List<Executor> executorList)
     {
-        super.addAll(0, contextList);
+        super.addAll(0, executorList);
     }
 }

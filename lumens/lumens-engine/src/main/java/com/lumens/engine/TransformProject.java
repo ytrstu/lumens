@@ -12,5 +12,5 @@ import java.util.List;
  */
 public class TransformProject
 {
-    private List<Component> components;
+    private List<TransformComponent> components;
 }
