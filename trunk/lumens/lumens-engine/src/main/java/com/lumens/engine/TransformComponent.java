@@ -1,18 +1,21 @@
-/*
- * To change this template, choose Tools | Templates
- * and initialize the template in the editor.
- */
 package com.lumens.engine;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author shaofeng wang
  */
-public interface Component
+public interface TransformComponent
 {
-    public void to(Component to);
+    public void to(TransformComponent to);
+
+    public boolean hasTo();
+
+    public boolean isSingleTo();
+
+    public Map<String, TransformComponent> getToList();
 
     public void initialize();
 
@@ -20,7 +23,7 @@ public interface Component
 
     public List<ExecuteContext> execute(ExecuteContext context);
 
-    public boolean accept(String name);
+    public boolean accept(ExecuteContext ctx);
 
     public String getName();
 
