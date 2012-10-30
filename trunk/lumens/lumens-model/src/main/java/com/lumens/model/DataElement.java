@@ -48,8 +48,7 @@ public class DataElement implements Element
             Element removed = children.remove(child.getFormat().getName());
             if (removed != null)
                 childrenList.remove(removed);
-        }
-        else
+        } else
             arrayItems.remove(child);
     }
 
@@ -72,7 +71,8 @@ public class DataElement implements Element
     public Element addChild(Element child)
     {
         if (isArray())
-            throw new RuntimeException("Error, the data node is an array, it is not an array item");
+            throw new RuntimeException(
+                    "Error, the data node is an array, it is not an array item");
         if (children == null)
         {
             children = new HashMap<String, Element>();
@@ -80,7 +80,8 @@ public class DataElement implements Element
         }
         String name = child.getFormat().getName();
         if (children.containsKey(name))
-            throw new IllegalArgumentException("Duplicate child \"" + format.getName() + "\"");
+            throw new IllegalArgumentException("Duplicate child \"" + format.
+                    getName() + "\"");
         child.setParent(this);
         children.put(name, child);
         childrenList.add(child);
@@ -157,11 +158,13 @@ public class DataElement implements Element
         {
             token = it.next();
             child = child.getChild(token.toString());
-            if (child != null && (token.isIndexed() || child.isArray() && it.hasNext()))
+            if (child != null && (token.isIndexed() || child.isArray() && (it.
+                    hasNext() || child.getChildren() != null)))
             {
                 items = child.getChildren();
                 if (items == null)
-                    throw new IllegalArgumentException("Error path \"" + path.toString() + "\"");
+                    throw new IllegalArgumentException("Error path \"" + path.
+                            toString() + "\"");
                 child = items.get(token.isIndexed() ? token.index() : 0);
             }
         }
@@ -230,7 +233,8 @@ public class DataElement implements Element
     public void setValue(boolean value)
     {
         if (!isBoolean())
-            throw new IllegalArgumentException("Error, data type is not Boolean !");
+            throw new IllegalArgumentException(
+                    "Error, data type is not Boolean !");
         this.value = value;
     }
 
@@ -262,7 +266,8 @@ public class DataElement implements Element
     public void setValue(double value)
     {
         if (!isDouble())
-            throw new IllegalArgumentException("Error, data type is not double !");
+            throw new IllegalArgumentException(
+                    "Error, data type is not double !");
         this.value = value;
     }
 
@@ -270,7 +275,8 @@ public class DataElement implements Element
     public void setValue(byte[] value)
     {
         if (!isBinary())
-            throw new IllegalArgumentException("Error, data type is not binary !");
+            throw new IllegalArgumentException(
+                    "Error, data type is not binary !");
         this.value = value;
     }
 
@@ -278,7 +284,8 @@ public class DataElement implements Element
     public void setValue(Date value)
     {
         if (!isDate())
-            throw new IllegalArgumentException("Error, data type is not date time !");
+            throw new IllegalArgumentException(
+                    "Error, data type is not date time !");
         this.value = value;
     }
 
@@ -289,8 +296,7 @@ public class DataElement implements Element
         if (!isString())
         {
             this.value = parseString(value);
-        }
-        else
+        } else
             this.value = value;
     }
 
