@@ -8,8 +8,8 @@ import com.lumens.client.rpc.beans.ComponentRegistry;
  *
  * @author shaofeng wang
  */
-@RemoteServiceRelativePath("datasource")
-public interface DataSourceService extends RemoteService
+@RemoteServiceRelativePath("service")
+public interface LumensService extends RemoteService
 {
     public ComponentRegistry[] getDataSourceCatalog();
     public ComponentRegistry[] getProcessorCatalog();

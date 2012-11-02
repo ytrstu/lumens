@@ -1,10 +1,10 @@
 package com.lumens.service.controller;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.lumens.client.rpc.DataSourceService;
+import com.lumens.client.constant.ViewConstants;
+import com.lumens.client.rpc.LumensService;
 import com.lumens.client.rpc.beans.ComponentRegistry;
 import com.lumens.client.service.ComponentRegistryManager;
-import com.lumens.client.view.ViewConstants;
 import com.lumens.connector.database.DatabaseConnector;
 import com.lumens.connector.webservice.WebServiceConnector;
 import com.lumens.processor.transform.TransformProcessor;
@@ -16,7 +16,7 @@ import javax.servlet.ServletException;
  * @author shaofeng wang
  */
 public class LumensServiceImpl extends RemoteServiceServlet
-        implements DataSourceService, ViewConstants
+        implements LumensService, ViewConstants
 {
     private ComponentRegistryManager componentRegistryManager = new ComponentRegistryManager();
 
@@ -26,14 +26,17 @@ public class LumensServiceImpl extends RemoteServiceServlet
         super.init(config);
         componentRegistryManager.registerDataSource(new ComponentRegistry(
                 webserviceID, "WebService(SOAP)", "soap.png",
+                "datasource/32/soap.png",
                 WebServiceConnector.class));
         componentRegistryManager.registerDataSource(
                 new ComponentRegistry(
                 databaseID, "Database", "database.png",
+                "datasource/32/database.png",
                 DatabaseConnector.class));
         componentRegistryManager.registerProcessor(
                 new ComponentRegistry(
-                databaseID, "Transform", "transform.png",
+                transformPrID, "Transform", "transform.png",
+                "processor/32/transform.png",
                 TransformProcessor.class));
     }
 

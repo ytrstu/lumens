@@ -1,7 +1,7 @@
 package com.lumens.client;
 
 import com.lumens.client.service.ComponentRegistryManager;
-import com.lumens.client.service.ProjectManager;
+import com.lumens.client.service.TransformProject;
 
 /**
  *
@@ -9,6 +9,6 @@ import com.lumens.client.service.ProjectManager;
  */
 public class WebClientController
 {
-    public static ComponentRegistryManager componentManager;
-    public static ProjectManager projectManager;
+    public static ComponentRegistryManager componentManager = new ComponentRegistryManager();
+    //public static ProjectManager projectManager = new ProjectManager();
 }

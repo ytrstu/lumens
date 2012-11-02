@@ -1,5 +1,6 @@
 package com.lumens.client.view;
 
+import com.lumens.client.constant.ViewConstants;
 import com.lumens.client.view.transformmanage.AgentManagePane;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;

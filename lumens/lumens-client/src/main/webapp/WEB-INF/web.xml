@@ -14,6 +14,6 @@
     </servlet> 
     <servlet-mapping> 
         <servlet-name>LumensServiceImpl</servlet-name> 
-        <url-pattern>/lumens/datasource</url-pattern> 
+        <url-pattern>/lumens/service</url-pattern> 
     </servlet-mapping>
 </web-app>

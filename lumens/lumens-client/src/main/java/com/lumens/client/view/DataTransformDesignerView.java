@@ -1,24 +1,33 @@
 package com.lumens.client.view;
 
-import com.lumens.client.view.transformdesign.DataSourceServiceClickHandler;
+import com.google.gwt.core.client.GWT;
+import com.lumens.client.constant.ViewConstants;
+import com.lumens.client.rpc.ComponentServiceAsyncCallback;
+import com.lumens.client.rpc.LumensService;
+import com.lumens.client.rpc.LumensServiceAsync;
+import com.lumens.client.rpc.beans.ComponentRegistry;
+import com.lumens.client.view.transformdesign.ComponentCatalogNodeClickHandler;
 import com.lumens.client.view.transformdesign.DataTransformDesignerPane;
-import com.lumens.client.view.transformdesign.ElementLink;
-import com.lumens.client.view.transformdesign.TransformationElement;
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.types.VisibilityMode;
-import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.grid.CellFormatter;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.SectionStack;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
 import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.layout.events.OnSectionHeaderClickHandler;
+import com.smartgwt.client.widgets.layout.events.SectionHeaderClickHandler;
 import com.smartgwt.client.widgets.menu.Menu;
 import com.smartgwt.client.widgets.menu.MenuItem;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripMenuButton;
+import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
+import com.smartgwt.client.widgets.tree.TreeGridField;
+import com.smartgwt.client.widgets.tree.TreeNode;
 
 /**
  *
@@ -51,22 +60,25 @@ public class DataTransformDesignerView extends HLayout implements
         view.sectionStack.setOverflow(Overflow.HIDDEN);
         view.sectionStack.setHeight100();
         view.sectionStack.setWidth(260);
-        OnSectionHeaderClickHandler click = new DataSourceServiceClickHandler(
+        SectionHeaderClickHandler click = new ComponentCatalogNodeClickHandler(
                 view.sectionStack);
-        view.sectionStack.addOnSectionHeaderClickHandler(click);
+        view.sectionStack.addSectionHeaderClickHandler(click);
 
-        SectionStackSection dataSourceSection = new SectionStackSection(messages.datasource_section());
+        SectionStackSection dataSourceSection = new SectionStackSection(messages.
+                datasource_section());
         dataSourceSection.setID(DATASOURCE_SECTION_ID);
         dataSourceSection.setShowHeader(true);
         view.sectionStack.addSection(dataSourceSection);
-        dataSourceSection.addItem(initDataSourceCatalog("datasource/"));
+        TreeGrid dsTree = initComponentCatalog("datasource/");
+        getDataSourceCatalogGroup(dsTree);
+        dataSourceSection.addItem(dsTree);
 
         SectionStackSection processorSection = new SectionStackSection(
                 messages.processor_section());
         processorSection.setID(PROCESSOR_SECTION_ID);
         view.sectionStack.addSection(processorSection);
         view.sectionStack.setShowResizeBar(true);
-        processorSection.addItem(initDataSourceCatalog("processor/"));
+        processorSection.addItem(initComponentCatalog("processor/"));
 
         // Build layout for toolbar and scenario area
         view.dtBuilderLayout = new VLayout();
@@ -96,7 +108,7 @@ public class DataTransformDesignerView extends HLayout implements
         this.active = active;
         if (active && !layoutContainer.hasMember(this))
         {
-            dataTransformationBuilderPane.buildDrawItems();
+            dataTransformationBuilderPane.paint();
             layoutContainer.addMember(this);
         } else if (!active && layoutContainer.hasMember(this))
         {
@@ -141,30 +153,7 @@ public class DataTransformDesignerView extends HLayout implements
 
     private void buildTransformWorker()
     {
-        dtBuilderLayout.addMember(buildScenarioBuilerPane());/*
-        // Build workers
-        TransformationElement worker1 = buildMockConnector("datasource/32/database.png",
-                                                           "Database");
-        worker1.setLeft(100);
-        worker1.setTop(100);
-        TransformationElement worker2 = buildMockConnector("processor/32/transform.png",
-                                                           "Transform");
-        worker2.setLeft(300);
-        worker2.setTop(200);
-        dataTransformationBuilderPane.addElement(worker1);
-        dataTransformationBuilderPane.addElement(worker2);
-        ElementLink link = buildLink();
-        link.set(worker1, worker2);
-        dataTransformationBuilderPane.addElement(link);
-
-        TransformationElement worker3 = buildMockConnector("datasource/32/soap.png",
-                                                           "WebService");
-        worker3.setLeft(500);
-        worker3.setTop(300);
-        ElementLink link2 = buildLink();
-        link2.set(worker2, worker3);
-        dataTransformationBuilderPane.addElement(worker3);
-        dataTransformationBuilderPane.addElement(link2);//*/
+        dtBuilderLayout.addMember(buildScenarioBuilerPane());
     }
 
     private DataTransformDesignerPane buildScenarioBuilerPane()
@@ -172,28 +161,13 @@ public class DataTransformDesignerView extends HLayout implements
         dataTransformationBuilderPane = new DataTransformDesignerPane();
         dataTransformationBuilderPane.setHeight100();
         dataTransformationBuilderPane.setWidth100();
-        dataTransformationBuilderPane.setBackgroundColor(
-                ViewConstants.BACKGROUD_COLOR);
+        dataTransformationBuilderPane.setBackgroundColor(BACKGROUD_COLOR);
         dataTransformationBuilderPane.setOverflow(Overflow.HIDDEN);
         dataTransformationBuilderPane.setCursor(Cursor.AUTO);
-        dataTransformationBuilderPane.setCanAcceptDrop(true);
-        dataTransformationBuilderPane.addDropHandler(dataTransformationBuilderPane);
         return dataTransformationBuilderPane;
     }
 
-    private ElementLink buildLink()
-    {
-        return new ElementLink();
-    }
-
-    private TransformationElement buildMockConnector(String ico, String label)
-    {
-        TransformationElement e = new TransformationElement(ico);
-        e.setLabel(label);
-        return e;
-    }
-
-    private static Canvas initDataSourceCatalog(String iconFolder)
+    private static TreeGrid initComponentCatalog(String iconFolder)
     {
         TreeGrid treeGrid = new TreeGrid();
         treeGrid.setWidth100();
@@ -201,11 +175,47 @@ public class DataTransformDesignerView extends HLayout implements
         treeGrid.setShowHeader(false);
         treeGrid.setShowResizeBar(false);
         treeGrid.setAppImgDir(iconFolder);
-        treeGrid.setCanDragRecordsOut(true);  
+        treeGrid.setCanDragRecordsOut(true);
         treeGrid.setShowOpenIcons(false);
         treeGrid.setOpenIconSuffix("");
         treeGrid.setDropIconSuffix("");
         treeGrid.setClosedIconSuffix("");
         return treeGrid;
+    }
+
+    private static void getDataSourceCatalogGroup(TreeGrid treeGrid)
+    {
+        ComponentNode[] ds = new ComponentNode[1];
+        ds[0] = new ComponentNode(new ComponentRegistry("", "", "../loading.gif",
+                                                        "", null));
+        TreeNode root = new TreeNode("ComponentRoot", ds);
+
+        Tree dataSourceTree = new Tree();
+        dataSourceTree.setModelType(TreeModelType.CHILDREN);
+        dataSourceTree.setNameProperty(COMPONENT_NAME);
+        dataSourceTree.setRoot(root);
+        // group tree grid
+        TreeGridField connectorsField = new TreeGridField(
+                "ComponentField");
+        connectorsField.setShowHover(false);
+        connectorsField.setCellFormatter(new CellFormatter()
+        {
+            @Override
+            public String format(Object value, ListGridRecord record,
+                                 int rowNum,
+                                 int colNum)
+            {
+                return "Loading ...";
+            }
+        });
+        treeGrid.setData(dataSourceTree);
+        treeGrid.setFields(connectorsField);
+
+        LumensServiceAsync dsService = (LumensServiceAsync) GWT.create(
+                LumensService.class);
+        dsService.
+                getDataSourceCatalog(
+                new ComponentServiceAsyncCallback(
+                DATASOURCE_SECTION_ID, treeGrid));
     }
 }
