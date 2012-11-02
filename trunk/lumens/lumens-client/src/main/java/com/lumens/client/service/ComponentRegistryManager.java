@@ -48,4 +48,14 @@ public class ComponentRegistryManager
         processorCatalog.values().toArray(registryArray);
         return registryArray;
     }
+
+    public ComponentRegistry lookupDataSource(String id)
+    {
+        return datasourceCatalog.get(id);
+    }
+
+    public ComponentRegistry lookupProcessor(String id)
+    {
+        return processorCatalog.get(id);
+    }
 }

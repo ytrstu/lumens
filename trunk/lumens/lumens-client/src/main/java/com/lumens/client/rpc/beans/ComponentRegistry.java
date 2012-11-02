@@ -12,17 +12,20 @@ public class ComponentRegistry implements Serializable, IsSerializable
     private String id;
     private String name;
     private String icon;
+    private String componentIcon;
     private transient Class<?> clazz;
 
     public ComponentRegistry()
     {
     }
 
-    public ComponentRegistry(String id, String name, String icon, Class<?> clazz)
+    public ComponentRegistry(String id, String name, String icon,
+                             String componentIcon, Class<?> clazz)
     {
         this.id = id;
         this.name = name;
         this.icon = icon;
+        this.componentIcon = componentIcon;
         this.clazz = clazz;
     }
 
@@ -41,7 +44,12 @@ public class ComponentRegistry implements Serializable, IsSerializable
         return icon;
     }
 
-    public Class<?> getConnectorClass()
+    public String getComponentIcon()
+    {
+        return componentIcon;
+    }
+
+    public Class<?> getComponentClass()
     {
         return clazz;
     }

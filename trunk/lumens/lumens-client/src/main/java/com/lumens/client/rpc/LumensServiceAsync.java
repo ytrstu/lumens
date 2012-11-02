@@ -7,7 +7,7 @@ import com.lumens.client.rpc.beans.ComponentRegistry;
  *
  * @author shaofeng wang
  */
-public interface DataSourceServiceAsync
+public interface LumensServiceAsync
 {
     public void getDataSourceCatalog(AsyncCallback<ComponentRegistry[]> callback);
 

@@ -1,7 +1,7 @@
 package com.lumens.client.view.transformmanage;
 
 import com.lumens.client.demo.DataLoader;
-import com.lumens.client.view.ViewConstants;
+import com.lumens.client.constant.ViewConstants;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Cursor;
@@ -34,7 +34,7 @@ import com.smartgwt.client.widgets.tree.TreeGridField;
  * @author shaofeng wang
  */
 public class AgentManagePane extends SectionStack implements
-        RecordDoubleClickHandler, HoverCustomizer
+        RecordDoubleClickHandler
 {
     private SectionStackSection agentListSection;
     private SectionStackSection agentDetailSection;
@@ -44,6 +44,16 @@ public class AgentManagePane extends SectionStack implements
     private ListGrid scnList;
     private Layout agentDetailPane;
     private TabSet detailPane;
+
+    private static final class HoverCustomizerImpl extends HoverCustomizer
+    {
+        @Override
+        public String hoverHTML(Object value, ListGridRecord record, int rowNum,
+                                int colNum)
+        {
+            return "<HTML><BODY>Scenaro: 3<br> Scenario Running: 2<br>Scenario Error: 1</BODY></HTML>";
+        }
+    }
 
     private AgentManagePane()
     {
@@ -82,7 +92,7 @@ public class AgentManagePane extends SectionStack implements
         // group tree grid
         TreeGridField agentField = new TreeGridField("Agent Group");
         agentField.setShowHover(true);
-        agentField.setHoverCustomizer(this);
+        agentField.setHoverCustomizer(new HoverCustomizerImpl());
         agentField.setCellFormatter(new CellFormatter()
         {
             @Override
@@ -198,13 +208,6 @@ public class AgentManagePane extends SectionStack implements
             record.getAttributeAsInt("memory");
             record.getAttributeAsInt("disk");
         }
-    }
-
-    @Override
-    public String hoverHTML(Object value, ListGridRecord record, int rowNum,
-                            int colNum)
-    {
-        return "<HTML><BODY>Scenaro: 3<br> Scenario Running: 2<br>Scenario Error: 1</BODY></HTML>";
     }
 }
 

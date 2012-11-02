@@ -1,6 +1,5 @@
 package com.lumens.client.view.transformdesign;
 
-import com.smartgwt.client.widgets.drawing.DrawItem;
 import com.smartgwt.client.widgets.drawing.DrawPath;
 import com.smartgwt.client.widgets.drawing.DrawRect;
 import com.smartgwt.client.widgets.drawing.Point;
@@ -11,8 +10,8 @@ import com.smartgwt.client.widgets.drawing.Point;
  */
 public class ElementLink extends DrawPath
 {
-    private TransformationElement outElement;
-    private TransformationElement inElement;
+    private TransformElement outElement;
+    private TransformElement inElement;
     private DrawRect anchorPoint;
     private final static int anchorSize = 8;
     private final static int deltaLength = 12;
@@ -28,18 +27,31 @@ public class ElementLink extends DrawPath
         anchorPoint.setLineWidth(1);
     }
 
-    public DrawItem getAnchorPoint()
+    public DrawRect getAnchorPoint()
     {
         return anchorPoint;
     }
 
-    public void set(TransformationElement in, TransformationElement out)
+    public void set(TransformElement in, TransformElement out)
     {
-        in.addInLink(this);
         inElement = in;
-        out.addOutLink(this);
         outElement = out;
-        updatePosition();
+        if (in != null)
+            in.addOutLink(this);
+        if (out != null)
+            out.addInLink(this);
+        if (in != null && out != null)
+            updatePosition();
+    }
+
+    public void remove()
+    {
+        if (outElement != null)
+            outElement.removeInLink(this);
+        if (inElement != null)
+            inElement.removeOutLink(this);
+        anchorPoint.erase();
+        erase();
     }
 
     public void updatePosition()
@@ -49,12 +61,12 @@ public class ElementLink extends DrawPath
         anchorPoint.setCenter(points[0].getX(), points[0].getY());
     }
 
-    public TransformationElement getIn()
+    public TransformElement getIn()
     {
         return this.inElement;
     }
 
-    public TransformationElement getOut()
+    public TransformElement getOut()
     {
         return this.outElement;
     }
@@ -96,8 +108,7 @@ public class ElementLink extends DrawPath
                             new Point(s_x - deltaLength, s_y - deltaOffset),
                             new Point(s_x - deltaLength, s_y + deltaOffset)
                         };
-            }
-            else
+            } else
             {
                 return new Point[]
                         {
@@ -152,8 +163,7 @@ public class ElementLink extends DrawPath
                         new Point(outCenterX, inCenterY),
                         new Point(outCenterX, outBottom)
                     };
-        }
-        else if (inRight <= outCenterX && inCenterY <= (outBottom + deltaLength) && inCenterY >= (outTop - deltaLength))
+        } else if (inRight <= outCenterX && inCenterY <= (outBottom + deltaLength) && inCenterY >= (outTop - deltaLength))
         {
             // in_right --> out_left
             int y = (inCenterY + outCenterY) / 2;
@@ -162,8 +172,7 @@ public class ElementLink extends DrawPath
                         new Point(inRight, y),
                         new Point(outLeft, y)
                     };
-        }
-        else if (inRight < outCenterX && inCenterY < outTop)
+        } else if (inRight < outCenterX && inCenterY < outTop)
         {
             //in_right --> out_top
             return new Point[]
@@ -172,8 +181,7 @@ public class ElementLink extends DrawPath
                         new Point(outCenterX, inCenterY),
                         new Point(outCenterX, outTop)
                     };
-        }
-        else if (inBottom <= outTop && inRight >= outCenterX && inLeft <= outCenterX)
+        } else if (inBottom <= outTop && inRight >= outCenterX && inLeft <= outCenterX)
         {
             // in_bottom --> out_top
             int x = (inCenterX + outCenterX) / 2;
@@ -182,8 +190,7 @@ public class ElementLink extends DrawPath
                         new Point(x, inBottom),
                         new Point(x, outTop)
                     };
-        }
-        else if (outCenterX < inLeft && outTop > (inCenterY + deltaLength))
+        } else if (outCenterX < inLeft && outTop > (inCenterY + deltaLength))
         {
             // in_left --> out_top
             return new Point[]
@@ -192,8 +199,7 @@ public class ElementLink extends DrawPath
                         new Point(outCenterX, inCenterY),
                         new Point(outCenterX, outTop)
                     };
-        }
-        else if (outRight <= inLeft && inCenterY <= (outBottom + deltaLength) && inCenterY >= (outTop - deltaLength))
+        } else if (outRight <= inLeft && inCenterY <= (outBottom + deltaLength) && inCenterY >= (outTop - deltaLength))
         {
             // in_left --> out_right
             int y = (inCenterY + outCenterY) / 2;
@@ -202,8 +208,7 @@ public class ElementLink extends DrawPath
                         new Point(inLeft, y),
                         new Point(outRight, y)
                     };
-        }
-        else if (outCenterX < inLeft && outTop < inCenterY)
+        } else if (outCenterX < inLeft && outTop < inCenterY)
         {
             // in_left --> out_bottom
             return new Point[]
@@ -212,8 +217,7 @@ public class ElementLink extends DrawPath
                         new Point(outCenterX, inCenterY),
                         new Point(outCenterX, outBottom)
                     };
-        }
-        else if (inTop >= outBottom && outCenterX >= inLeft && outCenterX <= inRight)
+        } else if (inTop >= outBottom && outCenterX >= inLeft && outCenterX <= inRight)
         {
             // in_top --> out_bottom
             int x = (inCenterX + outCenterX) / 2;
@@ -237,24 +241,31 @@ public class ElementLink extends DrawPath
     {
         int[] min = new int[]
         {
-            outCenterX, outTop, distance(inCenterX, inCenterY, outCenterX, outTop)
+            outCenterX, outTop, distance(inCenterX, inCenterY, outCenterX,
+                                         outTop)
         };
-        min = minDistance(inCenterX, inCenterY, min[0], min[1], min[2], outLeft + outWidth,
+        min = minDistance(inCenterX, inCenterY, min[0], min[1], min[2],
+                          outLeft + outWidth,
                           outCenterY);
-        min = minDistance(inCenterX, inCenterY, min[0], min[1], min[2], outCenterX,
+        min = minDistance(inCenterX, inCenterY, min[0], min[1], min[2],
+                          outCenterX,
                           outTop + outHeight);
-        min = minDistance(inCenterX, inCenterY, min[0], min[1], min[2], outLeft, outCenterY);
+        min = minDistance(inCenterX, inCenterY, min[0], min[1], min[2], outLeft,
+                          outCenterY);
         Point end = new Point(min[0], min[1]);
 
         min = new int[]
         {
             inCenterX, inTop, distance(outCenterX, outCenterY, inCenterX, inTop)
         };
-        min = minDistance(end.getX(), end.getY(), min[0], min[1], min[2], inLeft + inWidth,
+        min = minDistance(end.getX(), end.getY(), min[0], min[1], min[2],
+                          inLeft + inWidth,
                           inCenterY);
-        min = minDistance(end.getX(), end.getY(), min[0], min[1], min[2], inCenterX,
+        min = minDistance(end.getX(), end.getY(), min[0], min[1], min[2],
+                          inCenterX,
                           inTop + inHeight);
-        min = minDistance(end.getX(), end.getY(), min[0], min[1], min[2], inLeft, inCenterY);
+        min = minDistance(end.getX(), end.getY(), min[0], min[1], min[2], inLeft,
+                          inCenterY);
         Point start = new Point(min[0], min[1]);
 
         return new Point[]
@@ -263,7 +274,8 @@ public class ElementLink extends DrawPath
                 };
     }
 
-    private int[] minDistance(int x, int y, int foundX, int foundY, int distance, int edgeX,
+    private int[] minDistance(int x, int y, int foundX, int foundY, int distance,
+                              int edgeX,
                               int edgeY)
     {
         int distanceToEdge = distance(x, y, edgeX, edgeY);
