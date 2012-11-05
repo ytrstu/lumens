@@ -55,7 +55,7 @@ public class ConnectorTest extends TestCase implements SOAPConstants
             props.put(DatabaseConnector.USER, "sh");
             props.put(DatabaseConnector.PASSWORD, "accit");
             props.put(DatabaseConnector.FULL_LOAD, true);
-            cntr.configure(props);
+            cntr.setParameters(props);
             cntr.open();
             for (Format format : cntr.getFormatList(null).values())
             {
@@ -75,7 +75,7 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         HashMap<String, Object> props = new HashMap<String, Object>();
         props.put(WebServiceConnector.WSDL,
                   getClass().getResource("/wsdl/IncidentManagement.wsdl").toString());
-        connector.configure(props);
+        connector.setParameters(props);
         connector.open();
         Map<String, Format> services = connector.getFormatList(Usage.CONSUME);
         Format retrieveIncident = services.get("RetrieveIncident");
@@ -106,7 +106,7 @@ public class ConnectorTest extends TestCase implements SOAPConstants
                   getClass().getResource("/wsdl/ChinaOpenFundWS.asmx").toString());
         props.put(WebServiceConnector.PROXY_ADDR, "web-proxy.atl.hp.com");
         props.put(WebServiceConnector.PROXY_PORT, 8080);
-        connector.configure(props);
+        connector.setParameters(props);
         connector.open();
         services = connector.getFormatList(Usage.CONSUME);
         Format getOpenFundString = services.get("getOpenFundString");
@@ -136,7 +136,7 @@ public class ConnectorTest extends TestCase implements SOAPConstants
         props.put(WebServiceConnector.WSDL, ppmWSDL);
         props.put(DatabaseConnector.USER, "admin");
         props.put(DatabaseConnector.PASSWORD, "admin");
-        connector.configure(props);
+        connector.setParameters(props);
         connector.open();
         Map<String, Format> services = connector.getFormatList(Usage.CONSUME);
         Format getRequests = services.get("getRequests");

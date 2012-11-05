@@ -65,17 +65,17 @@ public class DatabaseConnector implements Connector
     }
 
     @Override
-    public void configure(Map<String, Object> configuration)
+    public void setParameters(Map<String, Object> parameters)
     {
-        if (configuration.containsKey(OJDBC))
-            ojdbcURL = (String) configuration.get(OJDBC);
-        if (configuration.containsKey(CONNECTION_URL))
-            connURL = (String) configuration.get(CONNECTION_URL);
-        if (configuration.containsKey(USER))
-            user = (String) configuration.get(USER);
-        if (configuration.containsKey(PASSWORD))
-            password = (String) configuration.get(PASSWORD);
-        if (configuration.containsKey(FULL_LOAD))
-            fullLoad = (Boolean) configuration.get(FULL_LOAD);
+        if (parameters.containsKey(OJDBC))
+            ojdbcURL = (String) parameters.get(OJDBC);
+        if (parameters.containsKey(CONNECTION_URL))
+            connURL = (String) parameters.get(CONNECTION_URL);
+        if (parameters.containsKey(USER))
+            user = (String) parameters.get(USER);
+        if (parameters.containsKey(PASSWORD))
+            password = (String) parameters.get(PASSWORD);
+        if (parameters.containsKey(FULL_LOAD))
+            fullLoad = (Boolean) parameters.get(FULL_LOAD);
     }
 }

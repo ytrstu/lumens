@@ -46,9 +46,6 @@ import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.xerces.impl.xs.XMLSchemaLoader;
 import org.apache.xerces.xni.XMLResourceIdentifier;
 import org.apache.xerces.xni.XNIException;
@@ -416,7 +413,7 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         }
         else if (term instanceof XSWildcard)
         {
-            // Ignore such nodes
+            // TODO Ignore such nodes
         }
         assert term != null;
     }

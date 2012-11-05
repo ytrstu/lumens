@@ -46,7 +46,7 @@ public class XMLConnector implements Connector
     }
 
     @Override
-    public void configure(Map<String, Object> configuration)
+    public void setParameters(Map<String, Object> parameters)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
