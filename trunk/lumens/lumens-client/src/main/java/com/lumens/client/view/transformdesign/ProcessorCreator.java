@@ -8,7 +8,6 @@ import com.lumens.client.WebClientController;
 import com.lumens.client.rpc.beans.ComponentRegistry;
 import com.lumens.client.view.ComponentNode;
 import com.smartgwt.client.util.EventHandler;
-import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -73,9 +72,9 @@ public class ProcessorCreator implements DropHandler, ClickHandler
         VirtualTransformElement vElement = designerPane.getVirtualElement();
         if (vElement != null)
         {
-            ElementLink link = vElement.getInLinkList()[0];
-            vElement.removeInLink(link);
             TransformElement processor = vElement.getTransformElement();
+            ElementLink link = vElement.getInLinkList()[0];
+            designerPane.removeVirtualElement();
             TransformElement tSrc = link.getIn();
             processor.setLeft((tSrc.getLeft() + tElement.getLeft()) / 2);
             processor.setTop((tSrc.getTop() + tElement.getTop()) / 2);
