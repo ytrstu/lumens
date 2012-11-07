@@ -2,11 +2,9 @@ package com.lumens.client.view.transformdesign;
 
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.drawing.DrawPane;
 import com.smartgwt.client.widgets.drawing.DrawPath;
-import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.DoubleClickEvent;
 import com.smartgwt.client.widgets.events.DoubleClickHandler;
 import com.smartgwt.client.widgets.events.DropOutEvent;

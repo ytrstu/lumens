@@ -1,7 +1,6 @@
 package com.lumens.client;
 
 import com.lumens.client.service.ComponentRegistryManager;
-import com.lumens.client.service.TransformProject;
 
 /**
  *
