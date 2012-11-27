@@ -11,3 +11,7 @@
  # connector分为模板与实例(favorate)
  # post process failed处理增加rollback接口,由connector实现,引擎调度
  # 把connect-it service和data generator整合.最好做到scheduling只管理这个connector, 即使database和xml也由这个connector出发. 就是设计一个用户很好理解的起点. 参照yahoo pipe
+
+*Connector*
+
+ #Email connector can support multi-account/profile
