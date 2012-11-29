@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+    TODO define vocabulary identification
+    PUBLIC ID: -//vendor//vocabulary//EN
+    SYSTEM ID: http://server/path/datasource.dtd
+
+-->
+
+<!--
+    An example how to use this DTD from your XML document:
+
+    <?xml version="1.0"?>
+
+    <!DOCTYPE Datasources SYSTEM "datasource.dtd">
+
+    <Datasources>
+    ...
+    </Datasources>
+-->
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT Datasources (Datasource)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT Datasource (Parameters|ClassName|ComponentIcon|Icon|Name|ID)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT ID (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT Name (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT Icon (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT ComponentIcon (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT ClassName (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT Parameters (Parameter)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT Parameter EMPTY>
+<!ATTLIST Parameter
+    encrypted CDATA #IMPLIED
+    javatype CDATA #IMPLIED
+    name CDATA #IMPLIED
+    id CDATA #IMPLIED
+  >

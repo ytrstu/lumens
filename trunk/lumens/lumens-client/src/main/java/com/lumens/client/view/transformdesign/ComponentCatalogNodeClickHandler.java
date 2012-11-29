@@ -8,7 +8,6 @@ import com.lumens.client.rpc.LumensServiceAsync;
 import com.lumens.client.rpc.beans.ComponentRegistry;
 import com.lumens.client.constant.ViewConstants;
 import com.lumens.client.rpc.ComponentServiceAsyncCallback;
-import com.lumens.client.view.ComponentNode;
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.grid.CellFormatter;
 import com.smartgwt.client.widgets.grid.ListGridRecord;

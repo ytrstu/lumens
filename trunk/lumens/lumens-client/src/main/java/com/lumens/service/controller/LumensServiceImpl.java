@@ -8,6 +8,8 @@ import com.lumens.client.service.ComponentRegistryManager;
 import com.lumens.connector.database.DatabaseConnector;
 import com.lumens.connector.webservice.WebServiceConnector;
 import com.lumens.processor.transform.TransformProcessor;
+import com.lumens.service.config.DatasourceHelper;
+import java.util.List;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
@@ -24,22 +26,23 @@ public class LumensServiceImpl extends RemoteServiceServlet
     public void init(ServletConfig config) throws ServletException
     {
         super.init(config);
-        // TODO need to load these connector information from a configuration file or db
-        // Maybe need a hot deploy here
-        componentRegistryManager.registerDataSource(new ComponentRegistry(
-                webserviceID, "WebService(SOAP)", "soap.png",
-                "datasource/32/soap.png",
-                WebServiceConnector.class.getName()));
-        componentRegistryManager.registerDataSource(
-                new ComponentRegistry(
-                databaseID, "Database", "database.png",
-                "datasource/32/database.png",
-                DatabaseConnector.class.getName()));
-        componentRegistryManager.registerProcessor(
-                new ComponentRegistry(
-                transformPrID, "Transform", "transform.png",
-                "processor/32/transform.png",
-                TransformProcessor.class.getName()));
+        try
+        {
+            List<ComponentRegistry> datasources = DatasourceHelper.
+                    loadDatasouceConfiguration();
+            for (ComponentRegistry registry : datasources)
+                componentRegistryManager.registerDataSource(registry);
+
+            // TODO
+            componentRegistryManager.registerProcessor(
+                    new ComponentRegistry(
+                    transformPrID, "Transform", "transform.png",
+                    "processor/32/transform.png",
+                    TransformProcessor.class.getName()));
+        } catch (Exception e)
+        {
+            throw new ServletException(e);
+        }
     }
 
     @Override
@@ -55,7 +58,14 @@ public class LumensServiceImpl extends RemoteServiceServlet
     }
 
     @Override
-    public void saveTransformWorkflow()
+    public void createDataSource()
     {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void createProcessor()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

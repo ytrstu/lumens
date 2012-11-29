@@ -13,5 +13,7 @@ public interface LumensServiceAsync
 
     public void getProcessorCatalog(AsyncCallback<ComponentRegistry[]> callback);
 
-    public void saveTransformWorkflow(AsyncCallback<String> callback);
+    public void createDataSource(AsyncCallback<String> callback);
+
+    public void createProcessor(AsyncCallback<String> callback);
 }

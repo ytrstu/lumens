@@ -6,7 +6,6 @@ package com.lumens.client.view.transformdesign;
 
 import com.lumens.client.WebClientController;
 import com.lumens.client.rpc.beans.ComponentRegistry;
-import com.lumens.client.view.ComponentNode;
 import com.smartgwt.client.util.EventHandler;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -47,9 +46,7 @@ public class ProcessorCreator implements DropHandler, ClickHandler
                         lookupProcessor(componentNode.getComponentID());
                 if (component != null)
                 {
-                    TransformElement processor = new TransformElement(component.
-                            getID(), component.
-                            getComponentIcon(), component.getName(),
+                    TransformElement processor = new TransformElement(component,
                                                                       designerPane);
                     VirtualTransformElement vElement = new VirtualTransformElement(
                             processor);
@@ -85,6 +82,8 @@ public class ProcessorCreator implements DropHandler, ClickHandler
             designerPane.addElement(link);
             designerPane.addElement(processor);
             designerPane.addElement(link2);
+            // TODO Save the link between a transform processor and a datasource
+            // TODO Add these information into server cache
         }
     }
 }

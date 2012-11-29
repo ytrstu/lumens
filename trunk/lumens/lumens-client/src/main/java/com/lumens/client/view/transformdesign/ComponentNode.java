@@ -1,4 +1,4 @@
-package com.lumens.client.view;
+package com.lumens.client.view.transformdesign;
 
 import com.lumens.client.constant.ViewConstants;
 import com.lumens.client.rpc.beans.ComponentRegistry;
@@ -15,7 +15,7 @@ public class ComponentNode extends TreeNode implements ViewConstants
 
     public ComponentNode(ComponentRegistry component)
     {
-        this.componentID = component.getID();
+        this.componentID = component.getId();
         this.componentName = component.getName();
         super.setIcon(component.getIcon());
         setAttribute(COMPONENT_NAME, component.getName());

@@ -38,7 +38,7 @@
         <dependency>
             <groupId>com.smartgwt</groupId>
             <artifactId>smartgwt</artifactId>
-            <version>3.1d</version>
+            <version>4.0d</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
@@ -64,6 +64,11 @@
             <groupId>com.lumens.engine</groupId>
             <artifactId>lumens-engine</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.8.3</version>
         </dependency>
     </dependencies>
     <description>Lumens Web Client</description>
