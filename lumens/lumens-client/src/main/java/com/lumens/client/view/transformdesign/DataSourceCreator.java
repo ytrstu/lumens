@@ -6,7 +6,6 @@ package com.lumens.client.view.transformdesign;
 
 import com.lumens.client.WebClientController;
 import com.lumens.client.rpc.beans.ComponentRegistry;
-import com.lumens.client.view.ComponentNode;
 import com.smartgwt.client.util.EventHandler;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.DropEvent;
@@ -20,11 +19,11 @@ import com.smartgwt.client.widgets.tree.TreeGrid;
  */
 public class DataSourceCreator implements DropHandler
 {
-    private DataTransformDesignerPane designer;
+    private DataTransformDesignerPane designPane;
 
-    public DataSourceCreator(DataTransformDesignerPane designer)
+    public DataSourceCreator(DataTransformDesignerPane designPane)
     {
-        this.designer = designer;
+        this.designPane = designPane;
     }
 
     @Override
@@ -42,12 +41,12 @@ public class DataSourceCreator implements DropHandler
                         lookupDataSource(componentNode.getComponentID());
                 if (component != null)
                 {
-                    TransformElement worker = new TransformElement(component.
-                            getID(), component.
-                            getComponentIcon(), component.getName(), designer);
-                    worker.setTop(event.getY() - designer.getAbsoluteTop());
-                    worker.setLeft(event.getX() - designer.getAbsoluteLeft());
-                    designer.addElement(worker);
+                    TransformElement worker = new TransformElement(component,
+                                                                   designPane);
+                    worker.setTop(event.getY() - designPane.getAbsoluteTop());
+                    worker.setLeft(event.getX() - designPane.getAbsoluteLeft());
+                    designPane.addElement(worker);
+                    // TODO add data source in to server cache
                 }
             }
         }

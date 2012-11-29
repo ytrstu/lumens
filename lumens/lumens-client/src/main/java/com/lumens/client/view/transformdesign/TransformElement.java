@@ -1,5 +1,7 @@
 package com.lumens.client.view.transformdesign;
 
+import com.lumens.client.rpc.beans.ComponentParameter;
+import com.lumens.client.rpc.beans.ComponentRegistry;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.DragAppearance;
 import com.smartgwt.client.widgets.Canvas;
@@ -14,6 +16,7 @@ import com.smartgwt.client.widgets.events.MouseOverHandler;
 import com.smartgwt.client.widgets.layout.VStack;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -27,7 +30,10 @@ public class TransformElement extends Canvas implements DragMoveHandler,
     private List<ElementLink> outLinks = new ArrayList<ElementLink>();
     private List<ElementLink> inLinks = new ArrayList<ElementLink>();
     private DataTransformDesignerPane designerPane;
-    private String componentID;
+    private ToolStrip tool;
+    private Label label;
+    private boolean isFocus;
+    private ComponentRegistry component;
 
     public TransformElement()
     {
@@ -39,11 +45,11 @@ public class TransformElement extends Canvas implements DragMoveHandler,
         addDragMoveHandler(this);
     }
 
-    public TransformElement(String compID, String ico, String text,
-                            DataTransformDesignerPane designer)
+    public TransformElement(ComponentRegistry component,
+                            DataTransformDesignerPane designerPane)
     {
-        componentID = compID;
-        designerPane = designer;
+        this.component = component;
+        this.designerPane = designerPane;
         int width = 150, height = 52;
         setWidth(width);
         setHeight(height);
@@ -60,36 +66,42 @@ public class TransformElement extends Canvas implements DragMoveHandler,
         VStack vStack = new VStack();
         vStack.setWidth(width);
         vStack.setHeight(height);
-        ToolStrip tool = new ToolStrip();
+        tool = new ToolStrip();
         tool.bringToFront();
         tool.setWidth(width);
         tool.setHeight(20);
         tool.addMouseOverHandler(this);
         tool.addMouseOutHandler(this);
         tool.setAlign(Alignment.RIGHT);
+        HeaderControl settings = new HeaderControl(HeaderControl.SETTINGS);
+        ComponentSettingsHandler pSettings = new ComponentSettingsHandler(this,
+                                                                          this.designerPane);
+        settings.addClickHandler(pSettings);
+        tool.addMember(settings);
         HeaderControl link = new HeaderControl(HeaderControl.TRANSFER);
         link.setCanAcceptDrop(true);
-        ProcessorCreator pCreator = new ProcessorCreator(this, designerPane);
+        ProcessorCreator pCreator = new ProcessorCreator(this, this.designerPane);
         link.addDropHandler(pCreator);
         link.addClickHandler(pCreator);
         link.bringToFront();
         tool.addMember(link);
         vStack.addMember(tool);
 
-        Label label = new Label();
+        label = new Label();
         label.setWidth(width);
         label.setHeight(32);
         label.setIconSize(32);
-        label.setIcon(ico);
+        label.setIcon(component.getComponentIcon());
         label.setAlign(Alignment.LEFT);
-        label.setContents(text);
+        label.setContents(component.getName());
         vStack.addMember(label);
         this.addChild(vStack);
+        this.addMouseDownHandler(designerPane);
     }
 
     public String getComponentID()
     {
-        return componentID;
+        return component.getId();
     }
 
     public void addOutLink(ElementLink link)
@@ -144,6 +156,11 @@ public class TransformElement extends Canvas implements DragMoveHandler,
             link.updatePosition();
     }
 
+    public Collection<ComponentParameter> getParameters()
+    {
+        return component.getParameters();
+    }
+
     @Override
     public void onDragMove(DragMoveEvent event)
     {
@@ -160,5 +177,15 @@ public class TransformElement extends Canvas implements DragMoveHandler,
     public void onMouseOver(MouseOverEvent event)
     {
         setCanDrag(true);
+    }
+
+    public void setFocus(boolean isFocus)
+    {
+        this.isFocus = isFocus;
+    }
+
+    public boolean isFocus()
+    {
+        return this.isFocus;
     }
 }

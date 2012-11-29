@@ -6,26 +6,69 @@
         Purpose of the stylesheet follows.
 */
 body {
-  overflow: hidden;
-  background-color: #fbfbfb;
+    overflow: hidden;
+    background-color: #fbfbfb;
 }
 
 /****************/
 html,body {
-  height: 100%;
-  width: 100%;
-  margin: 0 0 0 0;
+    height: 100%;
+    width: 100%;
+    margin: 0 0 0 0;
 }
 
 .lumens_title {
-  font-family: Arial,Verdana,tahoma,serif;
-  color:white;
-  background-color: #005699;
-  font-size:15px;
-  font-weight: bold;
-  text-shadow: 1px 1px #000000
+    font-family: Arial,Verdana,tahoma,serif;
+    color:white;
+    background-color: #005699;
+    font-size:15px;
+    font-weight: bold;
+    text-shadow: 1px 1px #000000
 }
 
 .lumens_headerbar {
-  background-color: #005699;
+    background-color: #005699;
+}
+
+.selectedFont {
+    font-weight: bold;
+}
+
+/*
+grid cell styles sample
+*/
+.boxedGridCell,
+.boxedGridCellDark {
+    font-family:Verdana,Bitstream Vera Sans,sans-serif; font-size:11px;
+    color:black;
+    border-bottom:1px solid #a0a0a0; border-right:1px solid #a0a0a0;
+    background-color:#ffffff;
+}
+.boxedGridCellOver,
+.boxedGridCellOverDark {
+    font-family:Verdana,Bitstream Vera Sans,sans-serif; font-size:11px;
+    color:black;
+    border-bottom:1px solid #a0a0a0; border-right:1px solid #a0a0a0;
+    background-color:#e0e0ff;
+}
+.boxedGridCellSelected,
+.boxedGridCellSelectedDark {
+    font-family:Verdana,Bitstream Vera Sans,sans-serif; font-size:11px;
+    color:black;
+    border-bottom:1px solid #a0a0a0; border-right:1px solid #a0a0a0;
+    background-color:#e0e0ff;
+}
+.boxedGridCellSelectedOver,
+.boxedGridCellSelectedOverDark {
+    font-family:Verdana,Bitstream Vera Sans,sans-serif; font-size:11px;
+    color:black;
+    border-bottom:1px solid #a0a0a0; border-right:1px solid #a0a0a0;
+    background-color:#e0e0ff;
+}
+.boxedGridCellDisabled,
+.boxedGridCellDisabledDark {
+    font-family:Verdana,Bitstream Vera Sans,sans-serif; font-size:11px;
+    color:#808080;
+    border-bottom:1px solid #a0a0a0; border-right:1px solid #a0a0a0;
+    background-color:#ffffff;
 }

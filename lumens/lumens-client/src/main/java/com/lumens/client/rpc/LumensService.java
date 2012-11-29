@@ -13,5 +13,6 @@ public interface LumensService extends RemoteService
 {
     public ComponentRegistry[] getDataSourceCatalog();
     public ComponentRegistry[] getProcessorCatalog();
-    public void saveTransformWorkflow();
+    public void createDataSource();
+    public void createProcessor();
 }

@@ -15,12 +15,12 @@ public class ComponentRegistryManager
 
     public void registerDataSource(ComponentRegistry connectorRegistry)
     {
-        datasourceCatalog.put(connectorRegistry.getID(), connectorRegistry);
+        datasourceCatalog.put(connectorRegistry.getId(), connectorRegistry);
     }
 
     public void registerProcessor(ComponentRegistry connectorRegistry)
     {
-        processorCatalog.put(connectorRegistry.getID(), connectorRegistry);
+        processorCatalog.put(connectorRegistry.getId(), connectorRegistry);
     }
 
     public int getDataSourceCount()

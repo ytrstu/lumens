@@ -2,6 +2,8 @@ package com.lumens.client.rpc.beans;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -13,6 +15,7 @@ public class ComponentRegistry implements Serializable, IsSerializable
     private String name;
     private String icon;
     private String componentIcon;
+    private List<ComponentParameter> parameters = new ArrayList<ComponentParameter>();
     private transient String className;
 
     public ComponentRegistry()
@@ -29,9 +32,14 @@ public class ComponentRegistry implements Serializable, IsSerializable
         this.className = className;
     }
 
-    public String getID()
+    public String getId()
     {
         return id;
+    }
+
+    public void setId(String id)
+    {
+        this.id = id;
     }
 
     public String getName()
@@ -39,9 +47,19 @@ public class ComponentRegistry implements Serializable, IsSerializable
         return name;
     }
 
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
     public String getIcon()
     {
         return icon;
+    }
+
+    public void setIcon(String icon)
+    {
+        this.icon = icon;
     }
 
     public String getComponentIcon()
@@ -49,8 +67,28 @@ public class ComponentRegistry implements Serializable, IsSerializable
         return componentIcon;
     }
 
-    public String getComponentClass()
+    public void setComponentIcon(String componentIcon)
+    {
+        this.componentIcon = componentIcon;
+    }
+
+    public String getClassName()
     {
         return className;
+    }
+
+    public void setClassName(String className)
+    {
+        this.className = className;
+    }
+
+    public void addParameter(ComponentParameter param)
+    {
+        parameters.add(param);
+    }
+
+    public List<ComponentParameter> getParameters()
+    {
+        return this.parameters;
     }
 }
