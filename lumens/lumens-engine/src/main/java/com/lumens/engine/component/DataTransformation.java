@@ -1,5 +1,7 @@
-package com.lumens.engine;
+package com.lumens.engine.component;
 
+import com.lumens.engine.TransformExecuteContext;
+import com.lumens.engine.run.ExecuteContext;
 import com.lumens.model.Element;
 import com.lumens.processor.Processor;
 import com.lumens.processor.transform.TransformProcessor;
@@ -14,18 +16,16 @@ import java.util.Map;
  *
  * @author shaofeng wang
  */
-public class Transformation implements TransformComponent
+public class DataTransformation extends AbstractTransformComponent
 {
     private String name;
     private Processor processor;
-    private TransformComponent to;
     private List<TransformRule> ruleList = new ArrayList<TransformRule>();
     private Map<String, List<TransformRule>> ruleFindList = new HashMap<String, List<TransformRule>>();
 
-    @Override
-    public void to(TransformComponent to)
+    public DataTransformation()
     {
-        this.to = to;
+        processor = new TransformProcessor();
     }
 
     public void registerRule(TransformRule rule)
@@ -52,8 +52,7 @@ public class Transformation implements TransformComponent
             if (rule.getName().equals(ruleName))
             {
                 it.remove();
-                List<TransformRule> rules = ruleFindList.get(rule.
-                        getSourceName());
+                List<TransformRule> rules = ruleFindList.get(rule.getSourceName());
                 if (rules == null)
                     throw new RuntimeException("Not found");
                 rules.remove(rule);
@@ -67,8 +66,8 @@ public class Transformation implements TransformComponent
     public List<ExecuteContext> execute(ExecuteContext context)
     {
         List<Element> results = new ArrayList<Element>();
-        String targetFormatName = context.getTargetFormatName();
-        List<TransformRule> rules = ruleFindList.get(targetFormatName);
+        String targetId = context.getTargetName();
+        List<TransformRule> rules = ruleFindList.get(targetId);
         List<ExecuteContext> exList = new ArrayList<ExecuteContext>();
         Object input = context.getInput();
         for (TransformRule rule : rules)
@@ -81,8 +80,7 @@ public class Transformation implements TransformComponent
                     List<Element> inputs = (List<Element>) input;
                     for (Element data : inputs)
                     {
-                        List<Element> result = (List<Element>) processor.
-                                execute(rule, data);
+                        List<Element> result = (List<Element>) processor.execute(rule, data);
                         if (!result.isEmpty())
                             results.addAll(result);
                     }
@@ -90,28 +88,23 @@ public class Transformation implements TransformComponent
             } else if (input == null || input instanceof Element)
             {
                 Element data = input == null ? null : (Element) input;
-                List<Element> result = (List<Element>) processor.execute(
-                        rule, data);
+                List<Element> result = (List<Element>) processor.execute(rule, data);
                 if (!result.isEmpty())
                     results.addAll(result);
             }
-            exList.
-                    add(
-                    new TransformExecuteContext(results, rule.getDesinationName()));
+            exList.add(new TransformExecuteContext(results, rule.getTargetName()));
         }
         return exList;
     }
 
     @Override
-    public void initialize()
+    public void open()
     {
-        processor = new TransformProcessor();
     }
 
     @Override
-    public void cleanup()
+    public void close()
     {
-        processor = null;
     }
 
     @Override
@@ -129,26 +122,23 @@ public class Transformation implements TransformComponent
     @Override
     public boolean accept(ExecuteContext ctx)
     {
-        return ruleFindList.containsKey(ctx.getTargetFormatName());
+        return ruleFindList.containsKey(ctx.getTargetName());
     }
 
     @Override
-    public Map<String, TransformComponent> getToList()
-    {
-        Map<String, TransformComponent> toList = new HashMap<String, TransformComponent>();
-        toList.put(to.getName(), to);
-        return toList;
-    }
-
-    @Override
-    public boolean hasTo()
-    {
-        return to != null;
-    }
-
-    @Override
-    public boolean isSingleTo()
+    public boolean isSingleTarget()
     {
         return true;
+    }
+
+    public List<TransformRule> getTransformRuleList()
+    {
+        return ruleList;
+    }
+
+    @Override
+    public String getClassName()
+    {
+        return DataTransformation.class.getName();
     }
 }
