@@ -4,10 +4,14 @@
 package com.lumens.model;
 
 import com.lumens.model.Format.Form;
-import com.lumens.model.serializer.DataElementXmlSerializer;
+import com.lumens.model.serializer.ElementXmlSerializer;
+import com.lumens.model.serializer.FormatXmlSerializer;
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.util.Iterator;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -36,7 +40,7 @@ public class ModelTest
         return new TestSuite(ModelTest.class);
     }
 
-    public void testFormatAndData()
+    public void testFormatAndData() throws JAXBException
     {
         // Create a simple structure, collection and attribute meta data model
         Format root = new DataFormat("root");
@@ -51,12 +55,12 @@ public class ModelTest
         Element personData = new DataElement(person);
         Element nameData = personData.addChild("name");
         nameData.setValue("James wang");
-        assertEquals("James wang", nameData.getString());
+        assertEquals("James wang", nameData.getValue().getString());
         Element assetData = personData.addChild("asset");
         assetData.addChild("name").setValue("Mac air book");
         assetData.addChild("price").setValue(12000.05f);
         assertEquals(12000.05f, personData.getChild("asset").getChild("price").
-                getFloat());
+                getValue().getFloat());
     }
 
     public void testCollection()
@@ -75,15 +79,14 @@ public class ModelTest
         Element personData = new DataElement(person);
         Element nameData = personData.addChild("name");
         nameData.setValue("James wang");
-        assertEquals("James wang", nameData.getString());
+        assertEquals("James wang", nameData.getValue().getString());
         Element assetData = personData.addChild("asset");
         Element assetDataItem = assetData.addArrayItem();
         assetDataItem.addChild("name").setValue("Mac air book");
         assetDataItem.addChild("price").setValue(12000.05f);
         assetDataItem.addChild("vendor").addChild("name").setValue("Apple");
         assertEquals(12000.05f, personData.getChild("asset").getChildren().
-                get(0).getChild("price").
-                getFloat());
+                get(0).getChild("price").getValue().getFloat());
     }
 
     public void testClone()
@@ -155,7 +158,7 @@ public class ModelTest
         Element personData = new DataElement(person);
         Element nameData = personData.addChild("name");
         nameData.setValue("James wang");
-        assertEquals("James wang", nameData.getString());
+        assertEquals("James wang", nameData.getValue().getString());
         Element assetData = personData.addChild("asset");
         Element assetDataItem = assetData.addArrayItem();
         assetDataItem.addChild("test").addArrayItem().setValue(
@@ -177,11 +180,12 @@ public class ModelTest
         nameData = personData.getChildByPath("asset[1].vendor.name");
         assertNotNull(nameData);
         Element test = personData.getChildByPath("asset.test");
-        assertEquals("test collection default index", test.getString());
+        assertEquals("test collection default index", test.getValue().
+                getString());
 
         // test xml
-        DataElementXmlSerializer serializer = new DataElementXmlSerializer(
-                personData, "UTF-8", true);
+        ElementXmlSerializer serializer = new ElementXmlSerializer(
+                personData, true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         serializer.write(baos);
         System.out.println(baos.toString());
@@ -198,8 +202,9 @@ public class ModelTest
         Format dateFormat = new DataFormat("Date", Form.FIELD, Type.DATE);
         Element dateElement = new DataElement(dateFormat);
         dateElement.setValue("2012-04-12T10:22:12Z");
-        System.out.println(dateElement.getString());
+        System.out.println(dateElement.getValue());
         dateElement.setValue("2012-04-12 10:22:12");
-        System.out.println(dateElement.getString());
+        System.out.println(dateElement.getValue());
     }
+
 }

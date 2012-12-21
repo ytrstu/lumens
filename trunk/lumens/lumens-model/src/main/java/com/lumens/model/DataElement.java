@@ -4,12 +4,10 @@
 package com.lumens.model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  *
@@ -21,13 +19,14 @@ public class DataElement implements Element
     protected List<Element> childrenList;
     protected List<Element> arrayItems;
     protected Format format;
-    protected Object value;
     private Element parent;
     private int level = 0;
     private boolean isArrayItem;
+    private Value value;
 
     public DataElement(Format format)
     {
+        super();
         this.format = format;
     }
 
@@ -187,246 +186,6 @@ public class DataElement implements Element
     }
 
     @Override
-    public Object getValue()
-    {
-        return value;
-    }
-
-    @Override
-    public void setValue(Object value)
-    {
-        if ((isBoolean() && value instanceof Boolean)
-            || (isByte() && value instanceof Byte)
-            || (isShort() && value instanceof Short)
-            || (isInt() && value instanceof Integer)
-            || (isLong() && value instanceof Long)
-            || (isFloat() && value instanceof Float)
-            || (isDouble() && value instanceof Double)
-            || (isDate() && value instanceof Date)
-            || (isBinary() && value instanceof byte[])
-            || (isString() && value instanceof String))
-            this.value = value;
-        else if (value != null && value instanceof String)
-            this.value = parseString(value.toString());
-        else
-            throw new IllegalArgumentException(
-                    "Error, data type is \"" + format.getType() + "\"," + " value type is \"" + value + "\" !");
-    }
-
-    @Override
-    public void setValue(short value)
-    {
-        if (!isShort())
-            throw new IllegalArgumentException("Error, data type is not short !");
-        this.value = value;
-    }
-
-    @Override
-    public void setValue(byte value)
-    {
-        if (!isByte())
-            throw new IllegalArgumentException("Error, data type is not Byte !");
-        this.value = value;
-    }
-
-    @Override
-    public void setValue(boolean value)
-    {
-        if (!isBoolean())
-            throw new IllegalArgumentException(
-                    "Error, data type is not Boolean !");
-        this.value = value;
-    }
-
-    @Override
-    public void setValue(int value)
-    {
-        if (!isInt())
-            throw new IllegalArgumentException("Error, data type is not int !");
-        this.value = value;
-    }
-
-    @Override
-    public void setValue(long value)
-    {
-        if (!isLong())
-            throw new IllegalArgumentException("Error, data type is not long !");
-        this.value = value;
-    }
-
-    @Override
-    public void setValue(float value)
-    {
-        if (!isFloat())
-            throw new IllegalArgumentException("Error, data type is not float !");
-        this.value = value;
-    }
-
-    @Override
-    public void setValue(double value)
-    {
-        if (!isDouble())
-            throw new IllegalArgumentException(
-                    "Error, data type is not double !");
-        this.value = value;
-    }
-
-    @Override
-    public void setValue(byte[] value)
-    {
-        if (!isBinary())
-            throw new IllegalArgumentException(
-                    "Error, data type is not binary !");
-        this.value = value;
-    }
-
-    @Override
-    public void setValue(Date value)
-    {
-        if (!isDate())
-            throw new IllegalArgumentException(
-                    "Error, data type is not date time !");
-        this.value = value;
-    }
-
-    @Override
-    public void setValue(String value)
-    {
-        // TODO need to try to convert to other data type from a string
-        if (!isString())
-        {
-            this.value = parseString(value);
-        } else
-            this.value = value;
-    }
-
-    @Override
-    public short getShort()
-    {
-        return (Short) value;
-    }
-
-    @Override
-    public byte getByte()
-    {
-        return (Byte) value;
-    }
-
-    @Override
-    public boolean getBoolean()
-    {
-        return (Boolean) value;
-    }
-
-    @Override
-    public int getInt()
-    {
-        return (Integer) value;
-    }
-
-    @Override
-    public long getLong()
-    {
-        return (Long) value;
-    }
-
-    @Override
-    public float getFloat()
-    {
-        return (Float) value;
-    }
-
-    @Override
-    public double getDouble()
-    {
-        return (Double) value;
-    }
-
-    @Override
-    public byte[] getBinary()
-    {
-        return (byte[]) value;
-    }
-
-    @Override
-    public String getString()
-    {
-        return value == null ? null : value.toString();
-    }
-
-    @Override
-    public Date getDate()
-    {
-        return (Date) value;
-    }
-
-    @Override
-    public boolean isShort()
-    {
-        return format.getType() == Type.SHORT;
-    }
-
-    @Override
-    public boolean isByte()
-    {
-        return format.getType() == Type.BYTE;
-    }
-
-    @Override
-    public boolean isBoolean()
-    {
-        return format.getType() == Type.BOOLEAN;
-    }
-
-    @Override
-    public boolean isInt()
-    {
-        return format.getType() == Type.INT;
-    }
-
-    @Override
-    public boolean isLong()
-    {
-        return format.getType() == Type.LONG;
-    }
-
-    @Override
-    public boolean isFloat()
-    {
-        return format.getType() == Type.FLOAT;
-    }
-
-    @Override
-    public boolean isDouble()
-    {
-        return format.getType() == Type.DOUBLE;
-    }
-
-    @Override
-    public boolean isBinary()
-    {
-        return format.getType() == Type.BINARY;
-    }
-
-    @Override
-    public boolean isDate()
-    {
-        return format.getType() == Type.DATE;
-    }
-
-    @Override
-    public boolean isString()
-    {
-        return format.getType() == Type.STRING;
-    }
-
-    @Override
-    public boolean isEmpty()
-    {
-        return value == null;
-    }
-
-    @Override
     public boolean isField()
     {
         return format.isField() || (isArrayItem() && format.isArrayOfField());
@@ -462,27 +221,29 @@ public class DataElement implements Element
         return isArrayItem;
     }
 
-    private Object parseString(String value)
+    @Override
+    public Value getValue()
     {
-        if (isBoolean())
-            return Boolean.parseBoolean(value);
-        else if (isByte())
-            return Byte.parseByte(value);
-        else if (isShort())
-            return Short.parseShort(value);
-        else if (isInt())
-            return Integer.parseInt(value);
-        else if (isLong())
-            return Long.parseLong(value);
-        else if (isFloat())
-            return Float.parseFloat(value);
-        else if (isDouble())
-            return Double.parseDouble(value);
-        else if (isDate())
-            return DateTime.parse(value);
-        else if (isBinary())
-            return Base64.decodeBase64(value);
+        return value;
+    }
 
-        throw new RuntimeException("Not supported data type !");
+    @Override
+    public void setValue(Value value)
+    {
+        this.value = value;
+    }
+
+    @Override
+    public void setValue(Object value)
+    {
+        if (value instanceof Value)
+            this.value = (Value) value;
+        this.value = new Value(format.getType(), value);
+    }
+
+    @Override
+    public boolean isNull()
+    {
+        return value == null || value.isNull();
     }
 }

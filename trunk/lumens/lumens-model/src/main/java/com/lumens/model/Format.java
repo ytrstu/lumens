@@ -31,6 +31,11 @@ public interface Format
         {
             return name;
         }
+
+        public static Form parseString(String form)
+        {
+            return Form.valueOf(form.toUpperCase());
+        }
     }
 
     public Type getType();
@@ -49,11 +54,11 @@ public interface Format
 
     public void setParent(Format format);
 
-    public void setProperty(String name, Object value);
+    public void setProperty(String name, Value value);
 
-    public Object getProperty(String name);
+    public Value getProperty(String name);
 
-    public Map<String, Object> getProperties();
+    public Map<String, Value> getPropertyList();
 
     public Format addChild(Format format);
 
