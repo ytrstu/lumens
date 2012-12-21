@@ -4,6 +4,8 @@
  */
 package com.lumens.engine;
 
+import com.lumens.engine.run.ExecuteContext;
+
 /**
  *
  * @author shaofeng wang
@@ -11,12 +13,12 @@ package com.lumens.engine;
 public class TransformExecuteContext implements ExecuteContext
 {
     private Object input;
-    private String targetFomat;
+    private String targetName;
 
-    public TransformExecuteContext(Object input, String targetFomat)
+    public TransformExecuteContext(Object input, String targetId)
     {
         this.input = input;
-        this.targetFomat = targetFomat;
+        this.targetName = targetId;
     }
 
     @Override
@@ -26,8 +28,8 @@ public class TransformExecuteContext implements ExecuteContext
     }
 
     @Override
-    public String getTargetFormatName()
+    public String getTargetName()
     {
-        return targetFomat;
+        return targetName;
     }
 }

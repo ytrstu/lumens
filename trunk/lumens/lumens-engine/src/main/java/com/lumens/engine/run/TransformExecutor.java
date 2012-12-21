@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lumens.engine;
+package com.lumens.engine.run;
 
+import com.lumens.engine.TransformComponent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,15 +30,15 @@ public class TransformExecutor implements Executor
     {
         List<Executor> tExList = new ArrayList<Executor>();
         List<ExecuteContext> exList = tComponent.execute(executeContext);
-        if (tComponent.hasTo())
+        if (tComponent.hasTarget())
         {
-            Map<String, TransformComponent> toList = tComponent.getToList();
-            for (TransformComponent to : toList.values())
+            Map<String, TransformComponent> targetList = tComponent.getTargetList();
+            for (TransformComponent target : targetList.values())
             {
                 for (ExecuteContext ctx : exList)
                 {
-                    if (to.accept(ctx))
-                        tExList.add(new TransformExecutor(to, ctx));
+                    if (target.accept(ctx))
+                        tExList.add(new TransformExecutor(target, ctx));
                 }
             }
         }
@@ -46,8 +47,7 @@ public class TransformExecutor implements Executor
             // TODO need log system
             for (ExecuteContext ctx : exList)
                 System.out.println(String.format(
-                        "No target component to process '%s'", ctx.
-                        getTargetFormatName()));
+                        "No target component to process '%s'", ctx.getTargetName()));
         }
         return tExList;
     }

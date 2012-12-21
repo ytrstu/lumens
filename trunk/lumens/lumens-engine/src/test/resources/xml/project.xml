@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="1.0" name="The demo project">
+    <description><![CDATA[The demo project description]]>    
+    </description>
+    <datasource-list>
+        <datasource id="webserviceID" name="SOAP Test web service">
+            <description><![CDATA[This is a testing datasource configuration]]>
+            </description>
+            <position x="120" y="100"/>
+            <target-list>
+                <target name="tranform rule"/>
+            </target-list>
+            <property-list> <!--reference="./parameter.xml"-->
+                <property id="WSDL"><![CDATA[ http://localhost:8084/ws-mock/test?cit-test-key=test ]]>
+                </property>
+                <property id="ProxyAddress"><![CDATA[ http://web-proxy.atl.hp.com ]]>
+                </property>
+                <property id="ProxyPort">8080</property>
+                <property id="User">admin</property>
+                <property id="Password">password encrypted text</property>
+            </property-list>
+            <format-list direction="IN">
+                <format-entry name="consume_request1" direction="IN">
+                    <format name="test1">
+                    </format>
+                </format-entry>
+                <format-entry name="consume_request2" direction="IN">
+                    <format name="test1">
+                    </format>
+                </format-entry>
+            </format-list>
+            <format-list direction="OUT">
+                <format-entry name="consume_request1" direction="OUT">
+                    <format name="test2">
+                    </format>
+                </format-entry>
+                <format-entry name="consume_request2" direction="OUT">
+                    <format name="test2">
+                    </format>
+                </format-entry>
+            </format-list>
+        </datasource>
+        <datasource id="webserviceID" name="Write to SOAP ws">
+            <position x="320" y="100"/>
+            <format-list type="IN">
+                <format-info name="consume_request11" type="IN">
+                    <format name="test1">
+                    </format>
+                </format-info>
+                <format-info name="consume_request222" type="IN">
+                    <format name="test1">
+                    </format>
+                </format-info>
+            </format-list>
+            <format-list type="OUT">
+                <format-info name="consume_request11" type="OUT">
+                    <format name="test2">
+                    </format>
+                </format-info>
+                <format-info name="consume_request22" type="OUT">
+                    <format name="test2">
+                    </format>
+                </format-info>
+            </format-list>
+        </datasource>
+    </datasource-list>
+    <processor-list>
+        <processor id="transformPro" name="tranform rule">
+            <description>Test description demo</description>
+            <position x="220" y="100"/>
+            <target-list>
+                <target name="Write to SOAP ws"/>
+            </target-list>
+            <transform-rule-list>
+                <transform-rule name="test transform rule" source-name="consume_request1" target-name="consume_request11">
+                    <transform-rule-item format-name="test3">
+                        <script><![CDATA[@a.b.c.d]]>
+                        </script>
+                        <transform-rule-item format-name="test4" array-iteration-path="test3.test4">
+                            <script><![CDATA[@a.b.c.d.e]]>
+                            </script>
+                            <transform-rule-item format-name="test5">
+                                <script>
+                                <![CDATA[
+                                if(@a.b.c.d.e > 0)
+                                  return @a.b.c.d.e
+                                else
+                                  return @a.b.c.d.f
+                                ]]>
+                                </script>
+                            </transform-rule-item>
+                        </transform-rule-item>
+                    </transform-rule-item>
+                </transform-rule>
+            </transform-rule-list>
+        </processor>
+    </processor-list>
+</project>

@@ -1,5 +1,6 @@
 package com.lumens.engine;
 
+import com.lumens.engine.run.ExecuteContext;
 import java.util.List;
 import java.util.Map;
 
@@ -9,17 +10,25 @@ import java.util.Map;
  */
 public interface TransformComponent
 {
-    public void to(TransformComponent to);
+    public void setX(int x);
 
-    public boolean hasTo();
+    public void setY(int y);
 
-    public boolean isSingleTo();
+    public int getX();
 
-    public Map<String, TransformComponent> getToList();
+    public int getY();
 
-    public void initialize();
+    public void targetTo(TransformComponent target);
 
-    public void cleanup();
+    public boolean hasTarget();
+
+    public boolean isSingleTarget();
+
+    public Map<String, TransformComponent> getTargetList();
+
+    public void open() throws Exception;
+
+    public void close();
 
     public List<ExecuteContext> execute(ExecuteContext context);
 
@@ -28,4 +37,10 @@ public interface TransformComponent
     public String getName();
 
     public void setName(String name);
+
+    public String getDescription();
+
+    public void setDescription(String description);
+    
+    public String getClassName();
 }

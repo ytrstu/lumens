@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lumens.engine;
+package com.lumens.engine.run;
 
 /**
  *
@@ -10,7 +10,7 @@ package com.lumens.engine;
  */
 public interface ExecuteContext
 {
-    public String getTargetFormatName();
+    public String getTargetName();
 
     public Object getInput();
 }

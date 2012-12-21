@@ -4,11 +4,19 @@
  */
 package com.lumens.engine;
 
+import com.lumens.engine.run.TransformExecuteJob;
+
 /**
  *
  * @author washaofe
  */
 public class TransformEngine
 {
-    
+    public void initialize()
+    {
+    }
+
+    public void execute(TransformExecuteJob job)
+    {
+    }
 }
