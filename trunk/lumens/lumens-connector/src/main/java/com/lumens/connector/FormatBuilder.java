@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public interface FormatBuilder
 {
-    public Map<String, Format> getFormatList(Usage param);
+    public Map<String, Format> getFormatList(Direction direction);
 
-    public Format getFormat(Format format, String path, Usage param);
+    public Format getFormat(Format format, String path, Direction direction);
 }

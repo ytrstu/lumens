@@ -9,6 +9,7 @@ import com.lumens.model.DataFormat;
 import com.lumens.model.Format;
 import com.lumens.model.Format.Form;
 import com.lumens.model.Type;
+import com.lumens.model.Value;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -21,7 +22,8 @@ import java.util.Map;
  */
 public class OracleClient extends AbstractClient implements OracleConstants
 {
-    public OracleClient(String ojdbcURL, String connURL, String user, String password)
+    public OracleClient(String ojdbcURL, String connURL, String user,
+                        String password)
     {
         super(ojdbcURL, ORACLE_CLASS, connURL, user, password);
     }
@@ -59,8 +61,8 @@ public class OracleClient extends AbstractClient implements OracleConstants
                     String type = ret.getString(3);
                     Format table = new DataFormat(tableName, Form.STRUCT);
                     tables.put(tableName, table);
-                    table.setProperty(DESCRIPTION, description);
-                    table.setProperty(TYPE, type);
+                    table.setProperty(DESCRIPTION, new Value(description));
+                    table.setProperty(TYPE, new Value(type));
                 }
                 if (fullLoad)
                 {
@@ -76,21 +78,24 @@ public class OracleClient extends AbstractClient implements OracleConstants
                                 String columnName = preparedRet.getString(1);
                                 String dataType = preparedRet.getString(2);
                                 String dataLength = preparedRet.getString(3);
-                                Format table = format.addChild(columnName, Form.FIELD, toType(
+                                Format table = format.addChild(columnName,
+                                                               Form.FIELD,
+                                                               toType(
                                         dataType));
-                                table.setProperty(DATA_TYPE, dataType);
-                                table.setProperty(DATA_LENGTH, dataLength);
+                                table.
+                                        setProperty(DATA_TYPE,
+                                                    new Value(dataType));
+                                table.setProperty(DATA_LENGTH,
+                                                  new Value(dataLength));
                             }
                         }
                     }
                 }
             }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             throw new RuntimeException(e);
-        }
-        finally
+        } finally
         {
             DbUtils.releaseResultSet(ret);
             DbUtils.releaseStatement(stat);
@@ -108,7 +113,8 @@ public class OracleClient extends AbstractClient implements OracleConstants
         try
         {
             stat = conn.createStatement();
-            ret = stat.executeQuery(TABLECOLUMNS + '\'' + format.getName() + '\'');
+            ret = stat.executeQuery(
+                    TABLECOLUMNS + '\'' + format.getName() + '\'');
             if (!ret.isClosed())
             {
                 while (ret.next())
@@ -116,17 +122,16 @@ public class OracleClient extends AbstractClient implements OracleConstants
                     String columnName = ret.getString(1);
                     String dataType = ret.getString(2);
                     String dataLength = ret.getString(3);
-                    Format table = format.addChild(columnName, Form.FIELD, toType(dataType));
-                    table.setProperty(DATA_TYPE, dataType);
-                    table.setProperty(DATA_LENGTH, dataLength);
+                    Format table = format.addChild(columnName, Form.FIELD,
+                                                   toType(dataType));
+                    table.setProperty(DATA_TYPE, new Value(dataType));
+                    table.setProperty(DATA_LENGTH, new Value(dataLength));
                 }
             }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             throw new RuntimeException(e);
-        }
-        finally
+        } finally
         {
             DbUtils.releaseResultSet(ret);
             DbUtils.releaseStatement(stat);
@@ -142,7 +147,7 @@ public class OracleClient extends AbstractClient implements OracleConstants
                 equalsIgnoreCase(CLOB))
             return Type.STRING;
         else if (dataType.startsWith(NUMBER))
-            return Type.INT;
+            return Type.INTEGER;
         else if (dataType.equalsIgnoreCase(DATE))
             return Type.DATE;
         else if (dataType.startsWith(NUMBERIC))
