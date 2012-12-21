@@ -5,18 +5,26 @@ package com.lumens.model.serializer;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  *
  * @author shaofeng wang
  */
-class StringWriter
+public class StringWriter
 {
     private DataOutputStream out;
+    private OutputStream outputStream;
 
-    public StringWriter(DataOutputStream out)
+    public StringWriter(OutputStream outputStream)
     {
-        this.out = out;
+        this.outputStream = outputStream;
+        this.out = new DataOutputStream(outputStream);
+    }
+
+    public OutputStream getOutStream()
+    {
+        return outputStream;
     }
 
     public StringWriter print(String str) throws IOException

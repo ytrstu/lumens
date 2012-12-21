@@ -15,9 +15,9 @@ import java.util.Map;
  */
 public class DataFormat implements Format
 {
-    protected Map<String, Object> properties;
-    protected Map<String, Format> children;
-    protected List<Format> childrenList;
+    protected Map<String, Value> propertyList;
+    protected Map<String, Format> childMap;
+    protected List<Format> childList;
     private String name;
     private Type type = Type.NONE;
     private Form form = Form.NONE;
@@ -49,8 +49,8 @@ public class DataFormat implements Format
     public Format clone()
     {
         DataFormat cloned = new DataFormat(getName(), getForm(), getType());
-        if (properties != null)
-            cloned.properties = new HashMap<String, Object>(properties);
+        if (propertyList != null)
+            cloned.propertyList = new HashMap<String, Value>(propertyList);
         return cloned;
     }
 
@@ -58,9 +58,9 @@ public class DataFormat implements Format
     public Format deepClone()
     {
         Format cloned = clone();
-        if (childrenList != null)
+        if (childList != null)
         {
-            for (Format child : childrenList)
+            for (Format child : childList)
                 cloned.addChild(child.deepClone());
         }
 
@@ -104,39 +104,39 @@ public class DataFormat implements Format
     }
 
     @Override
-    public void setProperty(String name, Object value)
+    public void setProperty(String name, Value value)
     {
-        if (properties == null)
-            properties = new HashMap<String, Object>();
-        properties.put(name, value);
+        if (propertyList == null)
+            propertyList = new HashMap<String, Value>();
+        propertyList.put(name, value);
     }
 
     @Override
-    public Object getProperty(String name)
+    public Value getProperty(String name)
     {
-        return properties == null ? null : properties.get(name);
+        return propertyList == null ? null : propertyList.get(name);
     }
 
     @Override
-    public Map<String, Object> getProperties()
+    public Map<String, Value> getPropertyList()
     {
-        return properties;
+        return propertyList;
     }
 
     @Override
     public Format addChild(Format format)
     {
-        if (children == null && childrenList == null)
+        if (childMap == null && childList == null)
         {
-            children = new HashMap<String, Format>();
-            childrenList = new ArrayList<Format>();
+            childMap = new HashMap<String, Format>();
+            childList = new ArrayList<Format>();
         }
-        else if (children.containsKey(format.getName()))
+        else if (childMap.containsKey(format.getName()))
             throw new IllegalArgumentException("Duplicate child \"" + format.getName() + "\"");
         format.setParent(this);
 
-        children.put(format.getName(), format);
-        childrenList.add(format);
+        childMap.put(format.getName(), format);
+        childList.add(format);
         return format;
     }
 
@@ -155,7 +155,7 @@ public class DataFormat implements Format
     @Override
     public Format getChild(String name)
     {
-        return children == null ? null : children.get(name);
+        return childMap == null ? null : childMap.get(name);
     }
 
     @Override
@@ -180,7 +180,7 @@ public class DataFormat implements Format
     @Override
     public List<Format> getChildren()
     {
-        return childrenList;
+        return childList;
     }
 
     @Override

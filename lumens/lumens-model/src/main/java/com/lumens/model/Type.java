@@ -13,7 +13,7 @@ public enum Type
     BYTE("Byte"),
     BOOLEAN("Boolean"),
     SHORT("Short"),
-    INT("Integer"),
+    INTEGER("Integer"),
     LONG("Long"),
     FLOAT("Float"),
     DOUBLE("Double"),
@@ -31,5 +31,10 @@ public enum Type
     public String toString()
     {
         return name;
+    }
+
+    public static Type parseString(String type)
+    {
+        return Type.valueOf(type.toUpperCase());
     }
 }
