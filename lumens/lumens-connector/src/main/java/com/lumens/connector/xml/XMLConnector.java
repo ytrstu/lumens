@@ -4,9 +4,10 @@
 package com.lumens.connector.xml;
 
 import com.lumens.connector.Connector;
+import com.lumens.connector.Direction;
 import com.lumens.connector.Operation;
-import com.lumens.connector.Usage;
 import com.lumens.model.Format;
+import com.lumens.model.Value;
 import java.util.Map;
 
 /**
@@ -28,13 +29,13 @@ public class XMLConnector implements Connector
     }
 
     @Override
-    public Map<String, Format> getFormatList(Usage param)
+    public Map<String, Format> getFormatList(Direction direction)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Format getFormat(Format format, String path, Usage param)
+    public Format getFormat(Format format, String path, Direction direction)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -46,7 +47,7 @@ public class XMLConnector implements Connector
     }
 
     @Override
-    public void setParameters(Map<String, Object> parameters)
+    public void setPropertyList(Map<String, Value> propertyList)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }

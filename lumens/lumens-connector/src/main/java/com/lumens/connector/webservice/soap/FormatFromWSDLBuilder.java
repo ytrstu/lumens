@@ -3,14 +3,15 @@
  */
 package com.lumens.connector.webservice.soap;
 
+import com.lumens.connector.Direction;
 import com.lumens.connector.FormatBuilder;
-import com.lumens.connector.Usage;
 import com.lumens.model.AccessPath;
 import com.lumens.model.DataFormat;
 import com.lumens.model.Format;
 import com.lumens.model.Format.Form;
 import com.lumens.model.Path;
 import com.lumens.model.Type;
+import com.lumens.model.Value;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -75,7 +76,8 @@ import org.xml.sax.InputSource;
  *
  * @author shaofeng wang
  */
-public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLEntityResolver
+public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants,
+                                              XMLEntityResolver
 {
     private String wsdlURL;
     private Definition definition;
@@ -90,7 +92,7 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         buildinTypes.put("string", Type.STRING);
         buildinTypes.put("byte", Type.BYTE);
         buildinTypes.put("boolean", Type.BOOLEAN);
-        buildinTypes.put("int", Type.INT);
+        buildinTypes.put("int", Type.INTEGER);
         buildinTypes.put("nonPositiveInteger", Type.LONG);
         buildinTypes.put("negativeInteger", Type.LONG);
         buildinTypes.put("nonNegativeInteger", Type.LONG);
@@ -126,31 +128,31 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
             WSDLReader wsdlReader11 = WSDLFactory.newInstance().newWSDLReader();
             definition = wsdlReader11.readWSDL(wsdlURL);
             buildSchemaModel();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public Map<String, Format> getFormatList(Usage param)
+    public Map<String, Format> getFormatList(Direction direction)
     {
-        return buildServices(definition, param);
+        return buildServices(definition, direction);
     }
 
     @Override
-    public Format getFormat(Format format, String path, Usage use)
+    public Format getFormat(Format format, String path, Direction direction)
     {
         int soapMessageType = SOAPMESSAGE_IN;
-        if (use == Usage.PRODUCE)
+        if (direction == Direction.OUT)
             soapMessageType = SOAPMESSAGE_OUT;
         Path accessPath = new AccessPath(path);
         int count = accessPath.tokenCount();
         Format child = format.getChildByPath(accessPath);
         if (child == null || path.endsWith(child.getName()))
             while (count >= 0)
-                getFormatForMessage(format, accessPath.removeRight(--count), soapMessageType);
+                getFormatForMessage(format, accessPath.removeRight(--count),
+                                    soapMessageType);
         return format;
     }
 
@@ -160,10 +162,12 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         {
             // Caching the schema information
             List schemas = definition.getTypes().getExtensibilityElements();
-            Set<Map.Entry<String, String>> namespaceSet = definition.getNamespaces().entrySet();
+            Set<Map.Entry<String, String>> namespaceSet = definition.
+                    getNamespaces().entrySet();
             if (schemas.size() > 1)
             {
-                throw new RuntimeException("Not support multiple schema in one WSDL");
+                throw new RuntimeException(
+                        "Not support multiple schema in one WSDL");
             }
             for (Object o : schemas)
             {
@@ -198,14 +202,17 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
                         toString(schema, out);
                         XMLSchemaLoader loader = new XMLSchemaLoader();
-                        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+                        DocumentBuilderFactory domFactory = DocumentBuilderFactory.
+                                newInstance();
                         domFactory.setNamespaceAware(true);
                         domFactory.setValidating(false);
-                        DocumentBuilder builder = domFactory.newDocumentBuilder();
+                        DocumentBuilder builder = domFactory.
+                                newDocumentBuilder();
                         DOMImplementationLS domLS = (DOMImplementationLS) builder.
                                 getDOMImplementation();
                         LSInput input = domLS.createLSInput();
-                        ByteArrayInputStream bais = new ByteArrayInputStream(out.toByteArray());
+                        ByteArrayInputStream bais = new ByteArrayInputStream(out.
+                                toByteArray());
                         InputSource is = new InputSource(bais);
                         input.setEncoding(is.getEncoding());
                         input.setPublicId(is.getPublicId());
@@ -215,8 +222,7 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
                         loader.setEntityResolver(this);
                         xsModel = loader.load(input);
                         schemaCache = null;
-                    }
-                    catch (Exception ex)
+                    } catch (Exception ex)
                     {
                         throw new RuntimeException(ex);
                     }
@@ -230,17 +236,20 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         List<Format> children = format.getChildren();
         for (Format child : children)
         {
-            Object prop = child.getProperty(SOAPMESSAGE);
-            if (prop != null && param == (Integer) prop
-                && (accessPath.isEmpty() || child.getName().equals(accessPath.left(1).toString())))
+            Value prop = child.getProperty(SOAPMESSAGE);
+            if (prop != null && param == prop.getInt()
+                && (accessPath.isEmpty() || child.getName().equals(accessPath.
+                    left(1).toString())))
             {
                 format = child;
                 break;
             }
         }
         String name = format.getName();
-        String namespace = (String) format.getProperty(TARGETNAMESPACE);
-        XSElementDeclaration xsElement = xsModel.getElementDeclaration(name, namespace);
+        String namespace = format.getProperty(TARGETNAMESPACE).getString();
+        XSElementDeclaration xsElement = xsModel.
+                getElementDeclaration(name,
+                                      namespace);
         if (xsElement != null)
         {
             XSTypeDefinition xsTypeDef = xsElement.getTypeDefinition();
@@ -248,19 +257,22 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
             {
                 XSComplexTypeDefinition xsComplex = (XSComplexTypeDefinition) xsTypeDef;
                 buildFieldFromXSAttributeList(format, xsComplex);
-                buildFormatFromXSComplexType(format, null, null, accessPath.removeLeft(1), xsComplex,
+                buildFormatFromXSComplexType(format, null, null, accessPath.
+                        removeLeft(1), xsComplex,
                                              false, 2);
-            }
-            else if (xsTypeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE)
+            } else if (xsTypeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE)
             {
                 XSSimpleTypeDefinition xsSimple = (XSSimpleTypeDefinition) xsTypeDef;
-                buildFormatFromXSSimpleType(format, name, namespace, null, xsSimple, false);
+                buildFormatFromXSSimpleType(format, name, namespace, null,
+                                            xsSimple, false);
             }
         }
     }
 
-    private static void buildFromatFromElement(Format parent, XSElementDeclaration xsElement,
-                                               Path accessPath, boolean isArray, int level)
+    private static void buildFromatFromElement(Format parent,
+                                               XSElementDeclaration xsElement,
+                                               Path accessPath, boolean isArray,
+                                               int level)
     {
         String name = xsElement.getName();
         String namespace = xsElement.getNamespace();
@@ -270,18 +282,20 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         {
 
             XSComplexTypeDefinition xsComplex = (XSComplexTypeDefinition) xsTypeDef;
-            buildFormatFromXSComplexType(parent, name, namespace, accessPath, xsComplex, isArray,
+            buildFormatFromXSComplexType(parent, name, namespace, accessPath,
+                                         xsComplex, isArray,
                                          level);
-        }
-        else if (xsTypeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE)
+        } else if (xsTypeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE)
         {
 
             XSSimpleTypeDefinition xsSimple = (XSSimpleTypeDefinition) xsTypeDef;
-            buildFormatFromXSSimpleType(parent, name, namespace, null, xsSimple, isArray);
+            buildFormatFromXSSimpleType(parent, name, namespace, null, xsSimple,
+                                        isArray);
         }
     }
 
-    private static void buildFormatFromXSComplexType(Format parent, String name, String namespace,
+    private static void buildFormatFromXSComplexType(Format parent, String name,
+                                                     String namespace,
                                                      Path accessPath,
                                                      XSComplexTypeDefinition xsComplex,
                                                      boolean isArray, int level)
@@ -305,18 +319,17 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
             Format format = parent.getChild(name);
             if (format == null)
             {
-                format = buildFormatFromXSSimpleType(parent, name, namespace, xsComplex,
+                format = buildFormatFromXSSimpleType(parent, name, namespace,
+                                                     xsComplex,
                                                      (XSSimpleTypeDefinition) baseType,
                                                      isArray);
             }
             buildFieldFromXSAttributeList(format, xsComplex);
-        }
-        else if (contentType == XSComplexTypeDefinition.SIMPLE_TYPE)
+        } else if (contentType == XSComplexTypeDefinition.SIMPLE_TYPE)
         {
             buildFormatFromXSSimpleType(parent, name, namespace, xsComplex,
                                         xsComplex.getSimpleType(), isArray);
-        }
-        else if (contentType == XSComplexTypeDefinition.CONTENTTYPE_ELEMENT)
+        } else if (contentType == XSComplexTypeDefinition.CONTENTTYPE_ELEMENT)
         {
             if (name != null)
             {
@@ -330,7 +343,7 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
                 {
                     Form form = isArray ? Form.ARRAYOFSTRUCT : Form.STRUCT;
                     format = parent.addChild(name, form);
-                    format.setProperty(TARGETNAMESPACE, namespace);
+                    format.setProperty(TARGETNAMESPACE, new Value(namespace));
 
                 }
                 buildFieldFromXSAttributeList(format, xsComplex);
@@ -354,7 +367,8 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         return true;
     }
 
-    private static Format buildFormatFromXSSimpleType(Format parent, String name, String namespace,
+    private static Format buildFormatFromXSSimpleType(Format parent, String name,
+                                                      String namespace,
                                                       XSComplexTypeDefinition xsComplex,
                                                       XSSimpleTypeDefinition xsSimple,
                                                       boolean isArray)
@@ -368,7 +382,7 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
             else
                 form = isArray ? Form.ARRAYOFSTRUCT : Form.STRUCT;
             format = parent.addChild(name, form);
-            format.setProperty(TARGETNAMESPACE, namespace);
+            format.setProperty(TARGETNAMESPACE, new Value(namespace));
             String simpleName = xsSimple.getName();
             if (XMLSCHEMAXSD.equalsIgnoreCase(xsSimple.getNamespace()))
             {
@@ -388,7 +402,8 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         return format;
     }
 
-    private static void buildFromFromXSParticle(Format parent, XSParticle xsParticle,
+    private static void buildFromFromXSParticle(Format parent,
+                                                XSParticle xsParticle,
                                                 Path accessPath, int level)
     {
         boolean isUnbounded = xsParticle.getMaxOccursUnbounded();
@@ -399,8 +414,7 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         {
             XSElementDeclaration xsElement = (XSElementDeclaration) term;
             buildFromatFromElement(parent, xsElement, accessPath, isArray, level);
-        }
-        else if (term instanceof XSModelGroup)
+        } else if (term instanceof XSModelGroup)
         {
             XSModelGroup xsGroup = (XSModelGroup) term;
             XSObjectList list = xsGroup.getParticles();
@@ -410,8 +424,7 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
                 XSParticle xsPart = (XSParticle) xsObj;
                 buildFromFromXSParticle(parent, xsPart, accessPath, level);
             }
-        }
-        else if (term instanceof XSWildcard)
+        } else if (term instanceof XSWildcard)
         {
             // TODO Ignore such nodes
         }
@@ -439,19 +452,21 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
             Element schema = schemaCache.get(ns);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             toString(schema, out);
-            ByteArrayInputStream bais = new ByteArrayInputStream(out.toByteArray());
+            ByteArrayInputStream bais = new ByteArrayInputStream(out.
+                    toByteArray());
             InputSource is = new InputSource(bais);
             is.setPublicId(ns);
-            XMLInputSource xmlInputSource = new XMLInputSource(is.getPublicId(), is.getSystemId(),
-                                                               xmlri.getBaseSystemId());
+            XMLInputSource xmlInputSource = new XMLInputSource(is.getPublicId(),
+                                                               is.getSystemId(),
+                                                               xmlri.
+                    getBaseSystemId());
             if (is.getCharacterStream() != null)
                 xmlInputSource.setCharacterStream(is.getCharacterStream());
             if (is.getByteStream() != null)
                 xmlInputSource.setByteStream(is.getByteStream());
             xmlInputSource.setEncoding(is.getEncoding());
             return xmlInputSource;
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new XNIException(ex);
         }
@@ -487,19 +502,22 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
             String attrName = attrDecl.getName();
             if (format.getChild(attrName) == null)
             {
-                String typeName = attrUse.getAttrDeclaration().getTypeDefinition().getName();
+                String typeName = attrUse.getAttrDeclaration().
+                        getTypeDefinition().getName();
                 Type type = buildinTypes.get(typeName);
                 if (type != null)
                 {
                     Format attr = format.addChild(attrName, Form.FIELD, type);
-                    attr.setProperty(SOAPATTRIBUTE, true);
-                    attr.setProperty(TARGETNAMESPACE, attrDecl.getNamespace());
+                    attr.setProperty(SOAPATTRIBUTE, new Value(true));
+                    attr.setProperty(TARGETNAMESPACE, new Value(attrDecl.
+                            getNamespace()));
                 }
             }
         }
     }
 
-    private static Map<String, Format> buildServices(Definition definition, Usage param)
+    private static Map<String, Format> buildServices(Definition definition,
+                                                     Direction direction)
     {
         Map<String, Format> services = new HashMap<String, Format>();
         Collection<Service> wsServices = definition.getServices().values();
@@ -515,7 +533,8 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
                     continue;
                 }
                 Binding binding = port.getBinding();
-                List<BindingOperation> bindingOperations = binding.getBindingOperations();
+                List<BindingOperation> bindingOperations = binding.
+                        getBindingOperations();
                 for (BindingOperation bindingOperation : bindingOperations)
                 {
                     String name = bindingOperation.getName();
@@ -523,54 +542,59 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
                         continue;
                     Format portFmt = new DataFormat(name, Form.STRUCT);
                     services.put(name, portFmt);
-                    portFmt.setProperty(SOAPENDPOINT, endPoint);
+                    portFmt.setProperty(SOAPENDPOINT, new Value(endPoint));
                     String soapAction = getSOAPAction(bindingOperation);
                     if (soapAction != null)
-                        portFmt.setProperty(SOAPACTION, soapAction);
+                        portFmt.setProperty(SOAPACTION, new Value(soapAction));
                     BindingInput input = bindingOperation.getBindingInput();
                     if (input != null)
                     {
-                        String inputName = input.getName();
-                        portFmt.setProperty(BINDINGINPUT,
-                                            inputName == null ? EMPTY_STRING : inputName);
+                        Value inputName = new Value(Type.STRING, input.getName());
+                        portFmt.setProperty(BINDINGINPUT, inputName);
                     }
                     BindingOutput output = bindingOperation.getBindingOutput();
                     if (output != null)
                     {
-                        String outputName = output.getName();
-                        portFmt.setProperty(BINDINGOUTPUT,
-                                            outputName == null ? EMPTY_STRING : outputName);
+                        Value outputName = new Value(Type.STRING, output.
+                                getName());
+                        portFmt.setProperty(BINDINGOUTPUT, outputName);
                     }
-                    portFmt.setProperty(TARGETNAMESPACE, binding.getQName().getNamespaceURI());
-                    buildMessages(portFmt, binding.getPortType(), param);
+                    portFmt.setProperty(TARGETNAMESPACE,
+                                        new Value(binding.getQName().
+                            getNamespaceURI()));
+                    buildMessages(portFmt, binding.getPortType(), direction);
                 }
             }
         }
         return services;
     }
 
-    private static void buildMessages(Format port, PortType portType, Usage param)
+    private static void buildMessages(Format port, PortType portType,
+                                      Direction direction)
     {
         if (portType != null)
         {
-            String inputName = (String) port.getProperty(BINDINGINPUT);
-            if (EMPTY_STRING.equals(inputName))
-                inputName = null;
-            String outputName = (String) port.getProperty(BINDINGOUTPUT);
-            if (EMPTY_STRING.equals(outputName))
-                outputName = null;
-            Operation operation = portType.getOperation(port.getName(), inputName,
-                                                        outputName);
+            String strInputName = null;
+            Value vName = port.getProperty(BINDINGINPUT);
+            if (vName != null)
+                strInputName = vName.getString();
+            String strOutputName = null;
+            vName = port.getProperty(BINDINGOUTPUT);
+            if (vName != null)
+                strOutputName = vName.getString();
+            Operation operation = portType.getOperation(port.getName(),
+                                                        strInputName,
+                                                        strOutputName);
             if (operation != null)
             {
                 Message message = null;
-                if (param == Usage.CONSUME)
+                if (direction == Direction.IN)
                 {
                     Input input = operation.getInput();
                     message = input.getMessage();
                     buildFormatFormMessage(message, port, SOAPMESSAGE_IN);
                 }
-                if (param == Usage.PRODUCE)
+                if (direction == Direction.OUT)
                 {
                     Output output = operation.getOutput();
                     message = output.getMessage();
@@ -580,7 +604,8 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
         }
     }
 
-    private static void buildFormatFormMessage(Message message, Format port, int soapMessageMode)
+    private static void buildFormatFormMessage(Message message, Format port,
+                                               int soapMessageMode)
     {
         Collection<Part> parts = message.getParts().values();
         for (Part part : parts)
@@ -588,23 +613,24 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
             // TODO does not handle http call here, the qname is null for http call
             QName qName = part.getElementName();
             Format msgFmt = port.addChild(qName.getLocalPart(), Form.STRUCT);
-            msgFmt.setProperty(TARGETNAMESPACE, qName.getNamespaceURI());
-            msgFmt.setProperty(SOAPMESSAGE, soapMessageMode);
+            msgFmt.setProperty(TARGETNAMESPACE, new Value(qName.
+                    getNamespaceURI()));
+            msgFmt.setProperty(SOAPMESSAGE, new Value(soapMessageMode));
         }
     }
 
     private static String getSOAPAction(BindingOperation bindingOperation)
     {
         // Get SOAP Action
-        List<ExtensibilityElement> extElemList = bindingOperation.getExtensibilityElements();
+        List<ExtensibilityElement> extElemList = bindingOperation.
+                getExtensibilityElements();
         for (ExtensibilityElement extElem : extElemList)
         {
             if (extElem instanceof SOAPOperation)
             {
                 SOAPOperation soapOper = (SOAPOperation) extElem;
                 return soapOper.getSoapActionURI();
-            }
-            else if (extElem instanceof SOAP12Operation)
+            } else if (extElem instanceof SOAP12Operation)
             {
                 SOAP12Operation soapOper = (SOAP12Operation) extElem;
                 return soapOper.getSoapActionURI();
@@ -622,13 +648,11 @@ public class FormatFromWSDLBuilder implements FormatBuilder, SOAPConstants, XMLE
             {
                 SOAPAddress soapAddress = (SOAPAddress) extElem;
                 return soapAddress.getLocationURI();
-            }
-            else if (extElem instanceof SOAP12Address)
+            } else if (extElem instanceof SOAP12Address)
             {
                 SOAP12Address soap12Address = (SOAP12Address) extElem;
                 return soap12Address.getLocationURI();
-            }
-            else if (extElem instanceof HTTPAddress)
+            } else if (extElem instanceof HTTPAddress)
             {
                 HTTPAddress httpAddress = (HTTPAddress) extElem;
                 return httpAddress.getLocationURI();

@@ -7,6 +7,7 @@ import com.lumens.model.DataElement;
 import com.lumens.model.Element;
 import com.lumens.model.Format;
 import com.lumens.model.Type;
+import com.lumens.model.Value;
 import java.util.Iterator;
 import java.util.List;
 import javax.xml.namespace.QName;
@@ -29,11 +30,12 @@ public class ElementFromSOAPBuilder implements SOAPConstants
         List<Format> children = format.getChildren();
         for (Format message : children)
         {
-            Integer isMessage = (Integer) message.getProperty(SOAPMESSAGE);
-            if (isMessage != null && isMessage.intValue() == SOAPMESSAGE_OUT)
+            Value isMessage = message.getProperty(SOAPMESSAGE);
+            if (isMessage != null && isMessage.getInt() == SOAPMESSAGE_OUT)
             {
                 Element messageElement = element.addChild(message.getName());
-                String namespace = (String) message.getProperty(TARGETNAMESPACE);
+                String namespace = message.getProperty(TARGETNAMESPACE).
+                        getString();
                 SOAPBody body = envelope.getBody();
                 OMElement omElem = body.getFirstElement();
                 if (omElem != null)
@@ -56,8 +58,9 @@ public class ElementFromSOAPBuilder implements SOAPConstants
         {
             for (Format child : children)
             {
-                String namespace = (String) child.getProperty(TARGETNAMESPACE);
-                Iterator<OMElement> it = omElem.getChildrenWithName(new QName(namespace, child.getName()));
+                String namespace = child.getProperty(TARGETNAMESPACE).getString();
+                Iterator<OMElement> it = omElem.getChildrenWithName(new QName(namespace, child.
+                        getName()));
                 if (it != null && it.hasNext())
                 {
                     Element childElement = element.newChild(child);
@@ -72,8 +75,7 @@ public class ElementFromSOAPBuilder implements SOAPConstants
                             buildElementFromOMElement(arrayItem, omChild);
                             if (arrayItem.getChildren() != null || arrayItem.isField())
                                 childElement.addArrayItem(arrayItem);
-                        }
-                        else
+                        } else
                         {
                             if (child.getType() != Type.NONE)
                                 childElement.setValue(omChild.getText());

@@ -7,6 +7,7 @@ import com.lumens.connector.FormatBuilder;
 import com.lumens.connector.webservice.WebServiceConnector;
 import com.lumens.model.Element;
 import com.lumens.model.Format;
+import com.lumens.model.Value;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.namespace.QName;
@@ -31,7 +32,6 @@ public class SOAPClient implements SOAPConstants
 {
     private FormatFromWSDLBuilder formatBuilder;
     private SOAPMessageBuilder soapBuilder;
-    private ElementFromSOAPBuilder elementBuilder;
     private Authenticator basicAuth;
     private ServiceClient client;
     private WebServiceConnector connector;
@@ -46,7 +46,6 @@ public class SOAPClient implements SOAPConstants
         // TODO need to handle SSL
         formatBuilder = new FormatFromWSDLBuilder(connector.getWsdlURL());
         soapBuilder = new SOAPMessageBuilder();
-        elementBuilder = new ElementFromSOAPBuilder();
         try
         {
             client = new ServiceClient();
@@ -80,14 +79,13 @@ public class SOAPClient implements SOAPConstants
                 options.setProperty(HTTPConstants.PROXY, pp);
                 System.setProperty("http.useProxy", Boolean.toString(true));
                 System.setProperty("http.proxyHost", pp.getProxyHostName());
-                System.setProperty("http.proxyPort", Integer.toString(pp.getProxyPort()));
-            }
-            else
+                System.setProperty("http.proxyPort", Integer.toString(pp.
+                        getProxyPort()));
+            } else
                 System.setProperty("http.useProxy", Boolean.toString(false));
 
             formatBuilder.loadWSDL();
-        }
-        catch (AxisFault ex)
+        } catch (AxisFault ex)
         {
             throw new RuntimeException(ex);
         }
@@ -101,8 +99,7 @@ public class SOAPClient implements SOAPConstants
             try
             {
                 client.cleanup();
-            }
-            catch (AxisFault ex)
+            } catch (AxisFault ex)
             {//Ignore exception when close
             }
         }
@@ -113,14 +110,17 @@ public class SOAPClient implements SOAPConstants
         return formatBuilder;
     }
 
-    public Element execute(Element requestElement, Format responseFormat) throws Exception
+    public SOAPEnvelope execute(Element requestElement) throws Exception
     {
         Format format = requestElement.getFormat();
         SOAPEnvelope reqEnvelop = soapBuilder.buildSOAPMessage(requestElement);
         Options options = client.getOptions();
-        options.setAction((String) format.getProperty(SOAPACTION));
-        String strEndPoint = (String) format.getProperty(SOAPENDPOINT);
-        options.setTo(new EndpointReference(strEndPoint));
+        Value soapAction = format.getProperty(SOAPACTION);
+        if (soapAction != null && !soapAction.isNull())
+            options.setAction(soapAction.getString());
+        Value soapEndPoint = format.getProperty(SOAPENDPOINT);
+        if (soapEndPoint != null && !soapEndPoint.isNull())
+            options.setTo(new EndpointReference(soapEndPoint.getString()));
 
         Object bindingIn = format.getProperty(BINDINGINPUT);
         Object bindingOut = format.getProperty(BINDINGOUTPUT);
@@ -139,9 +139,6 @@ public class SOAPClient implements SOAPConstants
 
         MessageContext responseMsgCtx = opClient.getMessageContext(
                 WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-        SOAPEnvelope responseEnvelope = responseMsgCtx.getEnvelope();
-        if (responseFormat != null)
-            return elementBuilder.buildElement(responseFormat, responseEnvelope);
-        return null;
+        return responseMsgCtx.getEnvelope();
     }
 }

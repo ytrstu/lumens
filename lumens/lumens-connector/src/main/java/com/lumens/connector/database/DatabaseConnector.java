@@ -4,10 +4,11 @@
 package com.lumens.connector.database;
 
 import com.lumens.connector.Connector;
+import com.lumens.connector.Direction;
 import com.lumens.connector.Operation;
-import com.lumens.connector.Usage;
 import com.lumens.connector.database.client.oracle.OracleClient;
 import com.lumens.model.Format;
+import com.lumens.model.Value;
 import java.util.Map;
 
 /**
@@ -47,13 +48,13 @@ public class DatabaseConnector implements Connector
     }
 
     @Override
-    public Map<String, Format> getFormatList(Usage use)
+    public Map<String, Format> getFormatList(Direction direction)
     {
         return tables;
     }
 
     @Override
-    public Format getFormat(Format format, String path, Usage use)
+    public Format getFormat(Format format, String path, Direction direction)
     {
         return dbClient.getFormat(format);
     }
@@ -65,17 +66,17 @@ public class DatabaseConnector implements Connector
     }
 
     @Override
-    public void setParameters(Map<String, Object> parameters)
+    public void setPropertyList(Map<String, Value> propertyList)
     {
-        if (parameters.containsKey(OJDBC))
-            ojdbcURL = (String) parameters.get(OJDBC);
-        if (parameters.containsKey(CONNECTION_URL))
-            connURL = (String) parameters.get(CONNECTION_URL);
-        if (parameters.containsKey(USER))
-            user = (String) parameters.get(USER);
-        if (parameters.containsKey(PASSWORD))
-            password = (String) parameters.get(PASSWORD);
-        if (parameters.containsKey(FULL_LOAD))
-            fullLoad = (Boolean) parameters.get(FULL_LOAD);
+        if (propertyList.containsKey(OJDBC))
+            ojdbcURL = propertyList.get(OJDBC).getString();
+        if (propertyList.containsKey(CONNECTION_URL))
+            connURL = propertyList.get(CONNECTION_URL).getString();
+        if (propertyList.containsKey(USER))
+            user = propertyList.get(USER).getString();
+        if (propertyList.containsKey(PASSWORD))
+            password = propertyList.get(PASSWORD).getString();
+        if (propertyList.containsKey(FULL_LOAD))
+            fullLoad = propertyList.get(FULL_LOAD).getBoolean();
     }
 }

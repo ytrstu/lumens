@@ -6,9 +6,10 @@ package com.lumens.connector.webservice;
 import com.lumens.connector.Connector;
 import com.lumens.connector.FormatBuilder;
 import com.lumens.connector.Operation;
-import com.lumens.connector.Usage;
+import com.lumens.connector.Direction;
 import com.lumens.connector.webservice.soap.SOAPClient;
 import com.lumens.model.Format;
+import com.lumens.model.Value;
 import java.util.Map;
 
 /**
@@ -52,34 +53,34 @@ public class WebServiceConnector implements Connector
     }
 
     @Override
-    public Map<String, Format> getFormatList(Usage use)
+    public Map<String, Format> getFormatList(Direction direction)
     {
-        return formatBuilder.getFormatList(use);
+        return formatBuilder.getFormatList(direction);
     }
 
     @Override
-    public Format getFormat(Format format, String path, Usage use)
+    public Format getFormat(Format format, String path, Direction direction)
     {
-        return formatBuilder.getFormat(format, path, use);
+        return formatBuilder.getFormat(format, path, direction);
     }
 
     @Override
-    public void setParameters(Map<String, Object> parameters)
+    public void setPropertyList(Map<String, Value> propertyList)
     {
-        if (parameters.containsKey(WSDL))
-            wsdlURL = (String) parameters.get(WSDL);
-        if (parameters.containsKey(USER))
-            user = (String) parameters.get(USER);
-        if (parameters.containsKey(PASSWORD))
-            password = (String) parameters.get(PASSWORD);
-        if (parameters.containsKey(PROXY_ADDR))
-            proxyAddr = (String) parameters.get(PROXY_ADDR);
-        if (parameters.containsKey(PROXY_PORT))
-            proxyPort = (Integer) parameters.get(PROXY_PORT);
-        if (parameters.containsKey(PROXY_USER))
-            proxyUser = (String) parameters.get(PROXY_USER);
-        if (parameters.containsKey(PROXY_PASSWORD))
-            proxyPassword = (String) parameters.get(PROXY_PASSWORD);
+        if (propertyList.containsKey(WSDL))
+            wsdlURL = propertyList.get(WSDL).getString();
+        if (propertyList.containsKey(USER))
+            user = propertyList.get(USER).getString();
+        if (propertyList.containsKey(PASSWORD))
+            password = propertyList.get(PASSWORD).getString();
+        if (propertyList.containsKey(PROXY_ADDR))
+            proxyAddr = propertyList.get(PROXY_ADDR).getString();
+        if (propertyList.containsKey(PROXY_PORT))
+            proxyPort = propertyList.get(PROXY_PORT).getInt();
+        if (propertyList.containsKey(PROXY_USER))
+            proxyUser = propertyList.get(PROXY_USER).getString();
+        if (propertyList.containsKey(PROXY_PASSWORD))
+            proxyPassword = propertyList.get(PROXY_PASSWORD).getString();
     }
 
     @Override

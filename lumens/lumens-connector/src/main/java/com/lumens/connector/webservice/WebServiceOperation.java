@@ -5,11 +5,10 @@
 package com.lumens.connector.webservice;
 
 import com.lumens.connector.Operation;
+import com.lumens.connector.OperationResult;
 import com.lumens.connector.webservice.soap.SOAPClient;
 import com.lumens.model.Element;
-import com.lumens.model.Format;
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.axiom.soap.SOAPEnvelope;
 
 /**
  *
@@ -25,11 +24,9 @@ public class WebServiceOperation implements Operation
     }
 
     @Override
-    public List<Element> execute(Element input, Format resultFormat) throws Exception
+    public OperationResult execute(Element input) throws Exception
     {
-        Element response = client.execute(input, resultFormat);
-        List<Element> result = new ArrayList<Element>();
-        result.add(response);
-        return result;
+        SOAPEnvelope envelope = client.execute(input);
+        return new WebServiceResult(envelope);
     }
 }

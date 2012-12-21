@@ -5,6 +5,7 @@
 package com.lumens.connector.database;
 
 import com.lumens.connector.Operation;
+import com.lumens.connector.OperationResult;
 import com.lumens.model.Element;
 import com.lumens.model.Format;
 import java.util.List;
@@ -20,7 +21,7 @@ public class DatabaseOperation implements Operation
     }
 
     @Override
-    public List<Element> execute(Element input, Format resultFormat) throws Exception
+    public OperationResult execute(Element input) throws Exception
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }

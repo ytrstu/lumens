@@ -18,7 +18,7 @@ public interface Connector extends Configurable
 
     public Operation getOperation();
 
-    public Map<String, Format> getFormatList(Usage param);
+    public Map<String, Format> getFormatList(Direction direction);
 
-    public Format getFormat(Format format, String path, Usage use);
+    public Format getFormat(Format format, String path, Direction direction);
 }

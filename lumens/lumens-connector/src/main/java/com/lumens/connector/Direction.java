@@ -8,8 +8,8 @@ package com.lumens.connector;
  *
  * @author shaofeng wang
  */
-public enum Usage
+public enum Direction
 {
-    CONSUME,
-    PRODUCE
+    IN,
+    OUT
 }

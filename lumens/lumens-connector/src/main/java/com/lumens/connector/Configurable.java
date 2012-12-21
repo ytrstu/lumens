@@ -3,6 +3,7 @@
  */
 package com.lumens.connector;
 
+import com.lumens.model.Value;
 import java.util.Map;
 
 /**
@@ -11,5 +12,5 @@ import java.util.Map;
  */
 public interface Configurable
 {
-    public void setParameters(Map<String, Object> parameters);
+    public void setPropertyList(Map<String, Value> parameters);
 }
