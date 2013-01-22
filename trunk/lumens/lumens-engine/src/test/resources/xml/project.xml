@@ -1,97 +1,136 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="1.0" name="The demo project">
-    <description><![CDATA[The demo project description]]>    
+<project name="The demo project">
+    <description>
+<![CDATA[test project description demo]]>
     </description>
     <datasource-list>
-        <datasource id="webserviceID" name="SOAP Test web service">
-            <description><![CDATA[This is a testing datasource configuration]]>
+        <datasource name="ChinaMobile-WebService-SOAP" class-name="com.lumens.connector.webservice.WebServiceConnector">
+            <description>
+<![CDATA[this is testing demo datasource for web service]]>
             </description>
-            <position x="120" y="100"/>
-            <target-list>
-                <target name="tranform rule"/>
-            </target-list>
-            <property-list> <!--reference="./parameter.xml"-->
-                <property id="WSDL"><![CDATA[ http://localhost:8084/ws-mock/test?cit-test-key=test ]]>
-                </property>
-                <property id="ProxyAddress"><![CDATA[ http://web-proxy.atl.hp.com ]]>
-                </property>
-                <property id="ProxyPort">8080</property>
-                <property id="User">admin</property>
-                <property id="Password">password encrypted text</property>
+            <position x="0" y="0"/>
+            <property-list>
+                <property name="WSDL" type="String">file:/X:/Projects/Opensource/lumens/trunk/lumens/lumens-engine/target/test-classes/wsdl/ChinaOpenFundWS.asmx</property>
             </property-list>
             <format-list direction="IN">
-                <format-entry name="consume_request1" direction="IN">
-                    <format name="test1">
+                <format-entry name="getOpenFundString1" direction="IN">
+                    <format name="getOpenFundString" form="Struct" type="None" >
+                        <property name="targetNamespace" type="String">http://WebXml.com.cn/</property>
+                        <property name="SOAPAddress" type="String">http://www.webxml.com.cn/WebServices/ChinaOpenFundWS.asmx</property>
+                        <property name="SOAPAction" type="String">http://WebXml.com.cn/getOpenFundString</property>
+                        <property name="BindingInput" type="String"></property>
+                        <property name="BindingOutput" type="String"></property>
+                        <format name="getOpenFundString" form="Struct" type="None" >
+                            <property name="targetNamespace" type="String">http://WebXml.com.cn/</property>
+                            <property name="SOAPMessage" type="Integer">0</property>
+                            <format name="userID" form="Field" type="String" >
+                                <property name="targetNamespace" type="String">http://WebXml.com.cn/</property>
+                            </format>
+                        </format>
                     </format>
                 </format-entry>
-                <format-entry name="consume_request2" direction="IN">
-                    <format name="test1">
+                <format-entry name="getOpenFundString2" direction="IN">
+                    <format name="getOpenFundString" form="Struct" type="None" >
+                        <property name="targetNamespace" type="String">http://WebXml.com.cn/</property>
+                        <property name="SOAPAddress" type="String">http://www.webxml.com.cn/WebServices/ChinaOpenFundWS.asmx</property>
+                        <property name="SOAPAction" type="String">http://WebXml.com.cn/getOpenFundString</property>
+                        <property name="BindingInput" type="String"></property>
+                        <property name="BindingOutput" type="String"></property>
+                        <format name="getOpenFundString" form="Struct" type="None" >
+                            <property name="targetNamespace" type="String">http://WebXml.com.cn/</property>
+                            <property name="SOAPMessage" type="Integer">0</property>
+                            <format name="userID" form="Field" type="String" >
+                                <property name="targetNamespace" type="String">http://WebXml.com.cn/</property>
+                            </format>
+                        </format>
                     </format>
                 </format-entry>
             </format-list>
             <format-list direction="OUT">
-                <format-entry name="consume_request1" direction="OUT">
-                    <format name="test2">
+                <format-entry name="getOpenFundString1" direction="OUT">
+                    <format name="getOpenFundString" form="Struct" type="None" >
+                        <property name="targetNamespace" type="String">http://WebXml.com.cn/</property>
+                        <property name="SOAPAddress" type="String">http://www.webxml.com.cn/WebServices/ChinaOpenFundWS.asmx</property>
+                        <property name="SOAPAction" type="String">http://WebXml.com.cn/getOpenFundString</property>
+                        <property name="BindingInput" type="String"></property>
+                        <property name="BindingOutput" type="String"></property>
+                        <format name="getOpenFundStringResponse" form="Struct" type="None" >
+                            <property name="targetNamespace" type="String">http://WebXml.com.cn/</property>
+                            <property name="SOAPMessage" type="Integer">1</property>
+                            <format name="getOpenFundStringResult" form="Struct" type="None" >
+                                <property name="targetNamespace" type="String">http://WebXml.com.cn/</property>
+                                <format name="string" form="ArrayOfField" type="String" >
+                                    <property name="targetNamespace" type="String">http://WebXml.com.cn/</property>
+                                </format>
+                            </format>
+                        </format>
                     </format>
                 </format-entry>
-                <format-entry name="consume_request2" direction="OUT">
-                    <format name="test2">
+                <format-entry name="getOpenFundString2" direction="OUT">
+                    <format name="getOpenFundString" form="Struct" type="None" >
+                        <property name="targetNamespace" type="String">http://WebXml.com.cn/</property>
+                        <property name="SOAPAddress" type="String">http://www.webxml.com.cn/WebServices/ChinaOpenFundWS.asmx</property>
+                        <property name="SOAPAction" type="String">http://WebXml.com.cn/getOpenFundString</property>
+                        <property name="BindingInput" type="String"></property>
+                        <property name="BindingOutput" type="String"></property>
+                        <format name="getOpenFundStringResponse" form="Struct" type="None" >
+                            <property name="targetNamespace" type="String">http://WebXml.com.cn/</property>
+                            <property name="SOAPMessage" type="Integer">1</property>
+                            <format name="getOpenFundStringResult" form="Struct" type="None" >
+                                <property name="targetNamespace" type="String">http://WebXml.com.cn/</property>
+                                <format name="string" form="ArrayOfField" type="String" >
+                                    <property name="targetNamespace" type="String">http://WebXml.com.cn/</property>
+                                </format>
+                            </format>
+                        </format>
                     </format>
                 </format-entry>
             </format-list>
-        </datasource>
-        <datasource id="webserviceID" name="Write to SOAP ws">
-            <position x="320" y="100"/>
-            <format-list type="IN">
-                <format-info name="consume_request11" type="IN">
-                    <format name="test1">
-                    </format>
-                </format-info>
-                <format-info name="consume_request222" type="IN">
-                    <format name="test1">
-                    </format>
-                </format-info>
-            </format-list>
-            <format-list type="OUT">
-                <format-info name="consume_request11" type="OUT">
-                    <format name="test2">
-                    </format>
-                </format-info>
-                <format-info name="consume_request22" type="OUT">
-                    <format name="test2">
-                    </format>
-                </format-info>
-            </format-list>
+            <target-list>
+                <target name="GetOpenFundString2-WS-Transform"/>
+            </target-list>
         </datasource>
     </datasource-list>
     <processor-list>
-        <processor id="transformPro" name="tranform rule">
-            <description>Test description demo</description>
-            <position x="220" y="100"/>
+        <processor name="GetOpenFundString-WS-Transform" class-name="com.lumens.engine.component.DataTransformation">
+            <position x="0" y="0"/>
             <target-list>
-                <target name="Write to SOAP ws"/>
+                <target name="ChinaMobile-WebService-SOAP"/>
             </target-list>
             <transform-rule-list>
-                <transform-rule name="test transform rule" source-name="consume_request1" target-name="consume_request11">
-                    <transform-rule-item format-name="test3">
-                        <script><![CDATA[@a.b.c.d]]>
-                        </script>
-                        <transform-rule-item format-name="test4" array-iteration-path="test3.test4">
-                            <script><![CDATA[@a.b.c.d.e]]>
-                            </script>
-                            <transform-rule-item format-name="test5">
-                                <script>
-                                <![CDATA[
-                                if(@a.b.c.d.e > 0)
-                                  return @a.b.c.d.e
-                                else
-                                  return @a.b.c.d.f
-                                ]]>
-                                </script>
+                <transform-rule-entry name="DataDriven-getOpenFundString1" source-name="DataDriven" target-name="getOpenFundString1">
+                    <transform-rule name="getOpenFundString">
+                        <transform-rule-item format-name="getOpenFundString">
+                            <transform-rule-item format-name="getOpenFundString">
+                                <transform-rule-item format-name="userID">
+                                    <script>
+<![CDATA["123"]]>
+                                    </script>
+                                </transform-rule-item>
                             </transform-rule-item>
                         </transform-rule-item>
-                    </transform-rule-item>
-                </transform-rule>
+                    </transform-rule>
+                </transform-rule-entry>
+            </transform-rule-list>
+        </processor>
+        <processor name="GetOpenFundString2-WS-Transform" class-name="com.lumens.engine.component.DataTransformation">
+            <position x="0" y="0"/>
+            <target-list>
+                <target name="ChinaMobile-WebService-SOAP"/>
+            </target-list>
+            <transform-rule-list>
+                <transform-rule-entry name="getOpenFundString1-getOpenFundString2" source-name="getOpenFundString1" target-name="getOpenFundString2">
+                    <transform-rule name="getOpenFundString">
+                        <transform-rule-item format-name="getOpenFundString">
+                            <transform-rule-item format-name="getOpenFundString">
+                                <transform-rule-item format-name="userID">
+                                    <script>
+<![CDATA[@getOpenFundStringResponse.getOpenFundStringResult.string]]>
+                                    </script>
+                                </transform-rule-item>
+                            </transform-rule-item>
+                        </transform-rule-item>
+                    </transform-rule>
+                </transform-rule-entry>
             </transform-rule-list>
         </processor>
     </processor-list>

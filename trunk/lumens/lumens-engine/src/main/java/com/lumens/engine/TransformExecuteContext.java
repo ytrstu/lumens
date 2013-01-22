@@ -1,6 +1,5 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright Lumens Team, Inc. All Rights Reserved.
  */
 package com.lumens.engine;
 
@@ -8,7 +7,7 @@ import com.lumens.engine.run.ExecuteContext;
 
 /**
  *
- * @author shaofeng wang
+ * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
 public class TransformExecuteContext implements ExecuteContext
 {

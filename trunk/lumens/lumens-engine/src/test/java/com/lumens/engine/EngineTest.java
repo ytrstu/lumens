@@ -5,6 +5,7 @@ import com.lumens.connector.Direction;
 import com.lumens.connector.webservice.WebServiceConnector;
 import com.lumens.engine.component.DataSource;
 import com.lumens.engine.component.DataTransformation;
+import com.lumens.engine.component.TransformRuleEntry;
 import com.lumens.engine.run.Executor;
 import com.lumens.engine.run.SingleThreadExecuteStack;
 import com.lumens.engine.run.TransformExecutor;
@@ -12,10 +13,12 @@ import com.lumens.engine.serializer.ProjectXmlSerializer;
 import com.lumens.model.Format;
 import com.lumens.model.Value;
 import com.lumens.processor.transform.TransformRule;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import junit.framework.TestCase;
+import org.apache.commons.io.IOUtils;
 
 /**
  *
@@ -35,8 +38,8 @@ public class EngineTest extends TestCase
         HashMap<String, Value> props = new HashMap<String, Value>();
         props.put(WebServiceConnector.WSDL, new Value(getClass().getResource(
                 "/wsdl/ChinaOpenFundWS.asmx").toString()));
-        props.put(WebServiceConnector.PROXY_ADDR, new Value("web-proxy.atl.hp.com"));
-        props.put(WebServiceConnector.PROXY_PORT, new Value(8080));
+        //props.put(WebServiceConnector.PROXY_ADDR, new Value("web-proxy.atl.hp.com"));
+        //props.put(WebServiceConnector.PROXY_PORT, new Value(8080));
         DataSource datasource = new DataSource(WebServiceConnector.class.
                 getName());
         datasource.setName("ChinaMobile-WebService-SOAP");
@@ -89,19 +92,17 @@ public class EngineTest extends TestCase
 
         // Create start point transformation
         String startPoint = "DataDriven";
-        TransformRule rule1 = new TransformRule(startPoint, targetName,
-                                                getOpenFundStringRequest);
+        TransformRule rule1 = new TransformRule(getOpenFundStringRequest);
         rule1.getRuleItem("getOpenFundString.userID").setScript(
                 "\"123\"");
-        callGetOpenFundString.registerRule(rule1);
+        callGetOpenFundString.registerRule(new TransformRuleEntry(startPoint, targetName, rule1));
 
         // Create the loop transformation datasource->transformation->datasource
-        TransformRule rule2 = new TransformRule(targetName,
-                                                targetName2,
-                                                getOpenFundStringRequest);
+        TransformRule rule2 = new TransformRule(getOpenFundStringRequest);
         rule2.getRuleItem("getOpenFundString.userID").setScript(
                 "@getOpenFundStringResponse.getOpenFundStringResult.string");
-        callGetOpenFundString2.registerRule(rule2);
+        callGetOpenFundString2.registerRule(new TransformRuleEntry(targetName,
+                                                                   targetName2, rule2));
 
         //*************Test project********************************************
         TransformProject project = new TransformProject();
@@ -133,11 +134,18 @@ public class EngineTest extends TestCase
     {
         new ProjectXmlSerializer(project).write(System.out);
 
-        // Read project and write it again
-        TransformProject newProject = new TransformProject();
-        new ProjectXmlSerializer(newProject).read(EngineTest.class.
-                getResourceAsStream("/xml/project-demo.xml"));
-        
-        new ProjectXmlSerializer(newProject).write(System.out);
+        InputStream in = null;
+        try
+        {
+            in = EngineTest.class.getResourceAsStream("/xml/project.xml");
+            // Read project and write it again
+            TransformProject newProject = new TransformProject();
+            ProjectXmlSerializer projXml = new ProjectXmlSerializer(newProject);
+            projXml.read(in);
+            projXml.write(System.out);
+        } finally
+        {
+            IOUtils.closeQuietly(in);
+        }
     }
 }
