@@ -10,5 +10,5 @@ package com.lumens.processor;
  */
 public interface Rule
 {
-
+    public String getName();
 }

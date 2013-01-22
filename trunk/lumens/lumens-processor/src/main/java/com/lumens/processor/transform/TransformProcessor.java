@@ -32,7 +32,7 @@ public class TransformProcessor extends AbstractProcessor
             TransformRule transformRule = (TransformRule) rule;
             Element inputElement = element;
             List<Element> results = new ArrayList<Element>();
-            TransformRuleItem ruleItem = transformRule.getRuleEntry();
+            TransformRuleItem ruleItem = transformRule.getRootRuleItem();
             String arrayIterationPath = ruleItem.getArrayIterationPath();
             List<Element> items;
             if (arrayIterationPath != null)

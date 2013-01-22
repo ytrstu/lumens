@@ -18,26 +18,14 @@ public class TransformRule implements Rule
 {
     private Format dstFmt;
     private TransformRuleItem root;
-    private String name;
-
-    public TransformRule(String name, Format dest)
-    {
-        this.name = name;
-        this.dstFmt = dest;
-    }
 
     public TransformRule(Format dest)
     {
-        name = dest.getName() + System.currentTimeMillis();
-        dstFmt = dest;
+        this.dstFmt = dest;
+        this.root = new TransformRuleItem(dstFmt);
     }
 
-    public String getName()
-    {
-        return name;
-    }
-
-    public TransformRuleItem getRuleEntry()
+    public TransformRuleItem getRootRuleItem()
     {
         return root;
     }
@@ -45,8 +33,6 @@ public class TransformRule implements Rule
     public TransformRuleItem getRuleItem(String path)
     {
         Path fmtPath = new AccessPath(path);
-        if (root == null)
-            root = new TransformRuleItem(dstFmt);
         if (!fmtPath.isEmpty())
         {
             PathToken token = null;
@@ -64,6 +50,12 @@ public class TransformRule implements Rule
             return child;
         }
 
-        return null;
+        return root;
+    }
+
+    @Override
+    public String getName()
+    {
+        return dstFmt.getName();
     }
 }

@@ -14,4 +14,10 @@ public class RouteRule implements Rule
     public RouteRule(String scipt_here)
     {
     }
+
+    @Override
+    public String getName()
+    {
+        return null;
+    }
 }
