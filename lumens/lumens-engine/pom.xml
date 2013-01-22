@@ -21,5 +21,10 @@
             <artifactId>lumens-connector</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.lumens.io</groupId>
+            <artifactId>lumens-io</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>

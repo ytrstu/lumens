@@ -1,3 +1,6 @@
+/*
+ * Copyright Lumens Team, Inc. All Rights Reserved.
+ */
 package com.lumens.engine;
 
 import com.lumens.engine.run.ExecuteContext;
@@ -6,7 +9,7 @@ import java.util.Map;
 
 /**
  *
- * @author shaofeng wang
+ * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
 public interface TransformComponent
 {

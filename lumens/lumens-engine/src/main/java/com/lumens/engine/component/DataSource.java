@@ -21,16 +21,16 @@ import java.util.Map;
  *
  * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
-public class DataSource extends AbstractTransformComponent
+public class DataSource extends AbstractTransformComponent implements RegisterFormatComponent
 {
     private String name;
     private String className;
     private String description;
     private Connector connector;
-    private Map<String, FormatEntry> registerProduceFormatList = new HashMap<String, FormatEntry>();
-    private Map<String, FormatEntry> registerConsumeFormatList = new HashMap<String, FormatEntry>();
-    private Map<String, Format> consumeFormatList;
-    private Map<String, Format> produceFormatList;
+    private Map<String, FormatEntry> registerOUTFormatList = new HashMap<String, FormatEntry>();
+    private Map<String, FormatEntry> registerINFormatList = new HashMap<String, FormatEntry>();
+    private Map<String, Format> inFormatList;
+    private Map<String, Format> outFormatList;
     private Map<String, Value> propertyList;
 
     public DataSource(String className)
@@ -60,21 +60,21 @@ public class DataSource extends AbstractTransformComponent
         connector = (Connector) Class.forName(className).newInstance();
         connector.setPropertyList(propertyList);
         connector.open();
-        consumeFormatList = connector.getFormatList(Direction.IN);
-        produceFormatList = connector.getFormatList(Direction.OUT);
+        inFormatList = connector.getFormatList(Direction.IN);
+        outFormatList = connector.getFormatList(Direction.OUT);
     }
 
     public Map<String, Format> getFormatList(Direction direction)
     {
-        return direction == Direction.IN ? consumeFormatList : produceFormatList;
+        return direction == Direction.IN ? inFormatList : outFormatList;
     }
 
     @Override
     public void close()
     {
         connector.close();
-        registerProduceFormatList.clear();
-        registerConsumeFormatList.clear();
+        registerOUTFormatList.clear();
+        registerINFormatList.clear();
     }
 
     @Override
@@ -83,7 +83,7 @@ public class DataSource extends AbstractTransformComponent
         try
         {
             String targetName = context.getTargetName();
-            FormatEntry entry = registerProduceFormatList.get(targetName);
+            FormatEntry entry = registerOUTFormatList.get(targetName);
             Format targetFormat = entry.getFormat();
             List<Element> result = new ArrayList<Element>();
             Object input = context.getInput();
@@ -131,36 +131,40 @@ public class DataSource extends AbstractTransformComponent
         return connector;
     }
 
-    public void registerFormat(String formatId, Format format, Direction direction)
+    @Override
+    public void registerFormat(String formatEntryName, Format format, Direction direction)
     {
         if (direction == Direction.IN)
-            registerConsumeFormatList.put(formatId, new FormatEntry(formatId, format, Direction.IN));
+            registerINFormatList.put(formatEntryName, new FormatEntry(formatEntryName, format,
+                                                                      Direction.IN));
         else
-            registerProduceFormatList.
-                    put(formatId, new FormatEntry(formatId, format, Direction.OUT));
+            registerOUTFormatList.
+                    put(formatEntryName, new FormatEntry(formatEntryName, format, Direction.OUT));
     }
 
-    public FormatEntry removeFormat(String formatId, Direction direction)
+    @Override
+    public FormatEntry removeFormat(String formatEntryName, Direction direction)
     {
         if (direction == Direction.IN)
         {
-            return registerConsumeFormatList.remove(formatId);
+            return registerINFormatList.remove(formatEntryName);
         } else
-            return registerProduceFormatList.remove(formatId);
+            return registerOUTFormatList.remove(formatEntryName);
     }
 
+    @Override
     public Map<String, FormatEntry> getRegisteredFormatList(Direction direction)
     {
         if (direction == Direction.IN)
-            return registerConsumeFormatList;
+            return registerINFormatList;
         else
-            return registerProduceFormatList;
+            return registerOUTFormatList;
     }
 
     @Override
     public boolean accept(ExecuteContext ctx)
     {
-        return registerConsumeFormatList.containsKey(ctx.getTargetName());
+        return registerINFormatList.containsKey(ctx.getTargetName());
     }
 
     @Override

@@ -96,15 +96,18 @@
   >
 
 <!--- Put your DTDDoc comment here. -->
-<!ELEMENT transform-rule-list (transform-rule)*>
+<!ELEMENT transform-rule-list (transform-rule-entry)*>
 
 <!--- Put your DTDDoc comment here. -->
-<!ELEMENT transform-rule (transform-rule-item)*>
-<!ATTLIST transform-rule
+<!ELEMENT transform-rule-entry (transform-rule)*>
+<!ATTLIST transform-rule-entry
     target-name CDATA #IMPLIED
     source-name CDATA #IMPLIED
     name CDATA #IMPLIED
   >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT transform-rule (transform-rule-item)*>
 
 <!--- Put your DTDDoc comment here. -->
 <!ELEMENT transform-rule-item (script|transform-rule-item)*>
@@ -114,4 +117,3 @@
 
 <!--- Put your DTDDoc comment here. -->
 <!ELEMENT script (#PCDATA)>
-

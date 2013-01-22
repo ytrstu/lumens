@@ -1,6 +1,5 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright Lumens Team, Inc. All Rights Reserved.
  */
 package com.lumens.engine.run;
 
@@ -46,8 +45,10 @@ public class TransformExecutor implements Executor
         {
             // TODO need log system
             for (ExecuteContext ctx : exList)
+            {
                 System.out.println(String.format(
                         "No target component to process '%s'", ctx.getTargetName()));
+            }
         }
         return tExList;
     }

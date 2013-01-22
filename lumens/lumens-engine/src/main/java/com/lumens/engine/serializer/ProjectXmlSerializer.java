@@ -9,15 +9,16 @@ import com.lumens.engine.TransformProject;
 import com.lumens.engine.component.DataSource;
 import com.lumens.engine.component.DataTransformation;
 import com.lumens.engine.component.FormatEntry;
-import com.lumens.engine.serializer.project.ProjectHandlerImpl;
-import com.lumens.engine.serializer.project.ProjectParser;
+import com.lumens.engine.component.TransformRuleEntry;
+import com.lumens.engine.serializer.parser.ProjectHandlerImpl;
+import com.lumens.engine.serializer.parser.ProjectParser;
+import com.lumens.io.StringWriter;
+import com.lumens.io.XmlSerializer;
 import com.lumens.model.Format;
 import com.lumens.model.Value;
 import com.lumens.model.serializer.FormatXmlSerializer;
-import com.lumens.model.serializer.StringWriter;
-import com.lumens.model.serializer.XmlSerializer;
 import com.lumens.processor.transform.TransformRule;
-import com.lumens.processor.transform.TransformRuleItem;
+import com.lumens.processor.transform.serializer.TransformRuleXmlSerializer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -164,7 +165,7 @@ public class ProjectXmlSerializer implements XmlSerializer
 
     private void writeDataTransformationListToXml(StringWriter xml,
                                                   List<DataTransformation> dataTransformationList,
-                                                  String indent) throws IOException
+                                                  String indent) throws Exception
     {
         if (dataTransformationList != null && !dataTransformationList.isEmpty())
         {
@@ -179,7 +180,7 @@ public class ProjectXmlSerializer implements XmlSerializer
     }
 
     private void writeDataTransformationToXml(StringWriter xml, DataTransformation dt,
-                                              String indent) throws IOException
+                                              String indent) throws Exception
     {
         String nextIndent = indent + INDENT;
         xml.print(indent).print("<processor name=\"").print(dt.getName()).print("\" class-name=\"").
@@ -193,54 +194,34 @@ public class ProjectXmlSerializer implements XmlSerializer
     }
 
     private void writeTransformRuleList(StringWriter xml,
-                                        List<TransformRule> transformRuleList,
-                                        String indent) throws IOException
+                                        List<TransformRuleEntry> transformRuleList,
+                                        String indent) throws Exception
     {
         if (transformRuleList != null && !transformRuleList.isEmpty())
         {
             String nextIndent = indent + INDENT;
             xml.print(indent).println("<transform-rule-list>");
-            for (TransformRule rule : transformRuleList)
-                writeTransformRule(xml, rule, nextIndent);
+            for (TransformRuleEntry ruleEntry : transformRuleList)
+                writeTransformRuleEntry(xml, ruleEntry, nextIndent);
             xml.print(indent).println("</transform-rule-list>");
         }
     }
 
-    private void writeTransformRule(StringWriter xml, TransformRule rule,
-                                    String indent) throws IOException
+    private void writeTransformRuleEntry(StringWriter xml, TransformRuleEntry ruleEntry,
+                                         String indent) throws Exception
     {
-        xml.print(indent).print("<transform-rule name=\"").print(rule.getName()).print("\"");
-        xml.print(" source-name=\"").print(rule.getSourceName()).print("\"");
-        xml.print(" target-name=\"").print(rule.getTargetName()).println("\">");
-        writeRuleItemToXml(xml, rule.getRuleEntry(), indent + INDENT);
-        xml.print(indent).println("</transform-rule>");
+        xml.print(indent).print("<transform-rule-entry name=\"").print(ruleEntry.getName()).print(
+                "\"");
+        xml.print(" source-name=\"").print(ruleEntry.getSourceName()).print("\"");
+        xml.print(" target-name=\"").print(ruleEntry.getTargetName()).println("\">");
+        writeRuleToXml(xml, ruleEntry.getRule(), indent + INDENT);
+        xml.print(indent).println("</transform-rule-entry>");
     }
 
-    private void writeRuleItemToXml(StringWriter xml, TransformRuleItem ruleEntry,
-                                    String indent) throws IOException
+    private void writeRuleToXml(StringWriter xml, TransformRule rule, String indent) throws Exception
     {
-        String nextIndent = indent + INDENT;
-        xml.print(indent).print("<transform-rule-item format-name=\"").print(ruleEntry.getFormat().
-                getName()).print("\"");
-        String arrayIterPath = ruleEntry.getArrayIterationPath();
-        if (arrayIterPath != null)
-            xml.print(" array-iteration-path=\"").print(arrayIterPath).println("\">");
-        else
-            xml.println(">");
-        String scriptString = ruleEntry.getScriptString();
-        if (scriptString != null)
-            xml.print(nextIndent).println("<script>").print("<![CDATA[")
-                    .print(scriptString).println("]]>").print(nextIndent).println("</script>");
-
-        Iterator<TransformRuleItem> it = ruleEntry.iterator();
-        if (it != null)
-        {
-            while (it.hasNext())
-            {
-                TransformRuleItem item = it.next();
-                writeRuleItemToXml(xml, item, nextIndent);
-            }
-        }
-        xml.print(indent).println("</transform-rule-item>");
+        TransformRuleXmlSerializer ruleXml = new TransformRuleXmlSerializer(rule);
+        ruleXml.initIndent(indent);
+        ruleXml.write(xml.getOutStream());
     }
 }
