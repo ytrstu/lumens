@@ -3,6 +3,8 @@
  */
 package com.lumens.model.serializer;
 
+import com.lumens.io.StringWriter;
+import com.lumens.io.XmlSerializer;
 import com.lumens.model.Format;
 import com.lumens.model.Value;
 import com.lumens.model.serializer.parser.FormatHandlerImpl;
@@ -25,7 +27,8 @@ public class FormatXmlSerializer implements XmlSerializer
     private Format format;
     private boolean useIndent;
     private boolean careProperties;
-    private String INDENT = "  ";
+    private String INDENT_OFFSET = "  ";
+    private String INDENT = "";
 
     public FormatXmlSerializer(Format format, boolean careProps,
                                boolean indent)
@@ -65,7 +68,7 @@ public class FormatXmlSerializer implements XmlSerializer
     public void write(OutputStream out) throws Exception
     {
         StringWriter dataOut = new StringWriter(out);
-        writeFormatToXml(format, "", dataOut);
+        writeFormatToXml(format, INDENT, dataOut);
     }
 
     private void writePropertyListToXml(Map<String, Value> properties,
@@ -97,7 +100,7 @@ public class FormatXmlSerializer implements XmlSerializer
         {
             closeTag = true;
             out.println(">");
-            writePropertyListToXml(format.getPropertyList(), indent + INDENT, out);
+            writePropertyListToXml(format.getPropertyList(), indent + INDENT_OFFSET, out);
         }
         List<Format> children = format.getChildren();
         if (children != null && children.size() > 0)
@@ -108,11 +111,11 @@ public class FormatXmlSerializer implements XmlSerializer
             for (Format child : children)
             {
                 if (child.isArray())
-                    writeFormatToXml(child, indent + INDENT, out);
+                    writeFormatToXml(child, indent + INDENT_OFFSET, out);
                 else if (child.isStruct())
-                    writeFormatToXml(child, indent + INDENT, out);
+                    writeFormatToXml(child, indent + INDENT_OFFSET, out);
                 else if (child.isField())
-                    writeFormatToXml(child, indent + INDENT, out);
+                    writeFormatToXml(child, indent + INDENT_OFFSET, out);
             }
         }
         if (closeTag)

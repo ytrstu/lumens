@@ -3,6 +3,8 @@
  */
 package com.lumens.model.serializer;
 
+import com.lumens.io.StringWriter;
+import com.lumens.io.XmlSerializer;
 import com.lumens.model.Element;
 import com.lumens.model.Format;
 import com.lumens.model.Type;

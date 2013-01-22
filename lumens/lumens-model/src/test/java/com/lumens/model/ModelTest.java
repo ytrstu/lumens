@@ -5,13 +5,10 @@ package com.lumens.model;
 
 import com.lumens.model.Format.Form;
 import com.lumens.model.serializer.ElementXmlSerializer;
-import com.lumens.model.serializer.FormatXmlSerializer;
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.util.Iterator;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
