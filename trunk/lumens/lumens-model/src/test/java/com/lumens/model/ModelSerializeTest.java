@@ -7,6 +7,7 @@ package com.lumens.model;
 import com.lumens.model.serializer.ElementXmlSerializer;
 import com.lumens.model.serializer.FormatXmlSerializer;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import junit.framework.TestCase;
 
 /**
@@ -64,8 +65,15 @@ public class ModelSerializeTest extends TestCase
     {
         Format root = new DataFormat("Root");
         FormatXmlSerializer xmlSerializer = new FormatXmlSerializer(root);
-        xmlSerializer.read(ModelTest.class.
-                getResourceAsStream("/data/format.xml"));
-        xmlSerializer.write(System.out);
+        InputStream in = null;
+        try
+        {
+            in = ModelSerializeTest.class.getResourceAsStream("/xml/format.xml");
+            xmlSerializer.read(in);
+            xmlSerializer.write(System.out);
+        } finally
+        {
+            in.close();
+        }
     }
 }
