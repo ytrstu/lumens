@@ -1,28 +1,27 @@
 package com.lumens.client.rpc.beans;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author shaofeng wang
  */
-public class DataFormat implements Serializable, IsSerializable
+public class ClientDataFormat implements IsSerializable
 {
     private String name;
-    private ArrayList<DataFormat> children;
-    private ArrayList<Entry<String, Object>> properties;
+    private ArrayList<ClientDataFormat> children;
+    private ArrayList<Entry<String, String>> properties;
 
     public String getName()
     {
         return name;
     }
 
-    public void addChild(DataFormat format)
+    public void addChild(ClientDataFormat format)
     {
         if (children == null)
-            children = new ArrayList<DataFormat>();
+            children = new ArrayList<ClientDataFormat>();
         children.add(format);
     }
 
@@ -31,14 +30,14 @@ public class DataFormat implements Serializable, IsSerializable
         return children != null && !children.isEmpty();
     }
 
-    public ArrayList<DataFormat> getChildren()
+    public ArrayList<ClientDataFormat> getChildren()
     {
         return children;
     }
 
-    public Object getProperty(String name)
+    public String getProperty(String name)
     {
-        for (Entry<String, Object> entry : properties)
+        for (Entry<String, String> entry : properties)
         {
             if (entry.getKey().equals(name))
             {
@@ -48,11 +47,11 @@ public class DataFormat implements Serializable, IsSerializable
         return null;
     }
 
-    public void setProperty(String name, Object value)
+    public void setProperty(String name, String value)
     {
         if (properties == null)
-            properties = new ArrayList<Entry<String, Object>>();
-        for (Entry<String, Object> entry : properties)
+            properties = new ArrayList<Entry<String, String>>();
+        for (Entry<String, String> entry : properties)
         {
             if (entry.getKey().equals(name))
             {
@@ -60,6 +59,6 @@ public class DataFormat implements Serializable, IsSerializable
                 return;
             }
         }
-        properties.add(new Entry<String, Object>(name, value));
+        properties.add(new Entry<String, String>(name, value));
     }
 }

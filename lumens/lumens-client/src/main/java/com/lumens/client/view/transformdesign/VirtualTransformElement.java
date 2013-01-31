@@ -3,21 +3,23 @@
  */
 package com.lumens.client.view.transformdesign;
 
+import com.lumens.client.rpc.beans.ClientTransformElement;
+
 /**
  *
  * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
-public class VirtualTransformElement extends TransformElement
+public class VirtualTransformElement extends ClientTransformElement
 {
-    private TransformElement tElement;
+    private ClientTransformElement tElement;
 
-    public VirtualTransformElement(TransformElement tElement)
+    public VirtualTransformElement(ClientTransformElement tElement)
     {
         super();
         this.tElement = tElement;
     }
 
-    public TransformElement getTransformElement()
+    public ClientTransformElement getTransformElement()
     {
         return tElement;
     }

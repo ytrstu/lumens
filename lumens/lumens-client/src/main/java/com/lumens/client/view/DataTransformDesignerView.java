@@ -1,7 +1,5 @@
 package com.lumens.client.view;
 
-import com.lumens.client.view.transformdesign.ApplyActionHandler;
-import com.lumens.client.view.transformdesign.ComponentNode;
 import com.google.gwt.core.client.GWT;
 import com.lumens.client.constant.ViewConstants;
 import com.lumens.client.rpc.ComponentServiceAsyncCallback;
@@ -9,9 +7,11 @@ import com.lumens.client.rpc.LumensService;
 import com.lumens.client.rpc.LumensServiceAsync;
 import com.lumens.client.rpc.beans.ComponentRegistry;
 import com.lumens.client.view.transformdesign.ComponentCatalogNodeClickHandler;
+import com.lumens.client.view.transformdesign.ComponentNode;
+import com.lumens.client.view.transformdesign.ComponentSettingsApplyHandler;
 import com.lumens.client.view.transformdesign.ComponentSettingsListGrid;
 import com.lumens.client.view.transformdesign.DataTransformDesignerPane;
-import com.lumens.client.view.transformdesign.TransformSaveHandler;
+import com.lumens.client.view.transformdesign.TransformProjectStorageActionHandler;
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.TreeModelType;
@@ -25,6 +25,8 @@ import com.smartgwt.client.widgets.layout.SectionStack;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.events.SectionHeaderClickHandler;
+import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.tab.TabSet;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import com.smartgwt.client.widgets.tree.Tree;
@@ -42,11 +44,13 @@ public class DataTransformDesignerView extends HLayout implements
     private SectionStack tComponentBoxStack;
     private SectionStack paramInfoStack;
     private ToolStrip toolBar;
-    private VLayout dtBuilderLayout;
     private boolean active;
+    private VLayout tBuilderLayout;
+    private DataTransformDesignerPane dataTransformationBuilderPane;
+    private TabSet transformConfigPane;
     private Layout layoutContainer;
     private HLayout builderPaneLayout;
-    private DataTransformDesignerPane dataTransformationBuilderPane;
+    private VLayout tElementLayout;
 
     private DataTransformDesignerView()
     {
@@ -86,32 +90,33 @@ public class DataTransformDesignerView extends HLayout implements
         view.tComponentBoxStack.addSection(processorSection);
 
         // Build layout for toolbar and scenario area
-        view.dtBuilderLayout = new VLayout();
-        view.dtBuilderLayout.setWidth100();
-        view.dtBuilderLayout.setHeight100();
-        view.dtBuilderLayout.setBackgroundColor(ViewConstants.BACKGROUD_COLOR);
 
+        view.tElementLayout = new VLayout();
+        view.tElementLayout.setWidth100();
+        view.tElementLayout.setHeight("*");
+        view.tElementLayout.setBackgroundColor(ViewConstants.BACKGROUD_COLOR);
+        view.tElementLayout.setShowResizeBar(true);
+        view.tElementLayout.setResizeBarTarget("next");
         // Build toolbar
-        view.builderPaneLayout = new HLayout();
         view.buildToolBar();
         // Build logic pane and parameter pane
         view.buildTransformDesignPane();
-        view.dtBuilderLayout.setWidth("*");
-        view.dtBuilderLayout.setShowResizeBar(true);
-        view.dtBuilderLayout.setResizeBarTarget("next");
+
+        view.tBuilderLayout = new VLayout();
+        view.tBuilderLayout.setHeight100();
+        view.tBuilderLayout.setBackgroundColor(ViewConstants.BACKGROUD_COLOR);
+        view.tBuilderLayout.setWidth("*");
+        view.tBuilderLayout.setShowResizeBar(true);
+        view.tBuilderLayout.setResizeBarTarget("next");
+
+        view.tBuilderLayout.addMember(view.tElementLayout);
+        view.buildTransformRulePane();
 
         // Build param information stack
-        view.paramInfoStack = new SectionStack();
-        view.paramInfoStack.setVisibilityMode(VisibilityMode.MULTIPLE);
-        view.paramInfoStack.setOverflow(Overflow.HIDDEN);
-        view.paramInfoStack.setHeight100();
-        view.paramInfoStack.setWidth(280);
-        ComponentSettingsListGrid paramList = buildParamListPane(
-                view.paramInfoStack);
-        view.dataTransformationBuilderPane.setParamList(paramList);
-
+        view.builderPaneLayout = new HLayout();
+        view.buildParamSettingsPane();
         // Add the panes to pane layout of designer
-        view.builderPaneLayout.addMember(view.dtBuilderLayout);
+        view.builderPaneLayout.addMember(view.tBuilderLayout);
         view.builderPaneLayout.addMember(view.paramInfoStack);
 
         // Add to parent panel
@@ -149,15 +154,27 @@ public class DataTransformDesignerView extends HLayout implements
 
     private void buildToolBar()
     {
+        TransformProjectStorageActionHandler transformProj = new TransformProjectStorageActionHandler(
+                dataTransformationBuilderPane);
         toolBar = new ToolStrip();
         toolBar.setWidth100();
         toolBar.setHeight(30);
+        ToolStripButton newButton = new ToolStripButton();
+        newButton.setID(newProjectButtonOfTransformDesignID);
+        newButton.setIcon("action/new-project.png");
+        newButton.addClickHandler(transformProj);
+        toolBar.addButton(newButton);
+        ToolStripButton openButton = new ToolStripButton();
+        openButton.setID(openProjectButtonOfTransformDesignID);
+        openButton.setIcon("action/open-project.png");
+        openButton.addClickHandler(transformProj);
+        toolBar.addButton(openButton);
         ToolStripButton saveButton = new ToolStripButton();
-        saveButton.setID(saveButtonOfTransformDesignID);
-        saveButton.setIcon("action/save.png");
-        saveButton.addClickHandler(new TransformSaveHandler(dataTransformationBuilderPane));
+        saveButton.setID(saveProjectButtonOfTransformDesignID);
+        saveButton.setIcon("action/save-project.png");
+        saveButton.addClickHandler(transformProj);
         toolBar.addButton(saveButton);
-        dtBuilderLayout.addMember(toolBar);
+        tElementLayout.addMember(toolBar);
     }
 
     private void buildTransformDesignPane()
@@ -165,12 +182,12 @@ public class DataTransformDesignerView extends HLayout implements
         dataTransformationBuilderPane = new DataTransformDesignerPane();
         dataTransformationBuilderPane.setWidth(3000);
         dataTransformationBuilderPane.setHeight(3000);
-        dataTransformationBuilderPane.setOverflow(Overflow.SCROLL);
+        dataTransformationBuilderPane.setOverflow(Overflow.HIDDEN);
         dataTransformationBuilderPane.setBackgroundColor(BACKGROUD_COLOR);
         dataTransformationBuilderPane.setCursor(Cursor.AUTO);
         dataTransformationBuilderPane.setBuilderPaneLayout(builderPaneLayout);
-        dataTransformationBuilderPane.setBuilderLayout(dtBuilderLayout);
-        dtBuilderLayout.addMember(dataTransformationBuilderPane);
+        dataTransformationBuilderPane.setBuilderLayout(tBuilderLayout);
+        tElementLayout.addMember(dataTransformationBuilderPane);
     }
 
     private static TreeGrid buildComponentCatalog(String iconFolder)
@@ -225,6 +242,18 @@ public class DataTransformDesignerView extends HLayout implements
                 DATASOURCE_SECTION_ID, treeGrid));
     }
 
+    private void buildParamSettingsPane()
+    {
+        paramInfoStack = new SectionStack();
+        paramInfoStack.setVisibilityMode(VisibilityMode.MULTIPLE);
+        paramInfoStack.setOverflow(Overflow.HIDDEN);
+        paramInfoStack.setHeight100();
+        paramInfoStack.setWidth(280);
+        ComponentSettingsListGrid paramList = buildParamListPane(
+                paramInfoStack);
+        dataTransformationBuilderPane.setParamList(paramList);
+    }
+
     private static ComponentSettingsListGrid buildParamListPane(
             SectionStack paramInfoStack)
     {
@@ -238,12 +267,11 @@ public class DataTransformDesignerView extends HLayout implements
         paramBar.setHeight(30);
         paramBar.addSpacer(10);
         ToolStripButton applyButton = new ToolStripButton();
-        applyButton.setID(applyButtonOfSettingsID);
-        applyButton.setIcon("action/apply.png");
+        applyButton.setID(applyParamsButtonOfSettingsID);
+        applyButton.setIcon("action/accept-params.png");
         paramBar.addButton(applyButton);
         paramBar.addSpacer(10);
         ToolStripButton helpButton = new ToolStripButton();
-        helpButton.setID(undoButtonOfSettingsID);
         helpButton.setIcon("help.png");
         paramBar.addButton(helpButton);
         paramPane.addMember(paramBar);
@@ -270,13 +298,28 @@ public class DataTransformDesignerView extends HLayout implements
         parameterSection.addItem(paramPane);
         paramInfoStack.addSection(parameterSection);
 
-        ApplyActionHandler apply = new ApplyActionHandler(paramList);
+        ComponentSettingsApplyHandler apply = new ComponentSettingsApplyHandler(
+                paramList);
         applyButton.addClickHandler(apply);
 
         return paramList;
     }
 
-    private static void buildTransformRulePane()
+    private void buildTransformRulePane()
     {
+        // Build param information stack
+        transformConfigPane = new TabSet();
+        transformConfigPane.setWidth100();
+        transformConfigPane.setHeight("20%");
+        Tab tElemTab = new Tab();
+        tElemTab.setTitle("Configuration");
+        transformConfigPane.addTab(tElemTab);
+        Tab tElemFormatTab = new Tab();
+        tElemFormatTab.setTitle("Transform format");
+        transformConfigPane.addTab(tElemFormatTab);
+        Tab tElemTransformRuleTab = new Tab();
+        tElemTransformRuleTab.setTitle("Transform rule");
+        transformConfigPane.addTab(tElemTransformRuleTab);
+        tBuilderLayout.addMember(transformConfigPane);
     }
 }

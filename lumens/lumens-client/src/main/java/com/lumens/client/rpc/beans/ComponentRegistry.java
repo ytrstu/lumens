@@ -1,7 +1,6 @@
 package com.lumens.client.rpc.beans;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +8,7 @@ import java.util.List;
  *
  * @author shaofeng wang
  */
-public class ComponentRegistry implements Serializable, IsSerializable
+public class ComponentRegistry implements IsSerializable
 {
     private String id;
     private String name;

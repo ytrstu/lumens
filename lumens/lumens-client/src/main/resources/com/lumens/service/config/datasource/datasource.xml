@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasource-list>
+    <datasource>
+        <id>webserviceID</id>
+        <name>Web Service (SOAP)</name>
+        <icon>soap.png</icon>
+        <instance-icon>datasource/32/soap.png</instance-icon>
+        <class-name>com.lumens.connector.webservice.WebServiceConnector</class-name>
+        <parameter-list>
+            <parameter name="WSDL" label="WSDL address" javatype="java.lang.String"/>
+            <parameter name="ProxyAddress" label="Proxy server" javatype="java.lang.String"/>
+            <parameter name="ProxyPort" label="Proxy port" javatype="java.lang.Integer"/>
+            <parameter name="User" label="User" javatype="java.lang.Integer"/>
+            <parameter name="Password" label="Password" javatype="java.lang.String" encrypted="true"/>
+        </parameter-list>
+    </datasource>
+    <datasource>
+        <id>databaseID</id>
+        <name>Database</name>
+        <icon>database.png</icon>
+        <instance-icon>datasource/32/database.png</instance-icon>
+        <class-name>com.lumens.connector.database.DatabaseConnector</class-name>
+        <parameter-list>
+            <parameter name="Server" label="Database server" javatype="java.lang.String"/>
+            <parameter name="Port" label="Database port" javatype="java.lang.Integer"/>
+            <parameter name="User" label="User" javatype="java.lang.Integer"/>
+            <parameter name="Password" label="Password" javatype="java.lang.String" encrypted="true"/>
+        </parameter-list>
+    </datasource>
+</datasource-list>

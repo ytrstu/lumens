@@ -12,42 +12,42 @@
 
     <?xml version="1.0"?>
 
-    <!DOCTYPE Datasources SYSTEM "datasource.dtd">
+    <!DOCTYPE datasource-list SYSTEM "datasource.dtd">
 
-    <Datasources>
+    <datasource-list>
     ...
-    </Datasources>
+    </datasource-list>
 -->
 
 <!--- Put your DTDDoc comment here. -->
-<!ELEMENT Datasources (Datasource)*>
+<!ELEMENT datasource-list (datasource)*>
 
 <!--- Put your DTDDoc comment here. -->
-<!ELEMENT Datasource (Parameters|ClassName|ComponentIcon|Icon|Name|ID)*>
+<!ELEMENT datasource (parameter-list|class-name|instance-icon|icon|name|id)*>
 
 <!--- Put your DTDDoc comment here. -->
-<!ELEMENT ID (#PCDATA)>
+<!ELEMENT id (#PCDATA)>
 
 <!--- Put your DTDDoc comment here. -->
-<!ELEMENT Name (#PCDATA)>
+<!ELEMENT name (#PCDATA)>
 
 <!--- Put your DTDDoc comment here. -->
-<!ELEMENT Icon (#PCDATA)>
+<!ELEMENT icon (#PCDATA)>
 
 <!--- Put your DTDDoc comment here. -->
-<!ELEMENT ComponentIcon (#PCDATA)>
+<!ELEMENT instance-icon (#PCDATA)>
 
 <!--- Put your DTDDoc comment here. -->
-<!ELEMENT ClassName (#PCDATA)>
+<!ELEMENT class-name (#PCDATA)>
 
 <!--- Put your DTDDoc comment here. -->
-<!ELEMENT Parameters (Parameter)*>
+<!ELEMENT parameter-list (parameter)*>
 
 <!--- Put your DTDDoc comment here. -->
-<!ELEMENT Parameter EMPTY>
-<!ATTLIST Parameter
+<!ELEMENT parameter EMPTY>
+<!ATTLIST parameter
     encrypted CDATA #IMPLIED
     javatype CDATA #IMPLIED
+    label CDATA #IMPLIED
     name CDATA #IMPLIED
-    id CDATA #IMPLIED
   >

@@ -1,10 +1,12 @@
 package com.lumens.client.rpc.beans;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  *
  * @author shaofeng wang
  */
-public class Entry<K, V>
+public class Entry<K, V> implements IsSerializable
 {
     private K key;
     private V value;

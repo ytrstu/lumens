@@ -1,13 +1,15 @@
+/*
+ * Copyright Lumens Team, Inc. All Rights Reserved.
+ */
 package com.lumens.client.view.transformdesign;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.lumens.client.WebClientController;
+import com.lumens.client.constant.ViewConstants;
+import com.lumens.client.rpc.ComponentServiceAsyncCallback;
 import com.lumens.client.rpc.LumensService;
 import com.lumens.client.rpc.LumensServiceAsync;
 import com.lumens.client.rpc.beans.ComponentRegistry;
-import com.lumens.client.constant.ViewConstants;
-import com.lumens.client.rpc.ComponentServiceAsyncCallback;
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.grid.CellFormatter;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
@@ -22,7 +24,7 @@ import com.smartgwt.client.widgets.tree.TreeNode;
 
 /**
  *
- * @author shaofeng wang
+ * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
 public class ComponentCatalogNodeClickHandler implements
         SectionHeaderClickHandler,

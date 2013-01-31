@@ -5,8 +5,10 @@
 package com.lumens.client.view.transformdesign;
 
 import com.lumens.client.WebClientController;
+import com.lumens.client.rpc.beans.ClientTransformElement;
 import com.lumens.client.rpc.beans.ComponentRegistry;
 import com.smartgwt.client.util.EventHandler;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.DropEvent;
 import com.smartgwt.client.widgets.events.DropHandler;
@@ -29,6 +31,13 @@ public class DataSourceCreator implements DropHandler
     @Override
     public void onDrop(DropEvent event)
     {
+        if (designPane.hasProject() == false)
+        {
+            // TODO error message is needed here
+            SC.say("Please create a new project");
+            return;
+        }
+
         Canvas target = EventHandler.getDragTarget();
         if (target instanceof TreeGrid)
         {
@@ -41,8 +50,8 @@ public class DataSourceCreator implements DropHandler
                         lookupDataSource(componentNode.getComponentID());
                 if (component != null)
                 {
-                    TransformElement worker = new TransformElement(component,
-                                                                   designPane);
+                    ClientTransformElement worker = new ClientTransformElement(component,
+                                                                               designPane);
                     worker.setTop(event.getY() - designPane.getAbsoluteTop());
                     worker.setLeft(event.getX() - designPane.getAbsoluteLeft());
                     designPane.addElement(worker);

@@ -1,5 +1,6 @@
-package com.lumens.client.view.transformdesign;
+package com.lumens.client.rpc.beans;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.smartgwt.client.widgets.drawing.DrawPath;
 import com.smartgwt.client.widgets.drawing.DrawRect;
 import com.smartgwt.client.widgets.drawing.Point;
@@ -8,16 +9,16 @@ import com.smartgwt.client.widgets.drawing.Point;
  *
  * @author shaofeng wang
  */
-public class ElementLink extends DrawPath
+public class ClientElementLink extends DrawPath implements IsSerializable
 {
-    private TransformElement outElement;
-    private TransformElement inElement;
-    private DrawRect anchorPoint;
+    private ClientTransformElement outElement;
+    private ClientTransformElement inElement;
+    private transient DrawRect anchorPoint;
     private final static int anchorSize = 8;
     private final static int deltaLength = 12;
     private final static int deltaOffset = 2;
 
-    public ElementLink()
+    public ClientElementLink()
     {
         this.setLineWidth(2);
         anchorPoint = new DrawRect();
@@ -32,7 +33,7 @@ public class ElementLink extends DrawPath
         return anchorPoint;
     }
 
-    public void set(TransformElement in, TransformElement out)
+    public void set(ClientTransformElement in, ClientTransformElement out)
     {
         inElement = in;
         outElement = out;
@@ -61,12 +62,12 @@ public class ElementLink extends DrawPath
         anchorPoint.setCenter(points[0].getX(), points[0].getY());
     }
 
-    public TransformElement getIn()
+    public ClientTransformElement getIn()
     {
         return this.inElement;
     }
 
-    public TransformElement getOut()
+    public ClientTransformElement getOut()
     {
         return this.outElement;
     }

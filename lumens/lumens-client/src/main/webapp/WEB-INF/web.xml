@@ -6,6 +6,7 @@
     <display-name>Lumens Web Client</display-name>
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
+        <!--<welcome-file>main.html</welcome-file>-->
     </welcome-file-list>
     <servlet> 
         <servlet-name>LumensServiceImpl</servlet-name> 

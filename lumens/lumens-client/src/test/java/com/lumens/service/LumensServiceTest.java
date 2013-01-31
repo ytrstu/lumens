@@ -1,11 +1,10 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright Lumens Team, Inc. All Rights Reserved.
  */
 package com.lumens.service;
 
 import com.lumens.client.rpc.beans.ComponentRegistry;
-import com.lumens.service.config.DatasourceHelper;
+import com.lumens.service.config.datasource.DatasourceHelper;
 import java.util.List;
 import junit.framework.TestCase;
 
@@ -34,8 +33,7 @@ public class LumensServiceTest extends TestCase
 
     public void testLoadConfig() throws Exception
     {
-       List<ComponentRegistry> compList = DatasourceHelper.
-                loadDatasouceConfiguration();
+        List<ComponentRegistry> compList = DatasourceHelper.loadDatasouceConfiguration();
         assertEquals(2, compList.size());
     }
 }

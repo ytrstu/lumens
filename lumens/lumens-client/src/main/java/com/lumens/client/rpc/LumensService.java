@@ -2,6 +2,7 @@ package com.lumens.client.rpc;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.lumens.client.rpc.beans.ClientTransformProject;
 import com.lumens.client.rpc.beans.ComponentRegistry;
 
 /**
@@ -12,7 +13,10 @@ import com.lumens.client.rpc.beans.ComponentRegistry;
 public interface LumensService extends RemoteService
 {
     public ComponentRegistry[] getDataSourceCatalog();
+
     public ComponentRegistry[] getProcessorCatalog();
-    public void createDataSource();
-    public void createProcessor();
+
+    public void saveTransformProject(ClientTransformProject project);
+
+    public ClientTransformProject openTransformProject();
 }
