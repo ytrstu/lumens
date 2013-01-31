@@ -4,7 +4,7 @@
 package com.lumens.service.controller;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.lumens.client.constant.ViewConstants;
+import com.lumens.client.utils.CConstants;
 import com.lumens.client.rpc.LumensService;
 import com.lumens.client.rpc.beans.CComponentTypeRegistry;
 import com.lumens.client.rpc.beans.CProject;
@@ -24,7 +24,7 @@ import javax.servlet.ServletException;
  * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
 public class LumensServiceImpl extends RemoteServiceServlet
-        implements LumensService, ViewConstants
+        implements LumensService, CConstants
 {
     private CComponentTypeRegistryManager componentRegistryManager = new CComponentTypeRegistryManager();
     private TransformProject currentProject;

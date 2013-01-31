@@ -6,7 +6,7 @@ package com.lumens.client.rpc;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.lumens.client.WebClientController;
-import com.lumens.client.constant.ViewConstants;
+import com.lumens.client.utils.CConstants;
 import com.lumens.client.rpc.beans.CComponentTypeRegistry;
 import com.lumens.client.view.transformdesign.CComponentTypeNode;
 import com.smartgwt.client.types.TreeModelType;
@@ -22,7 +22,7 @@ import com.smartgwt.client.widgets.tree.TreeNode;
  * @author washaofe
  */
 public class ElementServiceAsyncCallback implements
-        AsyncCallback<CComponentTypeRegistry[]>, ViewConstants
+        AsyncCallback<CComponentTypeRegistry[]>, CConstants
 {
     private String sectionID;
     private TreeGrid treeGrid;

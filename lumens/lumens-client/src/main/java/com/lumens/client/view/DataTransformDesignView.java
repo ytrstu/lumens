@@ -1,7 +1,7 @@
 package com.lumens.client.view;
 
 import com.google.gwt.core.client.GWT;
-import com.lumens.client.constant.ViewConstants;
+import com.lumens.client.utils.CConstants;
 import com.lumens.client.rpc.ElementServiceAsyncCallback;
 import com.lumens.client.rpc.LumensService;
 import com.lumens.client.rpc.LumensServiceAsync;
@@ -39,7 +39,7 @@ import com.smartgwt.client.widgets.tree.TreeNode;
  * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
 public class DataTransformDesignView extends HLayout implements
-        ActiveView, ViewConstants
+        ActiveView, CConstants
 {
     private SectionStack tComponentBoxStack;
     private SectionStack paramInfoStack;
@@ -94,7 +94,7 @@ public class DataTransformDesignView extends HLayout implements
         view.tElementLayout = new VLayout();
         view.tElementLayout.setWidth100();
         view.tElementLayout.setHeight("*");
-        view.tElementLayout.setBackgroundColor(ViewConstants.BACKGROUD_COLOR);
+        view.tElementLayout.setBackgroundColor(CConstants.BACKGROUD_COLOR);
         view.tElementLayout.setShowResizeBar(true);
         view.tElementLayout.setResizeBarTarget("next");
         // Build toolbar
@@ -104,7 +104,7 @@ public class DataTransformDesignView extends HLayout implements
 
         view.tBuilderLayout = new VLayout();
         view.tBuilderLayout.setHeight100();
-        view.tBuilderLayout.setBackgroundColor(ViewConstants.BACKGROUD_COLOR);
+        view.tBuilderLayout.setBackgroundColor(CConstants.BACKGROUD_COLOR);
         view.tBuilderLayout.setWidth("*");
         view.tBuilderLayout.setShowResizeBar(true);
         view.tBuilderLayout.setResizeBarTarget("next");
@@ -281,7 +281,7 @@ public class DataTransformDesignView extends HLayout implements
         paramList.setWidth100();
         paramList.setBaseStyle("boxedGridCell");
         paramList.setShowHeader(false);
-        paramList.setBackgroundColor(ViewConstants.BACKGROUD_COLOR);
+        paramList.setBackgroundColor(CConstants.BACKGROUD_COLOR);
         ListGridField[] fields = new ListGridField[]
         {
             new ListGridField("name", "Name", 120),

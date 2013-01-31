@@ -1,6 +1,6 @@
 package com.lumens.client.view;
 
-import com.lumens.client.constant.ViewConstants;
+import com.lumens.client.utils.CConstants;
 import com.lumens.client.view.transformmanage.AgentManagePane;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -27,7 +27,7 @@ public class DataTransformManageView extends VLayout implements ActiveView
         DataTransformManageView view = new DataTransformManageView();
         view.setWidth100();
         view.setHeight100();
-        view.setBackgroundColor(ViewConstants.BACKGROUD_COLOR);
+        view.setBackgroundColor(CConstants.BACKGROUD_COLOR);
         view.buildAgentMangePane();
         view.buildStatusBar();
         return view;

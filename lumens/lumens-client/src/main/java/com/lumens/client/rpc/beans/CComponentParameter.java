@@ -4,6 +4,7 @@
 package com.lumens.client.rpc.beans;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.lumens.client.utils.CConstants;
 
 /**
  *
@@ -15,7 +16,7 @@ public class CComponentParameter implements IsSerializable
     private String name;
     private String javatype;
     private boolean encrypted;
-    private String value = BeansConstants.g_strEmpty;
+    private String value = CConstants.g_strEmpty;
 
     public String getId()
     {

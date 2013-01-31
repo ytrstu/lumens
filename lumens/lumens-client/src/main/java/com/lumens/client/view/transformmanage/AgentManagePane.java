@@ -3,7 +3,7 @@
  */
 package com.lumens.client.view.transformmanage;
 
-import com.lumens.client.constant.ViewConstants;
+import com.lumens.client.utils.CConstants;
 import com.lumens.client.demo.DataLoader;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
@@ -160,7 +160,7 @@ public class AgentManagePane extends SectionStack implements RecordDoubleClickHa
         scnList.setHeight100();
         scnList.setWidth100();
         scnList.addRecordDoubleClickHandler(this);
-        scnList.setBackgroundColor(ViewConstants.BACKGROUD_COLOR);
+        scnList.setBackgroundColor(CConstants.BACKGROUD_COLOR);
         ListGridField[] fields = new ListGridField[]
         {
             new ListGridField("id", "Transform Job ID", 100),

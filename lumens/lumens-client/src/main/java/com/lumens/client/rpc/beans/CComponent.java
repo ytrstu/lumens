@@ -97,7 +97,7 @@ public class CComponent extends Canvas implements DragMoveHandler,
         label.setWidth(width);
         label.setHeight(32);
         label.setIconSize(32);
-        label.setIcon(component.getComponentIcon());
+        label.setIcon(component.getInstanceIcon());
         label.setAlign(Alignment.LEFT);
         label.setContents(component.getName());
         vStack.addMember(label);
