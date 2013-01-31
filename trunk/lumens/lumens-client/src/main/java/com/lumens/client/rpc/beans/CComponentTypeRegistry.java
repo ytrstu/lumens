@@ -16,7 +16,7 @@ public class CComponentTypeRegistry implements IsSerializable
     private String id;
     private String name;
     private String icon;
-    private String componentIcon;
+    private String instanceIcon;
     private List<CComponentParameter> parameters = new ArrayList<CComponentParameter>();
     private transient String className;
 
@@ -29,19 +29,19 @@ public class CComponentTypeRegistry implements IsSerializable
         this.id = copy.getId();
         this.name = copy.getName();
         this.icon = copy.getIcon();
-        this.componentIcon = copy.getComponentIcon();
+        this.instanceIcon = copy.getInstanceIcon();
         this.className = copy.getClassName();
         for (CComponentParameter p : copy.getParameters())
             this.parameters.add(p.copy());
     }
 
     public CComponentTypeRegistry(String id, String name, String icon,
-                                  String componentIcon, String className)
+                                  String instanceIcon, String className)
     {
         this.id = id;
         this.name = name;
         this.icon = icon;
-        this.componentIcon = componentIcon;
+        this.instanceIcon = instanceIcon;
         this.className = className;
     }
 
@@ -81,14 +81,14 @@ public class CComponentTypeRegistry implements IsSerializable
         this.icon = icon;
     }
 
-    public String getComponentIcon()
+    public String getInstanceIcon()
     {
-        return componentIcon;
+        return instanceIcon;
     }
 
-    public void setComponentIcon(String componentIcon)
+    public void setInstanceIcon(String instanceIcon)
     {
-        this.componentIcon = componentIcon;
+        this.instanceIcon = instanceIcon;
     }
 
     public String getClassName()

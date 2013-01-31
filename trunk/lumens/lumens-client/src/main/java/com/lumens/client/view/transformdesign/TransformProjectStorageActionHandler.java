@@ -4,7 +4,7 @@
 package com.lumens.client.view.transformdesign;
 
 import com.google.gwt.core.client.GWT;
-import com.lumens.client.constant.ViewConstants;
+import com.lumens.client.utils.CConstants;
 import com.lumens.client.rpc.LumensService;
 import com.lumens.client.rpc.LumensServiceAsync;
 import com.lumens.client.rpc.TransformOpenProjectServiceAsyncCallback;
@@ -30,10 +30,10 @@ public class TransformProjectStorageActionHandler implements ClickHandler
     public void onClick(ClickEvent event)
     {
         Canvas src = (Canvas) event.getSource();
-        if (ViewConstants.newProjectButtonOfTransformDesignID.
+        if (CConstants.newProjectButtonOfTransformDesignID.
                 equals(src.getID()))
         {
-        } else if (ViewConstants.openProjectButtonOfTransformDesignID.
+        } else if (CConstants.openProjectButtonOfTransformDesignID.
                 equals(src.getID()))
         {
             // TODO show a dialog and let user to select a project to open
@@ -44,7 +44,7 @@ public class TransformProjectStorageActionHandler implements ClickHandler
             dsService.openTransformProject(projectName,
                                            new TransformOpenProjectServiceAsyncCallback(
                     dataTransformationBuilderPane));
-        } else if (ViewConstants.saveProjectButtonOfTransformDesignID.
+        } else if (CConstants.saveProjectButtonOfTransformDesignID.
                 equals(src.getID()))
         {
         }

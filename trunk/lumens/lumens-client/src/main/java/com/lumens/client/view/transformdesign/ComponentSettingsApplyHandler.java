@@ -3,7 +3,7 @@
  */
 package com.lumens.client.view.transformdesign;
 
-import com.lumens.client.constant.ViewConstants;
+import com.lumens.client.utils.CConstants;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
@@ -12,7 +12,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  *
  * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
-public class ComponentSettingsApplyHandler implements ClickHandler, ViewConstants
+public class ComponentSettingsApplyHandler implements ClickHandler, CConstants
 {
     private ComponentSettingsListGrid paramList;
 

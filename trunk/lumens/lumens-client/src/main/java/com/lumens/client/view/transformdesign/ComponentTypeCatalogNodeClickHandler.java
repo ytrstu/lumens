@@ -5,7 +5,7 @@ package com.lumens.client.view.transformdesign;
 
 import com.google.gwt.core.client.GWT;
 import com.lumens.client.WebClientController;
-import com.lumens.client.constant.ViewConstants;
+import com.lumens.client.utils.CConstants;
 import com.lumens.client.rpc.ElementServiceAsyncCallback;
 import com.lumens.client.rpc.LumensService;
 import com.lumens.client.rpc.LumensServiceAsync;
@@ -27,7 +27,7 @@ import com.smartgwt.client.widgets.tree.TreeNode;
  * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
 public class ComponentTypeCatalogNodeClickHandler implements SectionHeaderClickHandler,
-                                                             ViewConstants
+                                                             CConstants
 {
     private SectionStack sectionStack;
 

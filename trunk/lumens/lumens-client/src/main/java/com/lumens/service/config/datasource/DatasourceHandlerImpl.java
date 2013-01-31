@@ -84,7 +84,7 @@ public class DatasourceHandlerImpl implements DatasourceHandler
     @Override
     public void handle_instance_icon(final String data, final Attributes meta) throws SAXException
     {
-        currentComponent.setComponentIcon(data);
+        currentComponent.setInstanceIcon(data);
     }
 
     @Override

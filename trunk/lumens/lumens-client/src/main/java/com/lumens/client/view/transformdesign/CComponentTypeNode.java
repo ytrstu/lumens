@@ -3,7 +3,7 @@
  */
 package com.lumens.client.view.transformdesign;
 
-import com.lumens.client.constant.ViewConstants;
+import com.lumens.client.utils.CConstants;
 import com.lumens.client.rpc.beans.CComponentTypeRegistry;
 import com.smartgwt.client.widgets.tree.TreeNode;
 
@@ -11,7 +11,7 @@ import com.smartgwt.client.widgets.tree.TreeNode;
  *
  * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
-public class CComponentTypeNode extends TreeNode implements ViewConstants
+public class CComponentTypeNode extends TreeNode implements CConstants
 {
     private String componentTypeID;
     private String componentName;
