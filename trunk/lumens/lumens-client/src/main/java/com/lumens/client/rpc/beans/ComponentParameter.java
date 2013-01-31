@@ -1,16 +1,15 @@
-package com.lumens.client.rpc.beans;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
-import java.io.Serializable;
-
 /*
  * Copyright Lumens Team, Inc. All Rights Reserved.
  */
+package com.lumens.client.rpc.beans;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  *
  * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
-public class ComponentParameter implements Serializable, IsSerializable
+public class ComponentParameter implements IsSerializable
 {
     private String id;
     private String name;

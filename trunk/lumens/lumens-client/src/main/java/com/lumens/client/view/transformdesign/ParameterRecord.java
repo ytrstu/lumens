@@ -36,9 +36,4 @@ public class ParameterRecord extends ListGridRecord
     {
         param.setValue(getValue());
     }
-
-    public void onCancel()
-    {
-        setValue(param.getValue());
-    }
 }

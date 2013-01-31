@@ -19,9 +19,9 @@ public interface ViewConstants
     public String webserviceID = "WebserviceSOAP-Datasource";
     public String databaseID = "Database-Datasource";
     public String transformPrID = "Transform-Processor";
-    
     //Action button ID
-    public String saveButtonOfTransformDesignID = "saveButtonOfTransformDesign";
-    public String applyButtonOfSettingsID = "applyButtonOfSettings";
-    public String undoButtonOfSettingsID = "undoButtonOfSettings";
+    public String newProjectButtonOfTransformDesignID = "newProjectButtonOfTransformDesignID";
+    public String openProjectButtonOfTransformDesignID = "openProjectButtonOfTransformDesignID";
+    public String saveProjectButtonOfTransformDesignID = "saveProjectButtonOfTransformDesignID";
+    public String applyParamsButtonOfSettingsID = "applyParamsButtonOfSettingsID";
 }

@@ -12,11 +12,11 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  *
  * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
-public class ApplyActionHandler implements ClickHandler, ViewConstants
+public class ComponentSettingsApplyHandler implements ClickHandler, ViewConstants
 {
     private ComponentSettingsListGrid paramList;
 
-    public ApplyActionHandler(ComponentSettingsListGrid paramList)
+    public ComponentSettingsApplyHandler(ComponentSettingsListGrid paramList)
     {
         this.paramList = paramList;
     }
@@ -29,7 +29,7 @@ public class ApplyActionHandler implements ClickHandler, ViewConstants
         {
             ParameterRecord[] params = paramList.getParameterRecords();
             ToolStripButton button = (ToolStripButton) src;
-            if (applyButtonOfSettingsID.equals(button.getID()))
+            if (applyParamsButtonOfSettingsID.equals(button.getID()))
                 for (ParameterRecord param : params)
                     param.onApply();
         }

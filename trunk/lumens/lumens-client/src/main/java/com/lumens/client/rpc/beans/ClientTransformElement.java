@@ -1,7 +1,9 @@
-package com.lumens.client.view.transformdesign;
+package com.lumens.client.rpc.beans;
 
-import com.lumens.client.rpc.beans.ComponentParameter;
-import com.lumens.client.rpc.beans.ComponentRegistry;
+import com.google.gwt.user.client.rpc.IsSerializable;
+import com.lumens.client.view.transformdesign.ComponentSettingsHandler;
+import com.lumens.client.view.transformdesign.DataTransformDesignerPane;
+import com.lumens.client.view.transformdesign.ProcessorCreator;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.DragAppearance;
 import com.smartgwt.client.widgets.Canvas;
@@ -23,19 +25,20 @@ import java.util.List;
  *
  * @author shaofeng wang
  */
-public class TransformElement extends Canvas implements DragMoveHandler,
-                                                        MouseOverHandler,
-                                                        MouseOutHandler
+public class ClientTransformElement extends Canvas implements DragMoveHandler,
+                                                              MouseOverHandler,
+                                                              MouseOutHandler,
+                                                              IsSerializable
 {
-    private List<ElementLink> outLinks = new ArrayList<ElementLink>();
-    private List<ElementLink> inLinks = new ArrayList<ElementLink>();
-    private DataTransformDesignerPane designerPane;
-    private ToolStrip tool;
-    private Label label;
-    private boolean isFocus;
+    private List<ClientElementLink> outLinks = new ArrayList<ClientElementLink>();
+    private List<ClientElementLink> inLinks = new ArrayList<ClientElementLink>();
     private ComponentRegistry component;
+    private transient DataTransformDesignerPane designerPane;
+    private transient ToolStrip tool;
+    private transient Label label;
+    private transient boolean isFocus;
 
-    public TransformElement()
+    public ClientTransformElement()
     {
         setWidth(1);
         setHeight(1);
@@ -45,8 +48,8 @@ public class TransformElement extends Canvas implements DragMoveHandler,
         addDragMoveHandler(this);
     }
 
-    public TransformElement(ComponentRegistry component,
-                            DataTransformDesignerPane designerPane)
+    public ClientTransformElement(ComponentRegistry component,
+                                  DataTransformDesignerPane designerPane)
     {
         this.component = component;
         this.designerPane = designerPane;
@@ -104,29 +107,29 @@ public class TransformElement extends Canvas implements DragMoveHandler,
         return component.getId();
     }
 
-    public void addOutLink(ElementLink link)
+    public void addOutLink(ClientElementLink link)
     {
         outLinks.add(link);
     }
 
-    public void addInLink(ElementLink link)
+    public void addInLink(ClientElementLink link)
     {
         inLinks.add(link);
     }
 
-    public ElementLink[] getInLinkList()
+    public ClientElementLink[] getInLinkList()
     {
-        ElementLink[] links = new ElementLink[inLinks.size()];
+        ClientElementLink[] links = new ClientElementLink[inLinks.size()];
         return inLinks.toArray(links);
     }
 
-    public ElementLink[] getOutLinkList()
+    public ClientElementLink[] getOutLinkList()
     {
-        ElementLink[] links = new ElementLink[outLinks.size()];
+        ClientElementLink[] links = new ClientElementLink[outLinks.size()];
         return outLinks.toArray(links);
     }
 
-    public void removeOutLink(ElementLink link)
+    public void removeOutLink(ClientElementLink link)
     {
         if (link != null)
             outLinks.remove(link);
@@ -134,7 +137,7 @@ public class TransformElement extends Canvas implements DragMoveHandler,
             outLinks.clear();
     }
 
-    public void removeInLink(ElementLink link)
+    public void removeInLink(ClientElementLink link)
     {
         if (link != null)
             inLinks.remove(link);
@@ -150,9 +153,9 @@ public class TransformElement extends Canvas implements DragMoveHandler,
 
     public void updatePosition()
     {
-        for (ElementLink link : outLinks)
+        for (ClientElementLink link : outLinks)
             link.updatePosition();
-        for (ElementLink link : inLinks)
+        for (ClientElementLink link : inLinks)
             link.updatePosition();
     }
 
@@ -187,5 +190,14 @@ public class TransformElement extends Canvas implements DragMoveHandler,
     public boolean isFocus()
     {
         return this.isFocus;
+    }
+
+    public String toXml()
+    {
+        return "";
+    }
+
+    public void fromXml(String xml)
+    {
     }
 }

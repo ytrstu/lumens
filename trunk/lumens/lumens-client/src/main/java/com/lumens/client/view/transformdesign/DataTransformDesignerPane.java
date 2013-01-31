@@ -1,5 +1,8 @@
 package com.lumens.client.view.transformdesign;
 
+import com.lumens.client.rpc.beans.ClientTransformElement;
+import com.lumens.client.rpc.beans.ClientElementLink;
+import com.lumens.client.rpc.beans.ClientTransformProject;
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
@@ -17,8 +20,6 @@ import com.smartgwt.client.widgets.events.MouseMoveEvent;
 import com.smartgwt.client.widgets.events.MouseMoveHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -27,10 +28,9 @@ import java.util.List;
 public class DataTransformDesignerPane extends Canvas implements
         MouseMoveHandler, DoubleClickHandler, MouseDownHandler
 {
-    private List<ElementLink> links = new ArrayList<ElementLink>();
-    private List<TransformElement> workers = new ArrayList<TransformElement>();
+    private ClientTransformProject project;
     private VirtualTransformElement vElement;
-    private TransformElement focusTransformElem;
+    private ClientTransformElement focusTransformElem;
     private DrawPane drawPane;
     private ComponentSettingsListGrid paramList;
     private HLayout builderPaneLayout;
@@ -39,9 +39,9 @@ public class DataTransformDesignerPane extends Canvas implements
     public DataTransformDesignerPane()
     {
         drawPane = new DrawPane();
-        drawPane.setWidth(3000);
-        drawPane.setHeight(3000);
-        drawPane.setOverflow(Overflow.HIDDEN);
+        drawPane.setWidth("100%");
+        drawPane.setHeight("100%");
+        drawPane.setOverflow(Overflow.AUTO);
         drawPane.setCursor(Cursor.AUTO);
         addChild(drawPane);
         setCanAcceptDrop(true);
@@ -70,23 +70,44 @@ public class DataTransformDesignerPane extends Canvas implements
         this.addDoubleClickHandler(this);
     }
 
+    public void openProject(String name)
+    {
+    }
+
+    public void newProject(String name)
+    {
+        project = new ClientTransformProject();
+        project.setName(name);
+    }
+
+    public void closeProject()
+    {
+        //TODO clean the objects in the transform workflow design pane
+        project = null;
+    }
+
+    public boolean hasProject()
+    {
+        return project != null;
+    }
+
     public void addElement(Object element)
     {
-        if (element instanceof ElementLink)
+        if (element instanceof ClientElementLink)
         {
-            ElementLink link = (ElementLink) element;
-            if (!links.contains(link))
+            ClientElementLink link = (ClientElementLink) element;
+            if (!project.contains(link))
             {
-                links.add(link);
+                project.add(link);
                 drawPane.addDrawItem((DrawPath) link, true);
                 drawPane.addDrawItem(link.getAnchorPoint(), true);
             }
-        } else if (element instanceof TransformElement)
+        } else if (element instanceof ClientTransformElement)
         {
-            TransformElement tElement = (TransformElement) element;
-            if (!workers.contains(tElement))
+            ClientTransformElement tElement = (ClientTransformElement) element;
+            if (!project.contains(tElement))
             {
-                workers.add(tElement);
+                project.add(tElement);
                 addChild(tElement);
             }
         } else
@@ -103,11 +124,11 @@ public class DataTransformDesignerPane extends Canvas implements
     {
         if (vElement != null)
         {
-            ElementLink[] linkList = vElement.getInLinkList();
-            for (ElementLink link : linkList)
+            ClientElementLink[] linkList = vElement.getInLinkList();
+            for (ClientElementLink link : linkList)
             {
                 link.remove();
-                links.remove(link);
+                project.remove(link);
             }
             vElement.remove();
             vElement = null;
@@ -123,10 +144,14 @@ public class DataTransformDesignerPane extends Canvas implements
     {
         if (drawPane != null)
             drawPane.erase();
-        for (ElementLink e : links)
+
+        if (project != null)
         {
-            drawPane.addDrawItem((DrawPath) e, true);
-            drawPane.addDrawItem(e.getAnchorPoint(), true);
+            for (ClientElementLink e : project.getLinkList())
+            {
+                drawPane.addDrawItem((DrawPath) e, true);
+                drawPane.addDrawItem(e.getAnchorPoint(), true);
+            }
         }
     }
 
@@ -155,9 +180,9 @@ public class DataTransformDesignerPane extends Canvas implements
         if (focusTransformElem != null)
             focusTransformElem.setFocus(false);
 
-        if (source instanceof TransformElement)
+        if (source instanceof ClientTransformElement)
         {
-            TransformElement tElement = (TransformElement) source;
+            ClientTransformElement tElement = (ClientTransformElement) source;
             focusTransformElem = tElement;
             focusTransformElem.setFocus(true);
         }

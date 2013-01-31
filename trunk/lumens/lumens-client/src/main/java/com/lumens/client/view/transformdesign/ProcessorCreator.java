@@ -5,6 +5,8 @@
 package com.lumens.client.view.transformdesign;
 
 import com.lumens.client.WebClientController;
+import com.lumens.client.rpc.beans.ClientElementLink;
+import com.lumens.client.rpc.beans.ClientTransformElement;
 import com.lumens.client.rpc.beans.ComponentRegistry;
 import com.smartgwt.client.util.EventHandler;
 import com.smartgwt.client.widgets.Canvas;
@@ -22,9 +24,9 @@ import com.smartgwt.client.widgets.tree.TreeGrid;
 public class ProcessorCreator implements DropHandler, ClickHandler
 {
     private DataTransformDesignerPane designerPane;
-    private TransformElement tElement;
+    private ClientTransformElement tElement;
 
-    public ProcessorCreator(TransformElement tElement,
+    public ProcessorCreator(ClientTransformElement tElement,
                             DataTransformDesignerPane designer)
     {
         this.tElement = tElement;
@@ -46,7 +48,7 @@ public class ProcessorCreator implements DropHandler, ClickHandler
                         lookupProcessor(componentNode.getComponentID());
                 if (component != null)
                 {
-                    TransformElement processor = new TransformElement(component,
+                    ClientTransformElement processor = new ClientTransformElement(component,
                                                                       designerPane);
                     VirtualTransformElement vElement = new VirtualTransformElement(
                             processor);
@@ -54,7 +56,7 @@ public class ProcessorCreator implements DropHandler, ClickHandler
                             setTop(event.getY() - designerPane.getAbsoluteTop());
                     vElement.setLeft(event.getX() - designerPane.
                             getAbsoluteLeft());
-                    ElementLink link = new ElementLink();
+                    ClientElementLink link = new ClientElementLink();
                     link.set(tElement, vElement);
                     designerPane.addElement(link);
                     designerPane.setVirtualElement(vElement);
@@ -69,15 +71,15 @@ public class ProcessorCreator implements DropHandler, ClickHandler
         VirtualTransformElement vElement = designerPane.getVirtualElement();
         if (vElement != null)
         {
-            TransformElement processor = vElement.getTransformElement();
-            ElementLink link = vElement.getInLinkList()[0];
+            ClientTransformElement processor = vElement.getTransformElement();
+            ClientElementLink link = vElement.getInLinkList()[0];
             designerPane.removeVirtualElement();
-            TransformElement tSrc = link.getIn();
+            ClientTransformElement tSrc = link.getIn();
             processor.setLeft((tSrc.getLeft() + tElement.getLeft()) / 2);
             processor.setTop((tSrc.getTop() + tElement.getTop()) / 2);
             link.set(link.getIn(), processor);
             processor.updatePosition();
-            ElementLink link2 = new ElementLink();
+            ClientElementLink link2 = new ClientElementLink();
             link2.set(processor, tElement);
             designerPane.addElement(link);
             designerPane.addElement(processor);

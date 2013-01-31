@@ -1,6 +1,7 @@
 package com.lumens.client.rpc;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.lumens.client.rpc.beans.ClientTransformProject;
 import com.lumens.client.rpc.beans.ComponentRegistry;
 
 /**
@@ -13,7 +14,9 @@ public interface LumensServiceAsync
 
     public void getProcessorCatalog(AsyncCallback<ComponentRegistry[]> callback);
 
-    public void createDataSource(AsyncCallback<String> callback);
+    public void saveTransformProject(ClientTransformProject project,
+                                     AsyncCallback<Void> callback);
 
-    public void createProcessor(AsyncCallback<String> callback);
+    public void openTransformProject(
+            AsyncCallback<ClientTransformProject> callback);
 }

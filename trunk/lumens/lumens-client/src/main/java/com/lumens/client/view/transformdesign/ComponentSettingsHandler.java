@@ -3,10 +3,10 @@
  */
 package com.lumens.client.view.transformdesign;
 
+import com.lumens.client.rpc.beans.ClientTransformElement;
 import com.lumens.client.rpc.beans.ComponentParameter;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.grid.ListGrid;
 import java.util.Collection;
 
 /**
@@ -15,10 +15,10 @@ import java.util.Collection;
  */
 public class ComponentSettingsHandler implements ClickHandler
 {
-    private TransformElement tElement;
+    private ClientTransformElement tElement;
     private DataTransformDesignerPane designerPane;
 
-    public ComponentSettingsHandler(TransformElement tElement,
+    public ComponentSettingsHandler(ClientTransformElement tElement,
                                     DataTransformDesignerPane designerPane)
     {
         this.tElement = tElement;
