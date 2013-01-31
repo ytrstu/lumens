@@ -1,8 +1,9 @@
 package com.lumens.client.rpc;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.lumens.client.rpc.beans.ClientTransformProject;
-import com.lumens.client.rpc.beans.ComponentRegistry;
+import com.lumens.client.rpc.beans.CProject;
+import com.lumens.client.rpc.beans.CComponentTypeRegistry;
+import com.lumens.client.rpc.beans.ProjectItem;
 
 /**
  *
@@ -10,13 +11,14 @@ import com.lumens.client.rpc.beans.ComponentRegistry;
  */
 public interface LumensServiceAsync
 {
-    public void getDataSourceCatalog(AsyncCallback<ComponentRegistry[]> callback);
+    public void getDataSourceCatalog(AsyncCallback<CComponentTypeRegistry[]> callback);
 
-    public void getProcessorCatalog(AsyncCallback<ComponentRegistry[]> callback);
+    public void getProcessorCatalog(AsyncCallback<CComponentTypeRegistry[]> callback);
 
-    public void saveTransformProject(ClientTransformProject project,
-                                     AsyncCallback<Void> callback);
+    public void saveTransformProject(CProject project, AsyncCallback<Void> callback);
 
-    public void openTransformProject(
-            AsyncCallback<ClientTransformProject> callback);
+    public void getProjectList(AsyncCallback<ProjectItem[]> callback);
+
+    public void openTransformProject(String projectName,
+                                     AsyncCallback<CProject> callback);
 }

@@ -1,6 +1,6 @@
 package com.lumens.client;
 
-import com.lumens.client.service.ComponentRegistryManager;
+import com.lumens.client.service.CComponentTypeRegistryManager;
 
 /**
  *
@@ -8,6 +8,6 @@ import com.lumens.client.service.ComponentRegistryManager;
  */
 public class WebClientController
 {
-    public static ComponentRegistryManager componentManager = new ComponentRegistryManager();
+    public static CComponentTypeRegistryManager componentManager = new CComponentTypeRegistryManager();
     //public static ProjectManager projectManager = new ProjectManager();
 }

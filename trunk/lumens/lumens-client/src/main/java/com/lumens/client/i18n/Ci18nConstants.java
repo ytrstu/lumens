@@ -6,7 +6,7 @@ import com.google.gwt.i18n.client.Constants;
  *
  * @author Shaofeng Wang
  */
-public interface Clienti18nConstants extends Constants
+public interface Ci18nConstants extends Constants
 {
     public String datasource_section();
 

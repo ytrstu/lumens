@@ -11,11 +11,11 @@ import java.util.List;
  *
  * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
-public class ClientTransformProject implements IsSerializable
+public class CProject implements IsSerializable
 {
     private String projectName;
-    private List<ClientElementLink> links = new ArrayList<ClientElementLink>();
-    private List<ClientTransformElement> workers = new ArrayList<ClientTransformElement>();
+    private List<CLink> links = new ArrayList<CLink>();
+    private List<CComponent> workers = new ArrayList<CComponent>();
 
     public void setName(String name)
     {
@@ -27,42 +27,42 @@ public class ClientTransformProject implements IsSerializable
         return this.projectName;
     }
 
-    public List<ClientElementLink> getLinkList()
+    public List<CLink> getLinkList()
     {
         return this.links;
     }
 
-    public List<ClientTransformElement> getWorkList()
+    public List<CComponent> getWorkList()
     {
         return this.workers;
     }
 
-    public void add(ClientElementLink link)
+    public void add(CLink link)
     {
         links.add(link);
     }
 
-    public void add(ClientTransformElement element)
+    public void add(CComponent element)
     {
         workers.add(element);
     }
 
-    public void remove(ClientElementLink link)
+    public void remove(CLink link)
     {
         links.remove(link);
     }
 
-    public void remove(ClientTransformElement element)
+    public void remove(CComponent element)
     {
         workers.remove(element);
     }
 
-    public boolean contains(ClientElementLink link)
+    public boolean contains(CLink link)
     {
         return links.contains(link);
     }
 
-    public boolean contains(ClientTransformElement element)
+    public boolean contains(CComponent element)
     {
         return workers.contains(element);
     }

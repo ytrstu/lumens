@@ -1,21 +1,24 @@
+/*
+ * Copyright Lumens Team, Inc. All Rights Reserved.
+ */
 package com.lumens.client.view.transformdesign;
 
 import com.lumens.client.constant.ViewConstants;
-import com.lumens.client.rpc.beans.ComponentRegistry;
+import com.lumens.client.rpc.beans.CComponentTypeRegistry;
 import com.smartgwt.client.widgets.tree.TreeNode;
 
 /**
  *
- * @author shaofeng wang
+ * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
-public class ComponentNode extends TreeNode implements ViewConstants
+public class CComponentTypeNode extends TreeNode implements ViewConstants
 {
-    private String componentID;
+    private String componentTypeID;
     private String componentName;
 
-    public ComponentNode(ComponentRegistry component)
+    public CComponentTypeNode(CComponentTypeRegistry component)
     {
-        this.componentID = component.getId();
+        this.componentTypeID = component.getId();
         this.componentName = component.getName();
         super.setIcon(component.getIcon());
         setAttribute(COMPONENT_NAME, component.getName());
@@ -23,7 +26,7 @@ public class ComponentNode extends TreeNode implements ViewConstants
 
     public String getComponentID()
     {
-        return componentID;
+        return componentTypeID;
     }
 
     public String getComponentName()

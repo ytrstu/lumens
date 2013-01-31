@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  *
  * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
-public class ComponentParameter implements IsSerializable
+public class CComponentParameter implements IsSerializable
 {
     private String id;
     private String name;
@@ -65,5 +65,16 @@ public class ComponentParameter implements IsSerializable
     public String getValue()
     {
         return value;
+    }
+
+    public CComponentParameter copy()
+    {
+        CComponentParameter copyed = new CComponentParameter();
+        copyed.id = this.id;
+        copyed.name = this.name;
+        copyed.value = this.value;
+        copyed.javatype = this.javatype;
+        copyed.encrypted = this.encrypted;
+        return copyed;
     }
 }

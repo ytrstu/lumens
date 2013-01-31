@@ -1,3 +1,6 @@
+/*
+ * Copyright Lumens Team, Inc. All Rights Reserved.
+ */
 package com.lumens.client.rpc.beans;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -7,10 +10,10 @@ import java.util.ArrayList;
  *
  * @author shaofeng wang
  */
-public class ClientDataFormat implements IsSerializable
+public class CFormat implements IsSerializable
 {
     private String name;
-    private ArrayList<ClientDataFormat> children;
+    private ArrayList<CFormat> children;
     private ArrayList<Entry<String, String>> properties;
 
     public String getName()
@@ -18,10 +21,10 @@ public class ClientDataFormat implements IsSerializable
         return name;
     }
 
-    public void addChild(ClientDataFormat format)
+    public void addChild(CFormat format)
     {
         if (children == null)
-            children = new ArrayList<ClientDataFormat>();
+            children = new ArrayList<CFormat>();
         children.add(format);
     }
 
@@ -30,7 +33,7 @@ public class ClientDataFormat implements IsSerializable
         return children != null && !children.isEmpty();
     }
 
-    public ArrayList<ClientDataFormat> getChildren()
+    public ArrayList<CFormat> getChildren()
     {
         return children;
     }

@@ -3,8 +3,11 @@
  */
 package com.lumens.service.controller.utils;
 
-import com.lumens.client.rpc.beans.ClientTransformProject;
+import com.lumens.client.rpc.beans.CProject;
 import com.lumens.engine.TransformProject;
+import com.lumens.engine.component.DataSource;
+import com.lumens.engine.component.DataTransformation;
+import java.util.List;
 
 /**
  *
@@ -12,13 +15,21 @@ import com.lumens.engine.TransformProject;
  */
 public class ServiceUtils
 {
-    public static TransformProject convertAsServerProject(ClientTransformProject project)
+    public static TransformProject convertAsServerProject(CProject project)
     {
         return null;
     }
 
-    public static ClientTransformProject convertAsClientProject(TransformProject project)
+    public static CProject convertAsClientProject(TransformProject project)
     {
+        CProject clientProject = new CProject();
+        clientProject.setName(project.getName());
+        List<DataSource> dataSrcList = project.getDatasourceList();
+        List<DataTransformation> transformList = project.getDataTransformationList();
+        for (DataSource ds : dataSrcList)
+        {
+            ds.getTargetList();
+        }
         return null;
     }
 }

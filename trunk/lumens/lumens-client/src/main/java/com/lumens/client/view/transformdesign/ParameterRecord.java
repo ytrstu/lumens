@@ -3,7 +3,7 @@
  */
 package com.lumens.client.view.transformdesign;
 
-import com.lumens.client.rpc.beans.ComponentParameter;
+import com.lumens.client.rpc.beans.CComponentParameter;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 /**
@@ -12,9 +12,9 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
  */
 public class ParameterRecord extends ListGridRecord
 {
-    private ComponentParameter param;
+    private CComponentParameter param;
 
-    public ParameterRecord(ComponentParameter param)
+    public ParameterRecord(CComponentParameter param)
     {
         this.param = param;
         this.setAttribute("id", param.getId());

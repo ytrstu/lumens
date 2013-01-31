@@ -1,12 +1,15 @@
+/*
+ * Copyright Lumens Team, Inc. All Rights Reserved.
+ */
 package com.lumens.client.rpc.beans;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  *
- * @author shaofeng wang
+ * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
-public class ClientDataElement implements IsSerializable
+public class CElement implements IsSerializable
 {
     public String getValue()
     {
