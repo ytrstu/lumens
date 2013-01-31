@@ -1,7 +1,7 @@
 package com.lumens.client.constant;
 
 import com.google.gwt.core.client.GWT;
-import com.lumens.client.i18n.Clienti18nConstants;
+import com.lumens.client.i18n.Ci18nConstants;
 
 /**
  *
@@ -9,7 +9,7 @@ import com.lumens.client.i18n.Clienti18nConstants;
  */
 public interface ViewConstants
 {
-    public Clienti18nConstants messages = GWT.create(Clienti18nConstants.class);
+    public Ci18nConstants messages = GWT.create(Ci18nConstants.class);
     public String BACKGROUD_COLOR = "#fbfbfb";
     public String COMPONENT_NAME = "ComponentName";
     public String DATASOURCE_SECTION_ID = "Datasource_section_ID";

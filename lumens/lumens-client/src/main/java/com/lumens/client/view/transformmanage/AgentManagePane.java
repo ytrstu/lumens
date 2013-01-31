@@ -1,7 +1,10 @@
+/*
+ * Copyright Lumens Team, Inc. All Rights Reserved.
+ */
 package com.lumens.client.view.transformmanage;
 
-import com.lumens.client.demo.DataLoader;
 import com.lumens.client.constant.ViewConstants;
+import com.lumens.client.demo.DataLoader;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Cursor;
@@ -31,10 +34,9 @@ import com.smartgwt.client.widgets.tree.TreeGridField;
 
 /**
  *
- * @author shaofeng wang
+ * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
-public class AgentManagePane extends SectionStack implements
-        RecordDoubleClickHandler
+public class AgentManagePane extends SectionStack implements RecordDoubleClickHandler
 {
     private SectionStackSection agentListSection;
     private SectionStackSection agentDetailSection;

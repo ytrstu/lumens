@@ -7,8 +7,8 @@ package com.lumens.client.rpc;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.lumens.client.WebClientController;
 import com.lumens.client.constant.ViewConstants;
-import com.lumens.client.rpc.beans.ComponentRegistry;
-import com.lumens.client.view.transformdesign.ComponentNode;
+import com.lumens.client.rpc.beans.CComponentTypeRegistry;
+import com.lumens.client.view.transformdesign.CComponentTypeNode;
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.grid.CellFormatter;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
@@ -21,13 +21,13 @@ import com.smartgwt.client.widgets.tree.TreeNode;
  *
  * @author washaofe
  */
-public class ComponentServiceAsyncCallback implements
-        AsyncCallback<ComponentRegistry[]>, ViewConstants
+public class ElementServiceAsyncCallback implements
+        AsyncCallback<CComponentTypeRegistry[]>, ViewConstants
 {
     private String sectionID;
     private TreeGrid treeGrid;
 
-    public ComponentServiceAsyncCallback(String sectionID, TreeGrid treeGrid)
+    public ElementServiceAsyncCallback(String sectionID, TreeGrid treeGrid)
     {
         this.sectionID = sectionID;
         this.treeGrid = treeGrid;
@@ -39,13 +39,13 @@ public class ComponentServiceAsyncCallback implements
     }
 
     @Override
-    public void onSuccess(ComponentRegistry[] result)
+    public void onSuccess(CComponentTypeRegistry[] result)
     {
-        ComponentNode[] ds = new ComponentNode[result.length];
+        CComponentTypeNode[] ds = new CComponentTypeNode[result.length];
         int index = 0;
-        for (ComponentRegistry registry : result)
+        for (CComponentTypeRegistry registry : result)
         {
-            ds[index++] = new ComponentNode(registry);
+            ds[index++] = new CComponentTypeNode(registry);
             if (PROCESSOR_SECTION_ID.equals(sectionID))
                 WebClientController.componentManager.registerProcessor(
                         registry);

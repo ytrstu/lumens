@@ -3,7 +3,7 @@
  */
 package com.lumens.service;
 
-import com.lumens.client.rpc.beans.ComponentRegistry;
+import com.lumens.client.rpc.beans.CComponentTypeRegistry;
 import com.lumens.service.config.datasource.DatasourceHelper;
 import java.util.List;
 import junit.framework.TestCase;
@@ -33,7 +33,7 @@ public class LumensServiceTest extends TestCase
 
     public void testLoadConfig() throws Exception
     {
-        List<ComponentRegistry> compList = DatasourceHelper.loadDatasouceConfiguration();
+        List<CComponentTypeRegistry> compList = DatasourceHelper.loadDatasouceConfiguration();
         assertEquals(2, compList.size());
     }
 }

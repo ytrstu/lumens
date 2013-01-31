@@ -6,10 +6,10 @@ package com.lumens.client.view.transformdesign;
 import com.google.gwt.core.client.GWT;
 import com.lumens.client.WebClientController;
 import com.lumens.client.constant.ViewConstants;
-import com.lumens.client.rpc.ComponentServiceAsyncCallback;
+import com.lumens.client.rpc.ElementServiceAsyncCallback;
 import com.lumens.client.rpc.LumensService;
 import com.lumens.client.rpc.LumensServiceAsync;
-import com.lumens.client.rpc.beans.ComponentRegistry;
+import com.lumens.client.rpc.beans.CComponentTypeRegistry;
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.grid.CellFormatter;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
@@ -26,13 +26,12 @@ import com.smartgwt.client.widgets.tree.TreeNode;
  *
  * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
-public class ComponentCatalogNodeClickHandler implements
-        SectionHeaderClickHandler,
-        ViewConstants
+public class ComponentTypeCatalogNodeClickHandler implements SectionHeaderClickHandler,
+                                                             ViewConstants
 {
     private SectionStack sectionStack;
 
-    public ComponentCatalogNodeClickHandler(SectionStack sectionStack)
+    public ComponentTypeCatalogNodeClickHandler(SectionStack sectionStack)
     {
         this.sectionStack = sectionStack;
     }
@@ -45,10 +44,9 @@ public class ComponentCatalogNodeClickHandler implements
             && WebClientController.componentManager.getProcessorCount() == 0)
         {
             TreeGrid treeGrid = (TreeGrid) section.getItems()[0];
-            ComponentNode[] ds = new ComponentNode[1];
-            ds[0] = new ComponentNode(new ComponentRegistry("", "",
-                                                            "../loading.gif", "",
-                                                            null));
+            CComponentTypeNode[] ds = new CComponentTypeNode[1];
+            ds[0] = new CComponentTypeNode(new CComponentTypeRegistry("", "", "../loading.gif", "",
+                                                                      null));
             TreeNode root = new TreeNode("ComponentRoot", ds);
 
             Tree dataSourceTree = new Tree();
@@ -81,7 +79,7 @@ public class ComponentCatalogNodeClickHandler implements
         LumensServiceAsync dsService = (LumensServiceAsync) GWT.create(
                 LumensService.class);
         dsService.getProcessorCatalog(
-                new ComponentServiceAsyncCallback(PROCESSOR_SECTION_ID,
-                                                  treeGrid));
+                new ElementServiceAsyncCallback(PROCESSOR_SECTION_ID,
+                                                treeGrid));
     }
 }

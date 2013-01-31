@@ -1,3 +1,6 @@
+/*
+ * Copyright Lumens Team, Inc. All Rights Reserved.
+ */
 package com.lumens.client.rpc.beans;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -7,18 +10,18 @@ import com.smartgwt.client.widgets.drawing.Point;
 
 /**
  *
- * @author shaofeng wang
+ * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
-public class ClientElementLink extends DrawPath implements IsSerializable
+public class CLink extends DrawPath implements IsSerializable
 {
-    private ClientTransformElement outElement;
-    private ClientTransformElement inElement;
+    private CComponent outElement;
+    private CComponent inElement;
     private transient DrawRect anchorPoint;
     private final static int anchorSize = 8;
     private final static int deltaLength = 12;
     private final static int deltaOffset = 2;
 
-    public ClientElementLink()
+    public CLink()
     {
         this.setLineWidth(2);
         anchorPoint = new DrawRect();
@@ -33,7 +36,7 @@ public class ClientElementLink extends DrawPath implements IsSerializable
         return anchorPoint;
     }
 
-    public void set(ClientTransformElement in, ClientTransformElement out)
+    public void set(CComponent in, CComponent out)
     {
         inElement = in;
         outElement = out;
@@ -62,12 +65,12 @@ public class ClientElementLink extends DrawPath implements IsSerializable
         anchorPoint.setCenter(points[0].getX(), points[0].getY());
     }
 
-    public ClientTransformElement getIn()
+    public CComponent getIn()
     {
         return this.inElement;
     }
 
-    public ClientTransformElement getOut()
+    public CComponent getOut()
     {
         return this.outElement;
     }

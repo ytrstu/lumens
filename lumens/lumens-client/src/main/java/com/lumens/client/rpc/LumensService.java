@@ -2,8 +2,9 @@ package com.lumens.client.rpc;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import com.lumens.client.rpc.beans.ClientTransformProject;
-import com.lumens.client.rpc.beans.ComponentRegistry;
+import com.lumens.client.rpc.beans.CProject;
+import com.lumens.client.rpc.beans.CComponentTypeRegistry;
+import com.lumens.client.rpc.beans.ProjectItem;
 
 /**
  *
@@ -12,11 +13,13 @@ import com.lumens.client.rpc.beans.ComponentRegistry;
 @RemoteServiceRelativePath("service")
 public interface LumensService extends RemoteService
 {
-    public ComponentRegistry[] getDataSourceCatalog();
+    public CComponentTypeRegistry[] getDataSourceCatalog();
 
-    public ComponentRegistry[] getProcessorCatalog();
+    public CComponentTypeRegistry[] getProcessorCatalog();
 
-    public void saveTransformProject(ClientTransformProject project);
+    public void saveTransformProject(CProject project);
 
-    public ClientTransformProject openTransformProject();
+    public ProjectItem[] getProjectList();
+
+    public CProject openTransformProject(String projectName);
 }

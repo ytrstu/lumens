@@ -3,8 +3,8 @@
  */
 package com.lumens.service.config.datasource;
 
-import com.lumens.client.rpc.beans.ComponentParameter;
-import com.lumens.client.rpc.beans.ComponentRegistry;
+import com.lumens.client.rpc.beans.CComponentParameter;
+import com.lumens.client.rpc.beans.CComponentTypeRegistry;
 import java.util.List;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -16,10 +16,10 @@ import org.xml.sax.SAXException;
 public class DatasourceHandlerImpl implements DatasourceHandler
 {
     public static final boolean DEBUG = false;
-    private List<ComponentRegistry> datasourceConfig;
-    private ComponentRegistry currentComponent;
+    private List<CComponentTypeRegistry> datasourceConfig;
+    private CComponentTypeRegistry currentComponent;
 
-    public DatasourceHandlerImpl(List<ComponentRegistry> datasourceConfig)
+    public DatasourceHandlerImpl(List<CComponentTypeRegistry> datasourceConfig)
     {
         this.datasourceConfig = datasourceConfig;
     }
@@ -49,7 +49,7 @@ public class DatasourceHandlerImpl implements DatasourceHandler
     @Override
     public void handle_parameter(final Attributes meta) throws SAXException
     {
-        ComponentParameter param = new ComponentParameter();
+        CComponentParameter param = new CComponentParameter();
         Object value = meta.getValue("name");
         if (value != null)
             param.setId((String) value);
@@ -96,7 +96,7 @@ public class DatasourceHandlerImpl implements DatasourceHandler
     @Override
     public void start_datasource(final Attributes meta) throws SAXException
     {
-        currentComponent = new ComponentRegistry();
+        currentComponent = new CComponentTypeRegistry();
     }
 
     @Override

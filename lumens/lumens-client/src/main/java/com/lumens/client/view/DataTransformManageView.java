@@ -8,7 +8,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
 
 /**
  *
- * @author shaofeng wang
+ * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
 public class DataTransformManageView extends VLayout implements ActiveView
 {

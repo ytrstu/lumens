@@ -1,8 +1,11 @@
+/*
+ * Copyright Lumens Team, Inc. All Rights Reserved.
+ */
 package com.lumens.client.view.transformdesign;
 
-import com.lumens.client.rpc.beans.ClientTransformElement;
-import com.lumens.client.rpc.beans.ClientElementLink;
-import com.lumens.client.rpc.beans.ClientTransformProject;
+import com.lumens.client.rpc.beans.CComponent;
+import com.lumens.client.rpc.beans.CLink;
+import com.lumens.client.rpc.beans.CProject;
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
@@ -23,24 +26,24 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 /**
  *
- * @author shaofeng wang
+ * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
-public class DataTransformDesignerPane extends Canvas implements
-        MouseMoveHandler, DoubleClickHandler, MouseDownHandler
+public class DataTransformDesignPane extends Canvas implements MouseMoveHandler, DoubleClickHandler,
+                                                               MouseDownHandler
 {
-    private ClientTransformProject project;
+    private CProject project;
     private VirtualTransformElement vElement;
-    private ClientTransformElement focusTransformElem;
+    private CComponent focusTransformElem;
     private DrawPane drawPane;
     private ComponentSettingsListGrid paramList;
     private HLayout builderPaneLayout;
     private VLayout builderLayout;
 
-    public DataTransformDesignerPane()
+    public DataTransformDesignPane()
     {
         drawPane = new DrawPane();
-        drawPane.setWidth("100%");
-        drawPane.setHeight("100%");
+        drawPane.setWidth100();
+        drawPane.setHeight100();
         drawPane.setOverflow(Overflow.AUTO);
         drawPane.setCursor(Cursor.AUTO);
         addChild(drawPane);
@@ -76,7 +79,7 @@ public class DataTransformDesignerPane extends Canvas implements
 
     public void newProject(String name)
     {
-        project = new ClientTransformProject();
+        project = new CProject();
         project.setName(name);
     }
 
@@ -93,18 +96,18 @@ public class DataTransformDesignerPane extends Canvas implements
 
     public void addElement(Object element)
     {
-        if (element instanceof ClientElementLink)
+        if (element instanceof CLink)
         {
-            ClientElementLink link = (ClientElementLink) element;
+            CLink link = (CLink) element;
             if (!project.contains(link))
             {
                 project.add(link);
                 drawPane.addDrawItem((DrawPath) link, true);
                 drawPane.addDrawItem(link.getAnchorPoint(), true);
             }
-        } else if (element instanceof ClientTransformElement)
+        } else if (element instanceof CComponent)
         {
-            ClientTransformElement tElement = (ClientTransformElement) element;
+            CComponent tElement = (CComponent) element;
             if (!project.contains(tElement))
             {
                 project.add(tElement);
@@ -124,8 +127,8 @@ public class DataTransformDesignerPane extends Canvas implements
     {
         if (vElement != null)
         {
-            ClientElementLink[] linkList = vElement.getInLinkList();
-            for (ClientElementLink link : linkList)
+            CLink[] linkList = vElement.getInLinkList();
+            for (CLink link : linkList)
             {
                 link.remove();
                 project.remove(link);
@@ -147,7 +150,7 @@ public class DataTransformDesignerPane extends Canvas implements
 
         if (project != null)
         {
-            for (ClientElementLink e : project.getLinkList())
+            for (CLink e : project.getLinkList())
             {
                 drawPane.addDrawItem((DrawPath) e, true);
                 drawPane.addDrawItem(e.getAnchorPoint(), true);
@@ -180,9 +183,9 @@ public class DataTransformDesignerPane extends Canvas implements
         if (focusTransformElem != null)
             focusTransformElem.setFocus(false);
 
-        if (source instanceof ClientTransformElement)
+        if (source instanceof CComponent)
         {
-            ClientTransformElement tElement = (ClientTransformElement) source;
+            CComponent tElement = (CComponent) source;
             focusTransformElem = tElement;
             focusTransformElem.setFocus(true);
         }

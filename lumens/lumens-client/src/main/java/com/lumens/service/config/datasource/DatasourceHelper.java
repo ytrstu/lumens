@@ -3,7 +3,7 @@
  */
 package com.lumens.service.config.datasource;
 
-import com.lumens.client.rpc.beans.ComponentRegistry;
+import com.lumens.client.rpc.beans.CComponentTypeRegistry;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,9 +13,9 @@ import java.util.List;
  */
 public class DatasourceHelper
 {
-    public static List<ComponentRegistry> loadDatasouceConfiguration() throws Exception
+    public static List<CComponentTypeRegistry> loadDatasouceConfiguration() throws Exception
     {
-        List<ComponentRegistry> datasourceConfig = new ArrayList<ComponentRegistry>();
+        List<CComponentTypeRegistry> datasourceConfig = new ArrayList<CComponentTypeRegistry>();
         DatasourceParser.parse(DatasourceHelper.class.getResource("datasource.xml"),
                                new DatasourceHandlerImpl(datasourceConfig));
         return datasourceConfig;

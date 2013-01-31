@@ -15,6 +15,16 @@ public class ProjectItem implements IsSerializable
     private String description;
     private String projectXml;
 
+    public ProjectItem()
+    {
+        this(null, null, null);
+    }
+
+    public ProjectItem(String projectName, String description)
+    {
+        this(projectName, description, null);
+    }
+
     public ProjectItem(String projectName, String description, String projectXml)
     {
         this.projectName = projectName;

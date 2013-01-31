@@ -4,7 +4,7 @@ import com.smartgwt.client.widgets.layout.Layout;
 
 /**
  *
- * @author shaofeng wang
+ * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
 public interface ActiveView
 {

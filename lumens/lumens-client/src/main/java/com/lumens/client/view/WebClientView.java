@@ -12,7 +12,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 /**
  *
- * @author shaofeng wang
+ * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
 public class WebClientView extends VLayout implements ClickHandler
 {
@@ -20,7 +20,7 @@ public class WebClientView extends VLayout implements ClickHandler
     private Layout header;
     private ToolStrip toolbar;
     private DataTransformManageView managementView;
-    private DataTransformDesignerView dataTransformationBuilderView;
+    private DataTransformDesignView dataTransformationBuilderView;
     private ToolStripButton buttonManagement;
     private ToolStripButton buttonDataTransformationDesigner;
     private ActiveView currentView;
@@ -113,7 +113,7 @@ public class WebClientView extends VLayout implements ClickHandler
 
     private void buildScenarioBuilderView()
     {
-        dataTransformationBuilderView = DataTransformDesignerView.build();
+        dataTransformationBuilderView = DataTransformDesignView.build();
         dataTransformationBuilderView.setLayoutContainer(this);
         dataTransformationBuilderView.setActive(true);
         buttonDataTransformationDesigner.setSelected(true);

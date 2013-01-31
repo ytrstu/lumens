@@ -5,8 +5,9 @@
 package com.lumens.client.view.transformdesign;
 
 import com.lumens.client.WebClientController;
-import com.lumens.client.rpc.beans.ClientTransformElement;
-import com.lumens.client.rpc.beans.ComponentRegistry;
+import com.lumens.client.rpc.beans.CComponent;
+import com.lumens.client.rpc.beans.CComponentTypeRegistry;
+import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.EventHandler;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
@@ -21,9 +22,9 @@ import com.smartgwt.client.widgets.tree.TreeGrid;
  */
 public class DataSourceCreator implements DropHandler
 {
-    private DataTransformDesignerPane designPane;
+    private DataTransformDesignPane designPane;
 
-    public DataSourceCreator(DataTransformDesignerPane designPane)
+    public DataSourceCreator(DataTransformDesignPane designPane)
     {
         this.designPane = designPane;
     }
@@ -31,11 +32,20 @@ public class DataSourceCreator implements DropHandler
     @Override
     public void onDrop(DropEvent event)
     {
-        if (designPane.hasProject() == false)
+        if (!designPane.hasProject())
         {
             // TODO error message is needed here
-            SC.say("Please create a new project");
-            return;
+            SC.ask("Do you want create a new project ?", new BooleanCallback()
+            {
+                @Override
+                public void execute(final Boolean value)
+                {
+                    if (value)
+                        designPane.newProject("new project");
+                }
+            });
+            if (!designPane.hasProject())
+                return;
         }
 
         Canvas target = EventHandler.getDragTarget();
@@ -43,15 +53,15 @@ public class DataSourceCreator implements DropHandler
         {
             TreeGrid tree = (TreeGrid) target;
             ListGridRecord record = tree.getSelectedRecord();
-            if (record instanceof ComponentNode)
+            if (record instanceof CComponentTypeNode)
             {
-                ComponentNode componentNode = (ComponentNode) record;
-                ComponentRegistry component = WebClientController.componentManager.
+                CComponentTypeNode componentNode = (CComponentTypeNode) record;
+                CComponentTypeRegistry component = WebClientController.componentManager.
                         lookupDataSource(componentNode.getComponentID());
                 if (component != null)
                 {
-                    ClientTransformElement worker = new ClientTransformElement(component,
-                                                                               designPane);
+                    CComponent worker = new CComponent(
+                            component.copy(), designPane);
                     worker.setTop(event.getY() - designPane.getAbsoluteTop());
                     worker.setLeft(event.getX() - designPane.getAbsoluteLeft());
                     designPane.addElement(worker);

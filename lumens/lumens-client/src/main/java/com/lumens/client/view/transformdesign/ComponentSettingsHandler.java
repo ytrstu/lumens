@@ -3,8 +3,8 @@
  */
 package com.lumens.client.view.transformdesign;
 
-import com.lumens.client.rpc.beans.ClientTransformElement;
-import com.lumens.client.rpc.beans.ComponentParameter;
+import com.lumens.client.rpc.beans.CComponent;
+import com.lumens.client.rpc.beans.CComponentParameter;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import java.util.Collection;
@@ -15,11 +15,11 @@ import java.util.Collection;
  */
 public class ComponentSettingsHandler implements ClickHandler
 {
-    private ClientTransformElement tElement;
-    private DataTransformDesignerPane designerPane;
+    private CComponent tElement;
+    private DataTransformDesignPane designerPane;
 
-    public ComponentSettingsHandler(ClientTransformElement tElement,
-                                    DataTransformDesignerPane designerPane)
+    public ComponentSettingsHandler(CComponent tElement,
+                                    DataTransformDesignPane designerPane)
     {
         this.tElement = tElement;
         this.designerPane = designerPane;
@@ -29,10 +29,10 @@ public class ComponentSettingsHandler implements ClickHandler
     public void onClick(ClickEvent event)
     {
         ComponentSettingsListGrid paramList = designerPane.getParamList();
-        Collection<ComponentParameter> params = tElement.getParameters();
+        Collection<CComponentParameter> params = tElement.getParameters();
         ParameterRecord[] paramRecords = new ParameterRecord[params.size()];
         int i = 0;
-        for (ComponentParameter param : params)
+        for (CComponentParameter param : params)
             paramRecords[i++] = new ParameterRecord(param);
         paramList.setParameterRecords(paramRecords);
     }

@@ -2,15 +2,15 @@ package com.lumens.client.view;
 
 import com.google.gwt.core.client.GWT;
 import com.lumens.client.constant.ViewConstants;
-import com.lumens.client.rpc.ComponentServiceAsyncCallback;
+import com.lumens.client.rpc.ElementServiceAsyncCallback;
 import com.lumens.client.rpc.LumensService;
 import com.lumens.client.rpc.LumensServiceAsync;
-import com.lumens.client.rpc.beans.ComponentRegistry;
-import com.lumens.client.view.transformdesign.ComponentCatalogNodeClickHandler;
-import com.lumens.client.view.transformdesign.ComponentNode;
+import com.lumens.client.rpc.beans.CComponentTypeRegistry;
+import com.lumens.client.view.transformdesign.ComponentTypeCatalogNodeClickHandler;
+import com.lumens.client.view.transformdesign.CComponentTypeNode;
 import com.lumens.client.view.transformdesign.ComponentSettingsApplyHandler;
 import com.lumens.client.view.transformdesign.ComponentSettingsListGrid;
-import com.lumens.client.view.transformdesign.DataTransformDesignerPane;
+import com.lumens.client.view.transformdesign.DataTransformDesignPane;
 import com.lumens.client.view.transformdesign.TransformProjectStorageActionHandler;
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.types.Overflow;
@@ -36,9 +36,9 @@ import com.smartgwt.client.widgets.tree.TreeNode;
 
 /**
  *
- * @author shaofeng wang
+ * @author shaofeng wang (shaofeng.cjpw@gmail.com)
  */
-public class DataTransformDesignerView extends HLayout implements
+public class DataTransformDesignView extends HLayout implements
         ActiveView, ViewConstants
 {
     private SectionStack tComponentBoxStack;
@@ -46,20 +46,20 @@ public class DataTransformDesignerView extends HLayout implements
     private ToolStrip toolBar;
     private boolean active;
     private VLayout tBuilderLayout;
-    private DataTransformDesignerPane dataTransformationBuilderPane;
+    private DataTransformDesignPane dataTransformationBuilderPane;
     private TabSet transformConfigPane;
     private Layout layoutContainer;
     private HLayout builderPaneLayout;
     private VLayout tElementLayout;
 
-    private DataTransformDesignerView()
+    private DataTransformDesignView()
     {
         super();
     }
 
-    public static DataTransformDesignerView build()
+    public static DataTransformDesignView build()
     {
-        DataTransformDesignerView view = new DataTransformDesignerView();
+        DataTransformDesignView view = new DataTransformDesignView();
         view.setWidth100();
         view.setHeight100();
 
@@ -71,7 +71,7 @@ public class DataTransformDesignerView extends HLayout implements
         view.tComponentBoxStack.setResizeBarSize(1);
         view.tComponentBoxStack.setHeight100();
         view.tComponentBoxStack.setWidth(260);
-        SectionHeaderClickHandler click = new ComponentCatalogNodeClickHandler(
+        SectionHeaderClickHandler click = new ComponentTypeCatalogNodeClickHandler(
                 view.tComponentBoxStack);
         view.tComponentBoxStack.addSectionHeaderClickHandler(click);
 
@@ -179,9 +179,9 @@ public class DataTransformDesignerView extends HLayout implements
 
     private void buildTransformDesignPane()
     {
-        dataTransformationBuilderPane = new DataTransformDesignerPane();
-        dataTransformationBuilderPane.setWidth(3000);
-        dataTransformationBuilderPane.setHeight(3000);
+        dataTransformationBuilderPane = new DataTransformDesignPane();
+        dataTransformationBuilderPane.setWidth100();
+        dataTransformationBuilderPane.setHeight100();
         dataTransformationBuilderPane.setOverflow(Overflow.HIDDEN);
         dataTransformationBuilderPane.setBackgroundColor(BACKGROUD_COLOR);
         dataTransformationBuilderPane.setCursor(Cursor.AUTO);
@@ -208,8 +208,8 @@ public class DataTransformDesignerView extends HLayout implements
 
     private static void getDataSourceCatalogGroup(TreeGrid treeGrid)
     {
-        ComponentNode[] ds = new ComponentNode[1];
-        ds[0] = new ComponentNode(new ComponentRegistry("", "", "../loading.gif",
+        CComponentTypeNode[] ds = new CComponentTypeNode[1];
+        ds[0] = new CComponentTypeNode(new CComponentTypeRegistry("", "", "../loading.gif",
                                                         "", null));
         TreeNode root = new TreeNode("ComponentRoot", ds);
 
@@ -238,7 +238,7 @@ public class DataTransformDesignerView extends HLayout implements
                 LumensService.class);
         dsService.
                 getDataSourceCatalog(
-                new ComponentServiceAsyncCallback(
+                new ElementServiceAsyncCallback(
                 DATASOURCE_SECTION_ID, treeGrid));
     }
 
