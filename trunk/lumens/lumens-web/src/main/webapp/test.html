@@ -1,0 +1,351 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+            <script type="text/javascript" src="tool/jquery/jquery-ui-1.10.0/js/jquery-1.9.0.js"></script>
+            <script type="text/javascript" src="tool/jquery/jquery-ui-1.10.0/js/jquery-ui-1.10.0.custom.js"></script>
+            <!-- Splitter plug-in -->
+            <link rel="stylesheet" type="text/css" href="tool/splitter/splitter.css"/>
+            <script type="text/javascript" src="tool/splitter/splitter.js"></script>
+            <!--tree-->
+            <link rel="stylesheet" href="tool/dynatree/skin-vista/ui.dynatree.css" type="text/css"/>
+            <script type="text/javascript" src="tool/dynatree/jquery.cookie.js"></script>
+            <script type="text/javascript" src="tool/dynatree/jquery.dynatree-1.2.2.js"></script>
+            <!-- D3 -->
+            <script type="text/javascript" src="tool/d3/d3.v3.js"></script>
+            <!--lumens-->
+            <link rel="stylesheet" type="text/css" href="lumens/styles/lumens.css"/>
+            <script type="text/javascript" src="lumens/lumens.js"></script>
+            <style>
+                body {
+                    padding: 0px;
+                    margin: 0px;
+                }
+
+                .item {
+                    height: 20px;
+                    width: 200px;
+                    display: inline-block;
+                    padding: 4px 12px;
+                    margin-bottom: 0;
+                    font-size: 14px;
+                    line-height: 20px;
+                    color: white;
+                    text-align: center;
+                    vertical-align: middle;
+                    cursor: pointer;
+                }
+                .item:hover {
+                    text-decoration: none;
+                    background-position: 0 -15px;
+                    -webkit-transition: background-position 0.1s linear;
+                    -moz-transition: background-position 0.1s linear;
+                    -o-transition: background-position 0.1s linear;
+                    transition: background-position 0.1s linear;
+                }
+                #holder {
+                    width: 100%;
+                    height: 100%;
+                }
+
+                .node rect {
+                    cursor: pointer;
+                    fill: #fff;
+                    fill-opacity: .5;
+                    stroke: #3182bd;
+                    stroke-width: .1px;
+                }
+
+                .node text {
+                    font: 10px sans-serif;
+                    pointer-events: none;
+                }
+
+                path.link {
+                    fill: none;
+                    stroke: #9ecae1;
+                    stroke-width: .1px;
+                }
+            </style>
+            <script type="text/javascript">
+                jQuery(function() {
+                    // TODO transform rule editor
+
+                    var RuleTreeEditorScrollBar = {};
+                    RuleTreeEditorScrollBar.create = function(scrollObject) {
+                        var scrollbar = {};
+                        scrollbar.scrollObject = scrollObject;
+                        var jQueryObj = scrollbar.scrollObject.jQueryObj;
+                        var svgObj = scrollbar.scrollObject.svgObj;
+                        var leftBarG = svgObj.append('svg:g');
+                        var leftGripG = leftBarG.append('svg:g')
+                        function dragmove_left_bar_grip(d) {
+                            var y = d.y + d3.event.dy;
+                            if( y <= (jQueryObj.height()*2/3 - 30) && y >= (jQueryObj.height()/3)  ) {
+                                d.y = y;
+                                leftGripG.attr("transform","translate(" + d.x + "," + d.y + ")");
+                            }
+                        }
+                        leftGripG.data([{
+                                x: 0,
+                                y: (jQueryObj.height()*2/3 - 30)
+                            }])
+                        .attr("transform","translate(" + 0 + "," + (jQueryObj.height()*2/3 - 30) + ")")
+                        .call(d3.behavior.drag().on("drag", dragmove_left_bar_grip));
+                        leftGripG.append('rect')
+                        .attr({
+                            "width" : "10px",
+                            "height" : "30px"
+                        })
+                        .style({
+                            "fill": "rgb(151, 151, 151)"
+                        });
+
+                        var bottomBarG = svgObj.append('svg:g');
+                        var bottomGripG = bottomBarG.append('svg:g');
+                        function area_width() {
+                            return jQueryObj.width() * 0.45 - 2;
+                        }
+                        function dragmove_bottom_bar_grip(d) {
+                            var x = d.x + d3.event.dx;
+                            if( x <= (area_width()*2/3 - 30) && x >= (area_width()/3)  ) {
+                                d.x = x;
+                                bottomGripG.attr("transform","translate(" + d.x + "," + d.y + ")");
+                            }
+                        }
+                        bottomGripG.data([{
+                                x: (area_width()*2/3 - 30),
+                                y: 0
+                            }])
+                        .attr("transform","translate(" + (area_width()*2/3 - 30) + "," + 0 + ")")
+                        .call(d3.behavior.drag().on("drag", dragmove_bottom_bar_grip));
+                        bottomGripG.append('rect')
+                        .attr({
+                            "width" : "30px",
+                            "height" : "10px"
+                        })
+                        .style({
+                            "fill": "rgb(151, 151, 151)"
+                        });
+                        return scrollbar;
+                    }
+
+                    var RuleTreeEditor = { version: 1.0 };
+                    RuleTreeEditor.create = function(holderId) {
+                        var ruleTreeEditor = {
+                            holderId : holderId,
+                            holder: d3.select('#'+holderId),
+                            jQueryObj: $('#'+holderId)
+                        };
+
+                        function compute_pane_width() {
+                            center_pane_width = 60;
+                            var tree_pane_width = (ruleTreeEditor.jQueryObj.width() - center_pane_width)/2 - 2;
+                            var tree_pane_height = ruleTreeEditor.jQueryObj.height() - 2;
+                            return {
+                                center_width: center_pane_width,
+                                pane_width: tree_pane_width,
+                                pane_height: tree_pane_height
+                            }
+                        }
+
+                        var pane_size = compute_pane_width();
+                        ruleTreeEditor.leftSVG = ruleTreeEditor.holder.append('svg:svg');
+                        ruleTreeEditor.leftSVG.attr({
+                            "width": pane_size.pane_width,
+                            "height": pane_size.pane_height
+                        })
+                        .style({
+                            "float": "left",
+                            "border-top-width": "1px",
+                            "border-top-color": "rgb(196, 196, 196)",
+                            "border-top-style": "solid",
+                            "border-bottom-width": "1px",
+                            "border-bottom-color": "rgb(196, 196, 196)",
+                            "border-bottom-style": "solid",
+                            "border-left-width": "1px",
+                            "border-left-color": "rgb(196, 196, 196)",
+                            "border-left-style": "solid"
+                        });
+                        ruleTreeEditor.centerSVG = ruleTreeEditor.holder.append('svg:svg');
+                        ruleTreeEditor.centerSVG.attr({
+                            "width": pane_size.center_width,
+                            "height": pane_size.pane_height
+                        })
+                        .style({
+                            "float": "left",
+                            "border-width": "1px",
+                            "border-color": "rgb(196, 196, 196)",
+                            "border-style": "solid"
+                        });
+                        ruleTreeEditor.rightSVG = ruleTreeEditor.holder.append('svg:svg');
+                        ruleTreeEditor.rightSVG.attr({
+                            "width": pane_size.pane_width,
+                            "height": pane_size.pane_height
+                        })
+                        .style({
+                            "float": "left",
+                            "border-top-width": "1px",
+                            "border-top-color": "rgb(196, 196, 196)",
+                            "border-top-style": "solid",
+                            "border-bottom-width": "1px",
+                            "border-bottom-color": "rgb(196, 196, 196)",
+                            "border-bottom-style": "solid",
+                            "border-right-width": "1px",
+                            "border-right-color": "rgb(196, 196, 196)",
+                            "border-right-style": "solid"
+                        });
+                        var draggable = true;
+                        // build a demo draggable rect
+                        function dragmove(d) {
+                            if( !draggable )
+                                return;
+                            d.x += d3.event.dx;
+                            d.y += d3.event.dy;
+                            ruleTreeEditor.treeG.attr("transform","translate(" + d.x + "," + d.y + ")");
+                        }
+
+                        // Create the tree structure in a group(g) of SVG(svg)
+                        ruleTreeEditor.leftG = ruleTreeEditor.leftSVG.append('svg:g');
+                        ruleTreeEditor.treeG =  ruleTreeEditor.leftG.append('svg:g');
+                        ruleTreeEditor.treeG.data([{
+                                x: 0,
+                                y: 0
+                            }]);
+                        //.call(d3.behavior.drag().on("drag", dragmove));
+                        function node(i) {
+                            return i*node_size;
+                        }
+
+                        var tree = d3.layout.tree();
+                        var vis = ruleTreeEditor.treeG.attr("transform", "translate(0, 10)"),
+                        i = 0,
+                        barHeight = 20,
+                        barWidth = 200,
+                        duration = 400,
+                        root;
+                        function update(source) {
+
+                            // Compute the flattened node list. TODO use d3.layout.hierarchy.
+                            var nodes = tree.nodes(root);
+
+                            // Compute the "layout".
+                            nodes.forEach(function(n, i) {
+                                n.x = i * barHeight;
+                                n.y = n.depth * 20;
+                            });
+
+                            // Update the nodes…
+                            var node = vis.selectAll("g.node")
+                            .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+                            var nodeEnter = node.enter().append("svg:g")
+                            .attr("class", "node")
+                            .attr("transform", function(d) {
+                                return "translate(" + source.y0 + "," + source.x0 + ")";
+                            })
+                            .style("opacity", 1e-6);
+
+                            // Enter any new nodes at the parent's previous position.
+                            nodeEnter.append("svg:rect")
+                            .attr("y", -barHeight / 2)
+                            .attr("height", barHeight)
+                            .attr("width", barWidth)
+                            .style("fill", color)
+                            .on("click", click);
+
+                            nodeEnter.append("svg:text")
+                            .attr("dy", 3.5)
+                            .attr("dx", 5.5)
+                            .text(function(d) { return d.name; });
+
+                            // Transition nodes to their new position.
+                            nodeEnter.transition()
+                            .duration(duration)
+                            .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+                            .style("opacity", 1);
+
+                            node.transition()
+                            .duration(duration)
+                            .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+                            .style("opacity", 1)
+                            .select("rect")
+                            .style("fill", color);
+
+                            // Transition exiting nodes to the parent's new position.
+                            node.exit().transition()
+                            .duration(duration)
+                            .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+                            .style("opacity", 1e-6)
+                            .remove();
+
+                            // Stash the old positions for transition.
+                            nodes.forEach(function(d) {
+                                d.x0 = d.x;
+                                d.y0 = d.y;
+                            });
+                        }
+
+                        // Toggle children on click.
+                        function click(d) {
+                            if (d.children) {
+                                d._children = d.children;
+                                d.children = null;
+                            } else {
+                                d.children = d._children;
+                                d._children = null;
+                            }
+                            update(d);
+                        }
+
+                        function color(d) {
+                            return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
+                        }
+
+                        d3.json("demo.json", function(json) {
+                            json.x0 = 0;
+                            json.y0 = 0;
+                            update(root = json);
+                        });
+
+                        RuleTreeEditorScrollBar.create({
+                            svgObj: ruleTreeEditor.leftG,
+                            jQueryObj: ruleTreeEditor.jQueryObj
+                        });
+
+                        return ruleTreeEditor;
+                    };
+
+                    var rEditor = RuleTreeEditor.create("rule-editor");
+                });
+            </script>
+            <style>
+                .editor-pane {
+                    width: 400px;
+                    height: 100px;
+                }
+                .editor-item {
+                    float: left;
+                    width: 100px;
+                    height: 100px;
+                    background: rgb(241, 241, 241);
+                    border-width: 1px;
+                    border-style: solid;
+                    border-color: rgb(206, 206, 206);
+                    margin-top: 20px;
+                    margin-left: 20px;
+                }
+            </style>
+    </head>
+    <body>
+        <div id="editor-pane">
+            <div id="left-pane" class="editor-item"></div>
+            <div id="cener-pane"  class="editor-item"></div>
+            <div id="right-pane"  class="editor-item"></div>
+        </div>
+        <div style="position: relative; width:500px; height:400px; left: 100px; top: 100px">
+            <div id="rule-editor" style="width:100%; height:100%; overflow: hidden; border-width:2px; border-color: black"/>
+        </div>
+    </body>
+</html>
