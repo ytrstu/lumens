@@ -15,7 +15,7 @@ public class TransformScheduler
         SCHEDULING
     }
 
-    public TransformScheduler(int scheduleTime, ScheduleMode scheduleMode)
+    public TransformScheduler(ScheduleMode scheduleMode)
     {
         // TODO
         throw new UnsupportedOperationException("Not yet implemented");

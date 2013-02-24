@@ -117,10 +117,8 @@ public class EngineTest extends TestCase
         //**********************************************************************
         // Execute all start rules to drive the ws connector
         SingleThreadExecuteStack executorStack = new SingleThreadExecuteStack();
-        executorStack.
-                push(
-                new TransformExecutor(callGetOpenFundString, new TransformExecuteContext(null,
-                                                                                         startPoint)));
+        executorStack.push(new TransformExecutor(callGetOpenFundString,
+                                                 new TransformExecuteContext(null, startPoint)));
         while (!executorStack.isEmpty())
         {
             Executor executor = executorStack.pop();

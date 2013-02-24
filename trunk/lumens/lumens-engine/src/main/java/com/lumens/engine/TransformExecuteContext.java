@@ -14,10 +14,15 @@ public class TransformExecuteContext implements ExecuteContext
     private Object input;
     private String targetName;
 
-    public TransformExecuteContext(Object input, String targetId)
+    public TransformExecuteContext(String targetName)
+    {
+        this(null, targetName);
+    }
+
+    public TransformExecuteContext(Object input, String targetName)
     {
         this.input = input;
-        this.targetName = targetId;
+        this.targetName = targetName;
     }
 
     @Override
