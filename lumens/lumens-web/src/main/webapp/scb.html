@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="tool/jquery/jquery-ui-1.10.0/js/jquery-1.9.0.js"></script>
+        <script type="text/javascript" src="tool/jquery/jquery-ui-1.10.0/js/jquery-ui-1.10.0.custom.js"></script>
+        <!-- Splitter plug-in -->
+        <link rel="stylesheet" type="text/css" href="tool/splitter/splitter.css"/>
+        <script type="text/javascript" src="tool/splitter/splitter.js"></script>
+        <!--tree-->
+        <link rel="stylesheet" href="tool/dynatree/skin-vista/ui.dynatree.css" type="text/css"/>
+        <script type="text/javascript" src="tool/dynatree/jquery.cookie.js"></script>
+        <script type="text/javascript" src="tool/dynatree/jquery.dynatree-1.2.2.js"></script>
+        <!-- D3 -->
+        <script type="text/javascript" src="tool/d3/d3.v3.js"></script>
+        <!--lumens-->
+        <link rel="stylesheet" type="text/css" href="lumens/styles/lumens.css"/>
+        <script type="text/javascript" src="lumens/lumens.js"></script>
+        <script type="text/javascript">
+            jQuery(function() {
+                var RuleTreeEditor = { version: 1.0 };
+                RuleTreeEditor.create = function(holderId) {
+                    var RuleTreeEditorScrollBar = {};
+                    RuleTreeEditorScrollBar.create = function(scrollInfo) {
+                        var scrollbar = {};
+                        // private memeber of scrollbar class
+                        var scrollInfo = scrollInfo;
+                        var treeG = scrollInfo.treeG;
+                        var paneG = scrollInfo.paneG;
+                        var vBarG = paneG.append('svg:g');
+                        var vGripG = vBarG.append('svg:g');
+                        var vEdge1 = vBarG.append('svg:rect');
+                        var vEdge2 = vBarG.append('svg:rect');
+                        var vGrip = vGripG.append('svg:rect');
+                        var hBarG = paneG.append('svg:g');
+                        var hGripG = hBarG.append('svg:g');
+                        var hEdge1 = vBarG.append('svg:rect');
+                        var hEdge2 = vBarG.append('svg:rect');
+                        var hGrip = hGripG.append('svg:rect');
+                        var vStep = 0;
+                        var hStep = 0;
+
+                        var grip_length = 60;
+                        var grip_width = 5;
+                        var size = {};
+                        scrollbar.layout = function() {
+                            size = scrollInfo.treeEditor.computeSize();
+                            var x = (scrollInfo.isLeft ? 0 : size.div_side_width-5);
+                            vEdge1.attr({
+                                "class": "edge",
+                                "x": x,
+                                "y": (size.div_height/3),
+                                "width": "5px",
+                                "height": "3px"
+                            });
+                            vEdge2.attr({
+                                "class": 'edge',
+                                "x": x,
+                                "y": (size.div_height*2/3),
+                                "width": "5px",
+                                "height": "3px"
+                            });
+                            vGripG.data([{
+                                    x: x,
+                                    y: (size.div_height/3)
+                                }])
+                            .attr("transform","translate(" + x + "," + (size.div_height/3) + ")");
+                            vGrip.attr({
+                                "width" : grip_width+"px",
+                                "height" : grip_length+"px"
+                            })
+                            hEdge1.attr({
+                                "class": "edge",
+                                "x": (size.div_side_width/3),
+                                "width": "3px",
+                                "height": "5px"
+                            });
+                            hEdge2.attr({
+                                "class": 'edge',
+                                "x": (size.div_side_width*2/3),
+                                "width": "3px",
+                                "height": "5px"
+                            });
+                            var x0 = scrollInfo.isLeft ?
+                                (size.div_side_width/3)
+                            : (size.div_side_width*2/3-grip_length);
+                            hGripG.data([{
+                                    x: x0,
+                                    y: 0
+                                }])
+                            .attr("transform","translate(" + x0 + "," + 0 + ")");
+                            hGrip.attr({
+                                "width" : grip_length+"px",
+                                "height" : grip_width+"px"
+                            })
+                        }
+                        scrollbar.layout();
+                        scrollInfo.treeEditor.domHolder.on("resize", function(e){
+                            scrollbar.layout();
+                        });
+                        vGrip.attr("class", "grip");
+                        hGrip.attr("class", "grip");
+                        // build a demo draggable rect
+                        function dragmove_vbar_grip(d) {
+                            var y = d.y + d3.event.dy;
+                            if( y <= (size.div_height*2/3 - grip_length)
+                                && y >= (size.div_height/3) ) {
+                                d.y = y;
+                                vGripG.attr("transform","translate(" + d.x + "," + d.y + ")");
+                                var deltaY = -Math.round(d3.event.dy*vStep);
+                                if( deltaY != 0 ) {
+                                    treeG.attr("transform", function(n) {
+                                        n.y += deltaY;
+                                        if(n.y > 0)
+                                            n.y = 0;
+                                        else if((n.y + treeG.height) < size.div_height)
+                                            n.y = size.div_height - treeG.height;
+                                        return "translate(" + n.x + "," + n.y + ")";
+                                    });
+                                }
+                            }
+                        }
+                        vGripG.call(d3.behavior.drag().on("drag", dragmove_vbar_grip));
+                        function dragmove_hbar_grip(d) {
+                            var x = d.x + d3.event.dx;
+                            if( x <= (size.div_side_width*2/3 - grip_length)
+                                && x >= (size.div_side_width/3) ) {
+                                d.x = x;
+                                hGripG.attr("transform","translate(" + d.x + "," + d.y + ")");
+                                var deltaX = -Math.round(d3.event.dx * hStep);
+                                if( deltaX != 0 ) {
+                                    treeG.attr("transform", function(n) {
+                                        n.x += deltaX;
+                                        if(scrollInfo.isLeft) {
+                                            if(n.x > 0)
+                                                n.x = 0;
+                                            else if((n.x + treeG.width) < size.div_side_width)
+                                                n.x = size.div_side_width - treeG.width;
+                                        }
+                                        return "translate(" + n.x + "," + n.y + ")";
+                                    });
+                                }
+                            }
+                        }
+                        hGripG.call(d3.behavior.drag().on("drag", dragmove_hbar_grip));
+
+                        treeG.eventListener.on("layout", function(t) {
+                            vStep = t.height > t.div_height ? ((t.height)/(t.div_height/3 - grip_length)):0;
+                            hStep = t.width > t.div_side_width ? ((t.width-size.div_side_width)/(t.div_side_width/3 - grip_length)):0;
+                            /*
+                            var hscale = hstep/hStep;
+                            var vscale = vstep/vStep;
+                            treeG.attr("transform", function(n) {
+                                n.x = Math.floor(n.x * hscale);
+                                n.y = Math.floor(n.y * vscale);
+                                if(n.x >=0)
+                                    n.x = 0;
+                                if(n.y >= 0)
+                                    n.y = 0;
+                                return "translate(" + n.x + "," + n.y + ")";
+                            });//*/
+                        });//*/
+                        return scrollbar;
+                    }
+
+                    var rtEditor = {
+                        holderId : holderId,
+                        d3Holder: d3.select(holderId),
+                        domHolder: $(holderId)
+                    };
+
+                    rtEditor.computeSize = function() {
+                        var center_width = 60;
+                        var width = (rtEditor.domHolder.width() - center_width)/2;
+                        var height = rtEditor.domHolder.height();
+                        return {
+                            center_width: center_width,
+                            width: width,
+                            height: height,
+                            div_center_width: center_width,
+                            div_side_width: width - 2,
+                            div_height: height - 2
+                        }
+                    };
+                    var d3DomTable = rtEditor.d3Holder.append('table');
+                    d3DomTable.attr({
+                        "class": "table-style"
+                    })
+                    var d3Tr = d3DomTable.append('tr');
+                    var leftDiv = d3Tr.append('td').append('div');
+                    var centerDiv = d3Tr.append('td').append('div');
+                    var rightDiv = d3Tr.append('td').append('div');
+                    var leftSVG = leftDiv.append('svg:svg');
+                    var centerSVG = centerDiv.append('svg:svg');
+                    var rightSVG = rightDiv.append('svg:svg');
+                    var leftG = leftSVG.append('svg:g');
+                    var leftTreeG = leftG.append('svg:g');
+                    var rightG = rightSVG.append('svg:g');
+                    var rightTreeG = rightG.append('svg:g');
+                    leftTreeG.height = 0;
+                    leftTreeG.width = 0;
+                    rightTreeG.height = 0;
+                    rightTreeG.width = 0;
+                    leftTreeG.eventListener = d3.dispatch("layout");
+                    rightTreeG.eventListener = d3.dispatch("layout");
+
+                    var duration = 200;
+                    var barHeight = 20;
+                    var barWidth = 200;
+                    rtEditor.layout = function() {
+                        var size = this.computeSize();
+                        leftDiv.attr({
+                            "id": "leftDiv",
+                            "class": "table-td table-td-border-side",
+                            "style": "width:" + size.div_side_width + "px; height:" + size.div_height + "px"
+                        });
+                        centerDiv.attr({
+                            "id": "centerDiv",
+                            "class": "table-td table-td-border-center",
+                            "style": "width:" + size.div_center_width + "px; height:" + size.div_height + "px"
+                        });
+                        rightDiv.attr({
+                            "id": "rightDiv",
+                            "class": "table-td table-td-border-side",
+                            "style": "width:" + size.div_side_width + "px; height:" + size.div_height + "px"
+                        });
+
+                        leftTreeG.data([{
+                                x: 0,
+                                y: 0
+                            }]);
+                        rightTreeG.data([{
+                                x: size.div_side_width,
+                                y: 0
+                            }]);
+                    }
+                    rtEditor.layout();
+                    rtEditor.domHolder.on("resize", function(e) {
+                        rtEditor.layout();
+                    });
+
+                    rtEditor.loadTree = function(treeG, jsonData) {
+                        var size = rtEditor.computeSize();
+                        function node(i) {
+                            return i*node_size;
+                        }
+                        var tree = d3.layout.tree();
+                        var x = leftTreeG == treeG ? 0 : size.div_side_width;
+                        var vis = treeG.attr("transform", "translate(" + x +", 0)"),
+                        i = 0, grip_size = 8,
+                        root;
+                        function layout(source) {
+                            size = rtEditor.computeSize();
+                            // Compute the flattened node list. TODO use d3.layout.hierarchy.
+                            var nodes = tree.nodes(root);
+                            // Compute the "layout".
+                            nodes.forEach(function(n, i) {
+                                n.x = i * barHeight;
+                                n.y = leftTreeG == treeG ?  n.depth * barHeight : (-n.depth * barHeight - barWidth);
+                            });
+
+                            // Update the nodes…
+                            var node = vis.selectAll("g.node")
+                            .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+                            var nodeEnter = node.enter().append("svg:g")
+                            .attr("class", "node")
+                            .attr("transform", function(d) {
+                                return "translate(" + source.y0 + "," + source.x0 + ")";
+                            })
+                            .style("opacity", 1e-6);
+
+                            // Enter any new nodes at the parent's previous position.
+                            nodeEnter.append("svg:rect")
+                            .attr({
+                                "height": barHeight,
+                                "width": barWidth
+                            })
+                            .style("fill", color);
+
+                            nodeEnter.append("svg:rect")
+                            .attr({
+                                "height": grip_size,
+                                "width": grip_size,
+                                "y": barHeight-grip_size,
+                                "x": leftTreeG == treeG ? 0:barWidth-grip_size})
+                            .style({
+                                "fill": "gray",
+                                "opacity": .5,
+                                "cursor": "pointer"
+                            })
+                            .on("click", click);
+
+                            nodeEnter.append("svg:text")
+                            .attr("dy", 12.5)
+                            .attr("dx", 10.5)
+                            .text(function(d) {
+                                if( !d.children )
+                                    return d.name + " [string]";
+                                return d.name;
+                            });
+
+                            // Transition nodes to their new position.
+                            nodeEnter.transition()
+                            .duration(duration)
+                            .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+                            .style("opacity", 1);
+
+                            node.transition()
+                            .duration(duration)
+                            .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+                            .style("opacity", 1)
+                            .select("rect")
+                            .style("fill", color);
+
+                            // Transition exiting nodes to the parent's new position.
+                            node.exit().transition()
+                            .duration(duration)
+                            .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+                            .style("opacity", 1e-6)
+                            .remove();
+
+                            // Stash the old positions for transition.
+                            nodes.forEach(function(d) {
+                                d.x0 = d.x;
+                                d.y0 = d.y;
+                            });
+
+                            // Update the links
+                            var diagonal = d3.svg.diagonal()
+                            .projection(function(d) {
+                                return [
+                                    leftTreeG == treeG ? d.y : (d.y+barWidth),
+                                    d.x+barHeight];
+                            });
+
+                            var link = vis.selectAll("path.link")
+                            .data(tree.links(nodes), function(d) { return d.target.id; });
+
+                            // Enter any new links at the parent's previous position.
+                            link.enter().insert("svg:path", "g")
+                            .attr("class", "link")
+                            .attr("d", function(d) {
+                                var o = {x: source.x0, y: source.y0};
+                                return diagonal({source: o, target: o});
+                            })
+                            .transition()
+                            .duration(duration)
+                            .attr("d", diagonal);
+
+                            // Transition links to their new position.
+                            link.transition()
+                            .duration(duration)
+                            .attr("d", diagonal);
+
+                            // Transition exiting nodes to the parent's new position.
+                            link.exit().transition()
+                            .duration(duration)
+                            .attr("d", function(d) {
+                                var o = {x: source.x, y: source.y};
+                                return diagonal({source: o, target: o});
+                            })
+                            .remove();
+                            // Compute the right and bottom of data structure tree
+                            treeG.width = 0;
+                            treeG.height = 0;
+                            if(leftTreeG == treeG) {
+                                nodes.forEach(function(n) {
+                                    if(treeG.width < n.y)
+                                        treeG.width = n.y;
+                                    if(treeG.height < n.x)
+                                        treeG.height = n.x;
+                                });
+                                treeG.width += barWidth;
+                                treeG.height += barHeight;
+                            }
+                            else {
+                                nodes.forEach(function(n) {
+                                    if(treeG.width > n.y)
+                                        treeG.width = n.y;
+                                    if(treeG.height < n.x)
+                                        treeG.height = n.x;
+                                });
+                                treeG.width = -treeG.width;
+                                treeG.height += barHeight;
+                            }
+                            var t = {
+                                width: treeG.width,
+                                height: treeG.height,
+                                div_height: size.div_height,
+                                div_side_width: size.div_side_width
+
+                            };
+                            treeG.eventListener.layout(t);
+                        }
+
+                        // Toggle children on click.
+                        function click(d) {
+                            if (d.children) {
+                                d._children = d.children;
+                                d.children = null;
+                            } else {
+                                d.children = d._children;
+                                d._children = null;
+                            }
+                            layout(d);
+                        }
+
+                        function color(d) {
+                            return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fdf5ef";
+                        }
+
+                        d3.json(jsonData, function(json) {
+                            json.x0 = 0;
+                            json.y0 = 0;
+                            layout(root = json);
+                        });
+                    }
+
+                    RuleTreeEditorScrollBar.create({
+                        treeEditor: rtEditor,
+                        treeG: leftTreeG,
+                        paneG: leftG,
+                        isLeft: true
+                    });//*/
+                    RuleTreeEditorScrollBar.create({
+                        treeEditor: rtEditor,
+                        treeG: rightTreeG,
+                        paneG: rightG,
+                        isLeft: false
+                    });//*/
+
+                    rtEditor.loadTree(leftTreeG, "demo.json");
+                    rtEditor.loadTree(rightTreeG, "demo.json");
+
+                    // End
+                    return rtEditor;
+                };
+
+                // TODO redesign the scrollbar style
+                // Tree is ok
+                var rt = RuleTreeEditor.create("#rule-editor");
+
+                $("#test").css({
+                    "width": "900px",
+                    "height": "300px"
+                }).find("#rule-editor").trigger(jQuery.Event("resize"));//*/
+
+            });
+        </script>
+        <style>
+            .scb {
+                border: 1px solid rgb(201, 201, 201);
+            }
+            .scrollbar {
+                fill: rgb(247, 243, 243);
+                stroke: rgb(192, 192, 192);
+                stroke-width: .2px;
+            }
+            .s_edge {
+                fill: rgb(220, 220, 220);
+                stroke: rgb(192, 192, 192);
+                stroke-width: .2px;
+            }
+        </style>
+        <script type="text/javascript">
+            $(function(){
+                var scb = d3.select("#scb_id");
+                scb.data([{
+                        x : 0,
+                        y : 0
+                    }]);
+                function dragmove_vbar_grip(d) {
+                    d.y += d3.event.dy;
+                    scb.attr("transform","translate(" + d.x + "," + d.y + ")");
+                    scb.layoutEvent.layout("hello");
+                }
+                scb.call(d3.behavior.drag().on("drag", dragmove_vbar_grip));
+                scb.layoutEvent = d3.dispatch("layout");
+                scb.layoutEvent.on("layout", function(v) {
+                    alert(v);
+                })
+            })
+        </script>
+    </head>
+    <body>
+        <div id="test" style="position: relative; width:900px; height:300px; left: 100px; top: 100px">
+            <div id="rule-editor" style="width:100%; height:100%; overflow: hidden"><!--
+                <div class="scb">
+                    <svg>
+                    <g id="scb_id" transform="translate(0, 0)">
+                    <rect class="scb s_edge" width="6" height="5" x="0" y="100"/>
+                    <rect class="scb s_edge" width="6" height="5" x="0" y="205"/>
+                    <rect class="scb scrollbar" width="6" height="100" x="0" y="105"/>
+                    </g>
+                    </svg>
+                </div>-->
+            </div>
+        </div>
+    </body>
+</html>
