@@ -38,6 +38,8 @@
                         var vGrip = null;
                         var hGripG = null;
                         var hGrip = null;
+                        var vStep = 0;
+                        var hStep = 0;
 
                         var scb = null;
                         var bVDragging = false;
@@ -60,6 +62,8 @@
                         scrollbar.update = function() {
                             scb = scrollSize();
                             scrollbarRemove();
+                            vStep = treeG.height > scb.scroll_v_range ? Math.round((treeG.height-barHeight)/(scb.scroll_v_range)):0;
+                            hStep = treeG.width > scb.scroll_h_range ? Math.round((treeG.width-scb.width)/(scb.scroll_h_range-barHeight)):0;
                             if( scb.has_scrollbar_v && vGripG == null ) {
                                 vGripG = vBarG.append('svg:g');
                                 vGrip = vGripG.append('svg:rect');
@@ -132,27 +136,30 @@
                             // build a demo draggable rect
                             function dragmove_vbar_grip(d) {
                                 var y = d.y + d3.event.dy;
-                                if( y < (scb.scroll_v_y_limit)
-                                    && y >= scb.scroll_origin_v_y ) {
+                                if( y <= (scb.scroll_v_y_limit)
+                                    && y >= scb.scroll_orgin_v_y ) {
                                     d.y = y;
                                     vGripG.attr("transform","translate(" + d.x + "," + d.y + ")");
-                                    treeG.attr("transform", function(n) {
-                                        // Check bottom edge
-                                        if(scb.scroll_v_y_limit - y < 2)
-                                            n.y = scb.height - treeG.height;
-                                        else
-                                            n.y = scb.view_origin_y - Math.round((y - scb.scroll_origin_v_y)*treeG.height/scb.scroll_v_range);
-                                        return "translate(" + n.x + "," + n.y + ")";
-                                    });
+                                    var deltaY = -Math.round(d3.event.dy*vStep);
+                                    if( deltaY != 0 ) {
+                                        treeG.attr("transform", function(n) {
+                                            n.y += deltaY;
+                                            if(n.y > scb.view_orign_y)
+                                                n.y = scb.view_orign_y;
+                                            else if( (n.y + treeG.height) < scb.height )
+                                                n.y = scb.height - treeG.height;
+                                            return "translate(" + n.x + "," + n.y + ")";
+                                        });
+                                    }
                                 }
                             }
                             function check_in_scroll_range_x(x) {
                                 if( scrollInfo.isLeft
                                     && x <= scb.scroll_h_x_limit
-                                    && x >= scb.scroll_origin_h_x )
+                                    && x >= scb.scroll_orgin_h_x )
                                     return true;
                                 else if( !scrollInfo.isLeft
-                                    && x <= (scb.scroll_origin_h_x)
+                                    && x <= (scb.scroll_orgin_h_x)
                                     && x >= scb.scroll_h_x_limit )
                                     return true;
                                 return false;
@@ -162,12 +169,25 @@
                                 if( check_in_scroll_range_x(x) ) {
                                     d.x = x;
                                     hGripG.attr("transform","translate(" + d.x + "," + d.y + ")");
-                                    var view_origin_x = scrollInfo.isLeft ? scb.view_origin_left_x : scb.view_origin_right_x;
-                                    treeG.attr("transform", function(n) {
-                                        // Check left or right edge
-                                        n.x = view_origin_x - Math.round((x - scb.scroll_origin_h_x)*treeG.width/scb.scroll_h_range);
-                                        return "translate(" + n.x + "," + n.y + ")";
-                                    });
+                                    var deltaX = -Math.round(d3.event.dx * hStep);
+                                    if( deltaX != 0 ) {
+                                        treeG.attr("transform", function(n) {
+                                            n.x += deltaX;
+                                            if( scrollInfo.isLeft ) {
+                                                if( n.x > scb.view_orign_left_x )
+                                                    n.x = scb.view_orign_left_x;
+                                                else if( (n.x + treeG.width) < scb.width )
+                                                    n.x = scb.width - treeG.width;
+                                            }
+                                            else {
+                                                if( n.x < scb.view_orign_right_x )
+                                                    n.x = scb.view_orign_right_x;
+                                                else if( n.x > treeG.width )
+                                                    n.x = treeG.width;
+                                            }
+                                            return "translate(" + n.x + "," + n.y + ")";
+                                        });
+                                    }
                                 }
                             }
                         }
@@ -175,45 +195,37 @@
                         function scrollSize() {
                             var s = rtEditor.axisOrign();
                             var p = treeG.datum();
-                            // frame
+                            s.has_scrollbar_v = treeG.height > s.height;
+                            s.has_scrollbar_h = treeG.width > s.width;
+                            s.grip_v_l = Math.round(s.height/treeG.height*s.height);
+                            s.grip_h_l = Math.round(s.width/treeG.width*s.width);
                             // v
                             s.scrollbag_v_x = scrollInfo.isLeft? 0:(s.width-gripbag_w);
                             s.scrollbag_v_y = 0;
+                            s.scroll_v_x = scrollInfo.isLeft ? 1 : s.width-grip_w-1;
+                            s.scroll_orgin_v_y = gripbag_w;
+                            // Need to compute the scroll position
+                            s.scroll_v_y_limit = s.height-s.grip_v_l-1;
+                            // Need a orgin x,y
+                            if(p.y == s.view_orign_y)
+                                s.scroll_v_y = s.scroll_orgin_v_y;
+                            else {
+                                s.scroll_v_y = Math.round(Math.abs(p.y)*s.height/treeG.height);
+                            }
                             // h
                             s.scrollbag_h_x = 0;
                             s.scrollbag_h_y = 0;
-                            // scrollbar
-                            s.has_scrollbar_v = treeG.height > s.height;
-                            s.has_scrollbar_h = treeG.width > s.width;
-                            // v
-                            if( s.has_scrollbar_v ) {
-                                s.grip_v_l = Math.round(Math.pow(s.height-s.view_origin_y, 2)/treeG.height);
+                            s.scroll_orgin_h_x = scrollInfo.isLeft? gripbag_w:(s.width-s.grip_h_l-gripbag_w);
+                            s.scroll_h_y = 1;
+                            s.scroll_h_x_limit = scrollInfo.isLeft ? (s.width-s.grip_h_l-1) : 1;
+                            if(p.x == s.view_orgin_x)
+                                s.scroll_h_x = s.scroll_orgin_h_x;
+                            else
+                                s.scroll_h_x = Math.round(Math.abs(p.x)*s.width/treeG.width);
 
-                                s.scroll_v_x = scrollInfo.isLeft ? 1 : s.width-grip_w-1;
-                                s.scroll_origin_v_y = gripbag_w;
-                                // Need to compute the scroll position
-                                s.scroll_v_y_limit = s.height-s.grip_v_l-1;
-                                s.scroll_v_range = s.height-gripbag_w-1;
-                                // Need a origin x,y
-                                if( p.y == s.view_origin_y )
-                                    s.scroll_v_y = s.scroll_origin_v_y;
-                                else
-                                    s.scroll_v_y = Math.round(Math.abs(p.y)*s.height/treeG.height);
-                            }
-                            // h
-                            if( s.has_scrollbar_h ) {
-                                s.grip_h_l = Math.round(Math.pow(s.width-s.view_origin_left_x, 2)/treeG.width);
-                                // the scroll base range is the same between left and right, so use left_x for both
-                                s.scroll_origin_h_x = scrollInfo.isLeft? gripbag_w:(s.width-s.grip_h_l-gripbag_w);
-                                s.scroll_h_y = 1;
-                                s.scroll_h_x_limit = scrollInfo.isLeft ? (s.width-s.grip_h_l-1) : 1;
-                                s.scroll_h_range = s.width-gripbag_w-1;
-                                var view_origin_x = scrollInfo.isLeft ? s.view_origin_left_x : s.view_origin_right_x;
-                                if( p.x == view_origin_x )
-                                    s.scroll_h_x = s.scroll_origin_h_x;
-                                else
-                                    s.scroll_h_x = Math.round(Math.abs(p.x)*s.width/treeG.width);
-                            }
+                                // h, v range
+                            s.scroll_h_range = s.width-s.grip_h_l-gripbag_w-1;
+                            s.scroll_v_range = s.height-s.grip_v_l-gripbag_w-1;
                             return s;
                         }
 
@@ -285,9 +297,9 @@
 
                     rtEditor.axisOrign = function() {
                         var size = rtEditor.paneSize();
-                        size.view_origin_left_x = rtEditor.scrollbar_width + 2;
-                        size.view_origin_right_x = size.width -rtEditor.scrollbar_width - 2,
-                        size.view_origin_y = rtEditor.scrollbar_width + 2;
+                        size.view_orign_left_x = rtEditor.scrollbar_width + 2;
+                        size.view_orign_right_x = size.width -rtEditor.scrollbar_width - 2,
+                        size.view_orign_y = rtEditor.scrollbar_width + 2;
                         return size;
                     };
 
@@ -332,15 +344,15 @@
                         });
 
                         leftTreeG.data([{
-                                x: axis.view_origin_left_x,
-                                y: axis.view_origin_y
+                                x: axis.view_orign_left_x,
+                                y: axis.view_orign_y
                             }]);
                         rightTreeG.data([{
-                                x: axis.view_origin_right_x,
-                                y: axis.view_origin_y
+                                x: axis.view_orign_right_x,
+                                y: axis.view_orign_y
                             }]);
-                        leftTreeG.attr("transform", "translate(" + axis.view_origin_left_x +"," + axis.view_origin_y +")");
-                        rightTreeG.attr("transform", "translate(" + axis.view_origin_right_x +"," + axis.view_origin_y +")");
+                        leftTreeG.attr("transform", "translate(" + axis.view_orign_left_x +"," + axis.view_orign_y +")");
+                        rightTreeG.attr("transform", "translate(" + axis.view_orign_right_x +"," + axis.view_orign_y +")");
 
                         if(leftTreeG.scrollbar != null)
                             leftTreeG.scrollbar.update();
@@ -358,8 +370,8 @@
                         var size = this.axisOrign();
                         var isLeft = (leftTreeG == treeG);
                         var tree = d3.layout.tree();
-                        var x = isLeft ? size.view_origin_left_x : size.view_origin_right_x;
-                        var vis = treeG.attr("transform", "translate(" + x +"," + size.view_origin_y +")"),
+                        var x = isLeft ? size.view_orign_left_x : size.view_orign_right_x;
+                        var vis = treeG.attr("transform", "translate(" + x +"," + size.view_orign_y +")"),
                         i = 0, btn_size = 8,
                         root;
 
@@ -395,8 +407,7 @@
                             nodeEnter.append("svg:rect")
                             .attr({
                                 "height": barHeight,
-                                "width": barHeight,
-                                "transform": "translate(" + (isLeft? 0:barWidth-barHeight) + ", 0)"
+                                "width": barWidth
                             })
                             .style("fill", color);
 
@@ -417,30 +428,11 @@
                             // TODO need to display data format data type
                             nodeEnter.append("svg:text")
                             .attr("dy", 12.5)
+                            .attr("dx", 10.5)
                             .text(function(d) {
                                 if( !d.children )
-                                    return isLeft ? "[string] "+d.name: d.name + " [string]";
+                                    return d.name + " [string]";
                                 return d.name;
-                            }).attr("dx", function(d) {
-                                var t_w = this.getBBox().width;
-                                var t_x =  isLeft ? (barHeight+2) : (barWidth-t_w-barHeight-2);
-                                d3.select(this.parentNode).append("svg:rect")
-                                .attr({
-                                    "height": barHeight,
-                                    "width": t_w,
-                                    "y": d.dy,
-                                    "x": t_x
-                                })
-                                .style({
-                                    "fill": "rgb(209, 228, 238)",
-                                    "opacity": 1e-6,
-                                    "cursor": "pointer"
-                                }).on("mouseover", function(e) {
-                                    d3.select(this).style("opacity", .5);
-                                }).on("mouseout", function(e) {
-                                    d3.select(this).style("opacity", 1e-6);
-                                });
-                                return t_x;
                             });
 
                             function opacityFilter(d) {
@@ -569,8 +561,8 @@
                     }
 
                     rtEditor.loadData = function() {
-                        rtEditor.loadTree(leftTreeG, "demo_1.json");
-                        rtEditor.loadTree(rightTreeG, "demo.json");
+                        rtEditor.loadTree(leftTreeG, "demo.json");
+                        rtEditor.loadTree(rightTreeG, "demo_1.json");
                     }
 
                     // End

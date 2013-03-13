@@ -1,297 +1,302 @@
 {
-    "name": "flare",
+    "name" : "root",
     "children":
-    [
-    {
-        "name": "analytics",
+    [{
+        "name": "flare",
         "children":
         [
         {
-            "name": "cluster",
+            "name": "analytics",
             "children":
             [
             {
-                "name": "AgglomerativeCluster",
-                "size": 3938
-            },
-
-            {
-                "name": "CommunityStructure",
-                "size": 3812
-            },
-
-            {
-                "name": "MergeEdge",
-                "size": 743
-            }
-            ]
-        },
-        {
-            "name": "graph",
-            "children":
-            [
-            {
-                "name": "BetweennessCentrality",
-                "size": 3534
-            },
-
-            {
-                "name": "LinkDistance",
+                "name": "cluster",
                 "children":
                 [
                 {
-                    "name": "analytics",
+                    "name": "AgglomerativeCluster",
+                    "size": 3938
+                },
+
+                {
+                    "name": "CommunityStructure",
+                    "size": 3812
+                },
+
+                {
+                    "name": "MergeEdge",
+                    "size": 743
+                }
+                ]
+            },
+            {
+                "name": "graph",
+                "children":
+                [
+                {
+                    "name": "BetweennessCentrality",
+                    "size": 3534
+                },
+
+                {
+                    "name": "LinkDistance",
                     "children":
                     [
                     {
-                        "name": "cluster",
+                        "name": "analytics",
                         "children":
                         [
                         {
-                            "name": "AgglomerativeCluster",
-                            "size": 3938
-                        },
-
-                        {
-                            "name": "CommunityStructure",
-                            "size": 3812
-                        },
-
-                        {
-                            "name": "MergeEdge",
-                            "size": 743
-                        }
-                        ]
-                    },
-                    {
-                        "name": "graph",
-                        "children":
-                        [
-                        {
-                            "name": "BetweennessCentrality",
-                            "size": 3534
-                        },
-
-                        {
-                            "name": "LinkDistance",
+                            "name": "cluster",
                             "children":
                             [
                             {
-                                "name": "analytics",
+                                "name": "AgglomerativeCluster",
+                                "size": 3938
+                            },
+
+                            {
+                                "name": "CommunityStructure",
+                                "size": 3812
+                            },
+
+                            {
+                                "name": "MergeEdge",
+                                "size": 743
+                            }
+                            ]
+                        },
+                        {
+                            "name": "graph",
+                            "children":
+                            [
+                            {
+                                "name": "BetweennessCentrality",
+                                "size": 3534
+                            },
+
+                            {
+                                "name": "LinkDistance",
                                 "children":
                                 [
                                 {
-                                    "name": "cluster",
+                                    "name": "analytics",
                                     "children":
                                     [
                                     {
-                                        "name": "AgglomerativeCluster",
-                                        "children": [
+                                        "name": "cluster",
+                                        "children":
+                                        [
                                         {
-                                            "name": "analytics",
-                                            "children":
-                                            [
+                                            "name": "AgglomerativeCluster",
+                                            "children": [
                                             {
-                                                "name": "cluster",
+                                                "name": "analytics",
                                                 "children":
                                                 [
                                                 {
-                                                    "name": "AgglomerativeCluster",
-                                                    "size": 3938
-                                                },
-
-                                                {
-                                                    "name": "CommunityStructure",
-                                                    "size": 3812
-                                                },
-
-                                                {
-                                                    "name": "MergeEdge",
-                                                    "size": 743
-                                                }
-                                                ]
-                                            },
-                                            {
-                                                "name": "graph",
-                                                "children":
-                                                [
-                                                {
-                                                    "name": "BetweennessCentrality",
-                                                    "size": 3534
-                                                },
-
-                                                {
-                                                    "name": "LinkDistance",
+                                                    "name": "cluster",
                                                     "children":
                                                     [
                                                     {
-                                                        "name": "analytics",
+                                                        "name": "AgglomerativeCluster",
+                                                        "size": 3938
+                                                    },
+
+                                                    {
+                                                        "name": "CommunityStructure",
+                                                        "size": 3812
+                                                    },
+
+                                                    {
+                                                        "name": "MergeEdge",
+                                                        "size": 743
+                                                    }
+                                                    ]
+                                                },
+                                                {
+                                                    "name": "graph",
+                                                    "children":
+                                                    [
+                                                    {
+                                                        "name": "BetweennessCentrality",
+                                                        "size": 3534
+                                                    },
+
+                                                    {
+                                                        "name": "LinkDistance",
                                                         "children":
                                                         [
                                                         {
-                                                            "name": "cluster",
+                                                            "name": "analytics",
                                                             "children":
                                                             [
                                                             {
-                                                                "name": "AgglomerativeCluster",
-                                                                "size": 3938
-                                                            },
-
-                                                            {
-                                                                "name": "CommunityStructure",
-                                                                "size": 3812
-                                                            },
-
-                                                            {
-                                                                "name": "MergeEdge",
-                                                                "children": [
+                                                                "name": "cluster",
+                                                                "children":
+                                                                [
                                                                 {
-                                                                    "name": "analytics",
-                                                                    "children":
-                                                                    [
+                                                                    "name": "AgglomerativeCluster",
+                                                                    "size": 3938
+                                                                },
+
+                                                                {
+                                                                    "name": "CommunityStructure",
+                                                                    "size": 3812
+                                                                },
+
+                                                                {
+                                                                    "name": "MergeEdge",
+                                                                    "children": [
                                                                     {
-                                                                        "name": "cluster",
+                                                                        "name": "analytics",
                                                                         "children":
                                                                         [
                                                                         {
-                                                                            "name": "AgglomerativeCluster",
-                                                                            "size": 3938
-                                                                        },
-
-                                                                        {
-                                                                            "name": "CommunityStructure",
-                                                                            "size": 3812
-                                                                        },
-
-                                                                        {
-                                                                            "name": "MergeEdge",
-                                                                            "size": 743
-                                                                        }
-                                                                        ]
-                                                                    },
-                                                                    {
-                                                                        "name": "graph",
-                                                                        "children":
-                                                                        [
-                                                                        {
-                                                                            "name": "BetweennessCentrality",
-                                                                            "size": 3534
-                                                                        },
-
-                                                                        {
-                                                                            "name": "LinkDistance",
+                                                                            "name": "cluster",
                                                                             "children":
                                                                             [
                                                                             {
-                                                                                "name": "analytics",
+                                                                                "name": "AgglomerativeCluster",
+                                                                                "size": 3938
+                                                                            },
+
+                                                                            {
+                                                                                "name": "CommunityStructure",
+                                                                                "size": 3812
+                                                                            },
+
+                                                                            {
+                                                                                "name": "MergeEdge",
+                                                                                "size": 743
+                                                                            }
+                                                                            ]
+                                                                        },
+                                                                        {
+                                                                            "name": "graph",
+                                                                            "children":
+                                                                            [
+                                                                            {
+                                                                                "name": "BetweennessCentrality",
+                                                                                "size": 3534
+                                                                            },
+
+                                                                            {
+                                                                                "name": "LinkDistance",
                                                                                 "children":
                                                                                 [
                                                                                 {
-                                                                                    "name": "cluster",
+                                                                                    "name": "analytics",
                                                                                     "children":
                                                                                     [
                                                                                     {
-                                                                                        "name": "AgglomerativeCluster",
-                                                                                        "size": 3938
-                                                                                    },
-
-                                                                                    {
-                                                                                        "name": "CommunityStructure",
-                                                                                        "size": 3812
-                                                                                    },
-
-                                                                                    {
-                                                                                        "name": "MergeEdge",
-                                                                                        "size": 743
-                                                                                    }
-                                                                                    ]
-                                                                                },
-                                                                                {
-                                                                                    "name": "graph",
-                                                                                    "children":
-                                                                                    [
-                                                                                    {
-                                                                                        "name": "BetweennessCentrality",
-                                                                                        "size": 3534
-                                                                                    },
-
-                                                                                    {
-                                                                                        "name": "LinkDistance",
+                                                                                        "name": "cluster",
                                                                                         "children":
                                                                                         [
                                                                                         {
-                                                                                            "name": "analytics",
+                                                                                            "name": "AgglomerativeCluster",
+                                                                                            "size": 3938
+                                                                                        },
+
+                                                                                        {
+                                                                                            "name": "CommunityStructure",
+                                                                                            "size": 3812
+                                                                                        },
+
+                                                                                        {
+                                                                                            "name": "MergeEdge",
+                                                                                            "size": 743
+                                                                                        }
+                                                                                        ]
+                                                                                    },
+                                                                                    {
+                                                                                        "name": "graph",
+                                                                                        "children":
+                                                                                        [
+                                                                                        {
+                                                                                            "name": "BetweennessCentrality",
+                                                                                            "size": 3534
+                                                                                        },
+
+                                                                                        {
+                                                                                            "name": "LinkDistance",
                                                                                             "children":
                                                                                             [
                                                                                             {
-                                                                                                "name": "cluster",
+                                                                                                "name": "analytics",
                                                                                                 "children":
                                                                                                 [
                                                                                                 {
-                                                                                                    "name": "AgglomerativeCluster",
-                                                                                                    "size": 3938
-                                                                                                },
-
-                                                                                                {
-                                                                                                    "name": "CommunityStructure",
-                                                                                                    "size": 3812
-                                                                                                },
-
-                                                                                                {
-                                                                                                    "name": "MergeEdge",
-                                                                                                    "size": 743
-                                                                                                }
-                                                                                                ]
-                                                                                            },
-                                                                                            {
-                                                                                                "name": "graph",
-                                                                                                "children":
-                                                                                                [
-                                                                                                {
-                                                                                                    "name": "BetweennessCentrality",
-                                                                                                    "size": 3534
-                                                                                                },
-
-                                                                                                {
-                                                                                                    "name": "LinkDistance",
+                                                                                                    "name": "cluster",
                                                                                                     "children":
                                                                                                     [
                                                                                                     {
-                                                                                                        "name": "analytics",
+                                                                                                        "name": "AgglomerativeCluster",
+                                                                                                        "size": 3938
+                                                                                                    },
+
+                                                                                                    {
+                                                                                                        "name": "CommunityStructure",
+                                                                                                        "size": 3812
+                                                                                                    },
+
+                                                                                                    {
+                                                                                                        "name": "MergeEdge",
+                                                                                                        "size": 743
+                                                                                                    }
+                                                                                                    ]
+                                                                                                },
+                                                                                                {
+                                                                                                    "name": "graph",
+                                                                                                    "children":
+                                                                                                    [
+                                                                                                    {
+                                                                                                        "name": "BetweennessCentrality",
+                                                                                                        "size": 3534
+                                                                                                    },
+
+                                                                                                    {
+                                                                                                        "name": "LinkDistance",
                                                                                                         "children":
                                                                                                         [
                                                                                                         {
-                                                                                                            "name": "cluster",
+                                                                                                            "name": "analytics",
                                                                                                             "children":
                                                                                                             [
                                                                                                             {
-                                                                                                                "name": "AgglomerativeCluster",
-                                                                                                                "size": 3938
-                                                                                                            },
+                                                                                                                "name": "cluster",
+                                                                                                                "children":
+                                                                                                                [
+                                                                                                                {
+                                                                                                                    "name": "AgglomerativeCluster",
+                                                                                                                    "size": 3938
+                                                                                                                },
 
-                                                                                                            {
-                                                                                                                "name": "CommunityStructure",
-                                                                                                                "size": 3812
-                                                                                                            },
+                                                                                                                {
+                                                                                                                    "name": "CommunityStructure",
+                                                                                                                    "size": 3812
+                                                                                                                },
 
-                                                                                                            {
-                                                                                                                "name": "MergeEdge",
-                                                                                                                "size": 743
-                                                                                                            }
-                                                                                                            ]
-                                                                                                        },
-                                                                                                        {
-                                                                                                            "name": "graph",
-                                                                                                            "children":
-                                                                                                            [
-                                                                                                            {
-                                                                                                                "name": "BetweennessCentrality",
-                                                                                                                "size": 3534
+                                                                                                                {
+                                                                                                                    "name": "MergeEdge",
+                                                                                                                    "size": 743
+                                                                                                                }
+                                                                                                                ]
                                                                                                             },
-
                                                                                                             {
-                                                                                                                "name": "LinkDistance",
-                                                                                                                "size": 5731
+                                                                                                                "name": "graph",
+                                                                                                                "children":
+                                                                                                                [
+                                                                                                                {
+                                                                                                                    "name": "BetweennessCentrality",
+                                                                                                                    "size": 3534
+                                                                                                                },
+
+                                                                                                                {
+                                                                                                                    "name": "LinkDistance",
+                                                                                                                    "size": 5731
+                                                                                                                }
+                                                                                                                ]
                                                                                                             }
                                                                                                             ]
                                                                                                         }
@@ -316,95 +321,95 @@
                                                                     ]
                                                                 }
                                                                 ]
-                                                            }
-                                                            ]
-                                                        },
-                                                        {
-                                                            "name": "graph",
-                                                            "children":
-                                                            [
-                                                            {
-                                                                "name": "BetweennessCentrality",
-                                                                "size": 3534
                                                             },
-
                                                             {
-                                                                "name": "LinkDistance",
+                                                                "name": "graph",
                                                                 "children":
                                                                 [
                                                                 {
-                                                                    "name": "analytics",
+                                                                    "name": "BetweennessCentrality",
+                                                                    "size": 3534
+                                                                },
+
+                                                                {
+                                                                    "name": "LinkDistance",
                                                                     "children":
                                                                     [
                                                                     {
-                                                                        "name": "cluster",
+                                                                        "name": "analytics",
                                                                         "children":
                                                                         [
                                                                         {
-                                                                            "name": "AgglomerativeCluster",
-                                                                            "size": 3938
-                                                                        },
-
-                                                                        {
-                                                                            "name": "CommunityStructure",
-                                                                            "size": 3812
-                                                                        },
-
-                                                                        {
-                                                                            "name": "MergeEdge",
-                                                                            "size": 743
-                                                                        }
-                                                                        ]
-                                                                    },
-                                                                    {
-                                                                        "name": "graph",
-                                                                        "children":
-                                                                        [
-                                                                        {
-                                                                            "name": "BetweennessCentrality",
-                                                                            "size": 3534
-                                                                        },
-
-                                                                        {
-                                                                            "name": "LinkDistance",
+                                                                            "name": "cluster",
                                                                             "children":
                                                                             [
                                                                             {
-                                                                                "name": "analytics",
+                                                                                "name": "AgglomerativeCluster",
+                                                                                "size": 3938
+                                                                            },
+
+                                                                            {
+                                                                                "name": "CommunityStructure",
+                                                                                "size": 3812
+                                                                            },
+
+                                                                            {
+                                                                                "name": "MergeEdge",
+                                                                                "size": 743
+                                                                            }
+                                                                            ]
+                                                                        },
+                                                                        {
+                                                                            "name": "graph",
+                                                                            "children":
+                                                                            [
+                                                                            {
+                                                                                "name": "BetweennessCentrality",
+                                                                                "size": 3534
+                                                                            },
+
+                                                                            {
+                                                                                "name": "LinkDistance",
                                                                                 "children":
                                                                                 [
                                                                                 {
-                                                                                    "name": "cluster",
+                                                                                    "name": "analytics",
                                                                                     "children":
                                                                                     [
                                                                                     {
-                                                                                        "name": "AgglomerativeCluster",
-                                                                                        "size": 3938
-                                                                                    },
+                                                                                        "name": "cluster",
+                                                                                        "children":
+                                                                                        [
+                                                                                        {
+                                                                                            "name": "AgglomerativeCluster",
+                                                                                            "size": 3938
+                                                                                        },
 
-                                                                                    {
-                                                                                        "name": "CommunityStructure",
-                                                                                        "size": 3812
-                                                                                    },
+                                                                                        {
+                                                                                            "name": "CommunityStructure",
+                                                                                            "size": 3812
+                                                                                        },
 
-                                                                                    {
-                                                                                        "name": "MergeEdge",
-                                                                                        "size": 743
-                                                                                    }
-                                                                                    ]
-                                                                                },
-                                                                                {
-                                                                                    "name": "graph",
-                                                                                    "children":
-                                                                                    [
-                                                                                    {
-                                                                                        "name": "BetweennessCentrality",
-                                                                                        "size": 3534
+                                                                                        {
+                                                                                            "name": "MergeEdge",
+                                                                                            "size": 743
+                                                                                        }
+                                                                                        ]
                                                                                     },
-
                                                                                     {
-                                                                                        "name": "LinkDistance",
-                                                                                        "size": 5731
+                                                                                        "name": "graph",
+                                                                                        "children":
+                                                                                        [
+                                                                                        {
+                                                                                            "name": "BetweennessCentrality",
+                                                                                            "size": 3534
+                                                                                        },
+
+                                                                                        {
+                                                                                            "name": "LinkDistance",
+                                                                                            "size": 5731
+                                                                                        }
+                                                                                        ]
                                                                                     }
                                                                                     ]
                                                                                 }
@@ -427,70 +432,582 @@
                                                 ]
                                             }
                                             ]
+                                        },
+
+                                        {
+                                            "name": "CommunityStructure",
+                                            "size": 3812
+                                        },
+
+                                        {
+                                            "name": "MergeEdge",
+                                            "size": 743
                                         }
                                         ]
                                     },
-
                                     {
-                                        "name": "CommunityStructure",
-                                        "size": 3812
-                                    },
-
-                                    {
-                                        "name": "MergeEdge",
-                                        "size": 743
-                                    }
-                                    ]
-                                },
-                                {
-                                    "name": "graph",
-                                    "children":
-                                    [
-                                    {
-                                        "name": "BetweennessCentrality",
-                                        "size": 3534
-                                    },
-
-                                    {
-                                        "name": "LinkDistance",
+                                        "name": "graph",
                                         "children":
                                         [
                                         {
-                                            "name": "analytics",
+                                            "name": "BetweennessCentrality",
+                                            "size": 3534
+                                        },
+
+                                        {
+                                            "name": "LinkDistance",
                                             "children":
                                             [
                                             {
-                                                "name": "cluster",
+                                                "name": "analytics",
                                                 "children":
                                                 [
                                                 {
-                                                    "name": "AgglomerativeCluster",
-                                                    "size": 3938
-                                                },
+                                                    "name": "cluster",
+                                                    "children":
+                                                    [
+                                                    {
+                                                        "name": "AgglomerativeCluster",
+                                                        "size": 3938
+                                                    },
 
-                                                {
-                                                    "name": "CommunityStructure",
-                                                    "size": 3812
-                                                },
+                                                    {
+                                                        "name": "CommunityStructure",
+                                                        "size": 3812
+                                                    },
 
+                                                    {
+                                                        "name": "MergeEdge",
+                                                        "size": 743
+                                                    }
+                                                    ]
+                                                },
                                                 {
-                                                    "name": "MergeEdge",
-                                                    "size": 743
+                                                    "name": "graph",
+                                                    "children":
+                                                    [
+                                                    {
+                                                        "name": "BetweennessCentrality",
+                                                        "size": 3534
+                                                    },
+
+                                                    {
+                                                        "name": "LinkDistance",
+                                                        "size": 5731
+                                                    }
+                                                    ]
                                                 }
                                                 ]
-                                            },
+                                            }
+                                            ]
+                                        }
+                                        ]
+                                    }
+                                    ]
+                                }
+                                ]
+                            }
+                            ]
+                        }
+                        ]
+                    }
+                    ]
+                }
+                ]
+            }
+            ]
+        },
+        {
+            "name": "analytics",
+            "children":
+            [
+            {
+                "name": "cluster",
+                "children":
+                [
+                {
+                    "name": "AgglomerativeCluster",
+                    "size": 3938
+                },
+
+                {
+                    "name": "CommunityStructure",
+                    "size": 3812
+                },
+
+                {
+                    "name": "MergeEdge",
+                    "size": 743
+                }
+                ]
+            },
+            {
+                "name": "graph",
+                "children":
+                [
+                {
+                    "name": "BetweennessCentrality",
+                    "size": 3534
+                },
+
+                {
+                    "name": "LinkDistance",
+                    "children":
+                    [
+                    {
+                        "name": "analytics",
+                        "children":
+                        [
+                        {
+                            "name": "cluster",
+                            "children":
+                            [
+                            {
+                                "name": "AgglomerativeCluster",
+                                "size": 3938
+                            },
+
+                            {
+                                "name": "CommunityStructure",
+                                "size": 3812
+                            },
+
+                            {
+                                "name": "MergeEdge",
+                                "size": 743
+                            }
+                            ]
+                        },
+                        {
+                            "name": "graph",
+                            "children":
+                            [
+                            {
+                                "name": "BetweennessCentrality",
+                                "size": 3534
+                            },
+
+                            {
+                                "name": "LinkDistance",
+                                "children":
+                                [
+                                {
+                                    "name": "analytics",
+                                    "children":
+                                    [
+                                    {
+                                        "name": "cluster",
+                                        "children":
+                                        [
+                                        {
+                                            "name": "AgglomerativeCluster",
+                                            "children": [
                                             {
-                                                "name": "graph",
+                                                "name": "analytics",
                                                 "children":
                                                 [
                                                 {
-                                                    "name": "BetweennessCentrality",
-                                                    "size": 3534
-                                                },
+                                                    "name": "cluster",
+                                                    "children":
+                                                    [
+                                                    {
+                                                        "name": "AgglomerativeCluster",
+                                                        "size": 3938
+                                                    },
 
+                                                    {
+                                                        "name": "CommunityStructure",
+                                                        "size": 3812
+                                                    },
+
+                                                    {
+                                                        "name": "MergeEdge",
+                                                        "size": 743
+                                                    }
+                                                    ]
+                                                },
                                                 {
-                                                    "name": "LinkDistance",
-                                                    "size": 5731
+                                                    "name": "graph",
+                                                    "children":
+                                                    [
+                                                    {
+                                                        "name": "BetweennessCentrality",
+                                                        "size": 3534
+                                                    },
+
+                                                    {
+                                                        "name": "LinkDistance",
+                                                        "children":
+                                                        [
+                                                        {
+                                                            "name": "analytics",
+                                                            "children":
+                                                            [
+                                                            {
+                                                                "name": "cluster",
+                                                                "children":
+                                                                [
+                                                                {
+                                                                    "name": "AgglomerativeCluster",
+                                                                    "size": 3938
+                                                                },
+
+                                                                {
+                                                                    "name": "CommunityStructure",
+                                                                    "size": 3812
+                                                                },
+
+                                                                {
+                                                                    "name": "MergeEdge",
+                                                                    "children": [
+                                                                    {
+                                                                        "name": "analytics",
+                                                                        "children":
+                                                                        [
+                                                                        {
+                                                                            "name": "cluster",
+                                                                            "children":
+                                                                            [
+                                                                            {
+                                                                                "name": "AgglomerativeCluster",
+                                                                                "size": 3938
+                                                                            },
+
+                                                                            {
+                                                                                "name": "CommunityStructure",
+                                                                                "size": 3812
+                                                                            },
+
+                                                                            {
+                                                                                "name": "MergeEdge",
+                                                                                "size": 743
+                                                                            }
+                                                                            ]
+                                                                        },
+                                                                        {
+                                                                            "name": "graph",
+                                                                            "children":
+                                                                            [
+                                                                            {
+                                                                                "name": "BetweennessCentrality",
+                                                                                "size": 3534
+                                                                            },
+
+                                                                            {
+                                                                                "name": "LinkDistance",
+                                                                                "children":
+                                                                                [
+                                                                                {
+                                                                                    "name": "analytics",
+                                                                                    "children":
+                                                                                    [
+                                                                                    {
+                                                                                        "name": "cluster",
+                                                                                        "children":
+                                                                                        [
+                                                                                        {
+                                                                                            "name": "AgglomerativeCluster",
+                                                                                            "size": 3938
+                                                                                        },
+
+                                                                                        {
+                                                                                            "name": "CommunityStructure",
+                                                                                            "size": 3812
+                                                                                        },
+
+                                                                                        {
+                                                                                            "name": "MergeEdge",
+                                                                                            "size": 743
+                                                                                        }
+                                                                                        ]
+                                                                                    },
+                                                                                    {
+                                                                                        "name": "graph",
+                                                                                        "children":
+                                                                                        [
+                                                                                        {
+                                                                                            "name": "BetweennessCentrality",
+                                                                                            "size": 3534
+                                                                                        },
+
+                                                                                        {
+                                                                                            "name": "LinkDistance",
+                                                                                            "children":
+                                                                                            [
+                                                                                            {
+                                                                                                "name": "analytics",
+                                                                                                "children":
+                                                                                                [
+                                                                                                {
+                                                                                                    "name": "cluster",
+                                                                                                    "children":
+                                                                                                    [
+                                                                                                    {
+                                                                                                        "name": "AgglomerativeCluster",
+                                                                                                        "size": 3938
+                                                                                                    },
+
+                                                                                                    {
+                                                                                                        "name": "CommunityStructure",
+                                                                                                        "size": 3812
+                                                                                                    },
+
+                                                                                                    {
+                                                                                                        "name": "MergeEdge",
+                                                                                                        "size": 743
+                                                                                                    }
+                                                                                                    ]
+                                                                                                },
+                                                                                                {
+                                                                                                    "name": "graph",
+                                                                                                    "children":
+                                                                                                    [
+                                                                                                    {
+                                                                                                        "name": "BetweennessCentrality",
+                                                                                                        "size": 3534
+                                                                                                    },
+
+                                                                                                    {
+                                                                                                        "name": "LinkDistance",
+                                                                                                        "children":
+                                                                                                        [
+                                                                                                        {
+                                                                                                            "name": "analytics",
+                                                                                                            "children":
+                                                                                                            [
+                                                                                                            {
+                                                                                                                "name": "cluster",
+                                                                                                                "children":
+                                                                                                                [
+                                                                                                                {
+                                                                                                                    "name": "AgglomerativeCluster",
+                                                                                                                    "size": 3938
+                                                                                                                },
+
+                                                                                                                {
+                                                                                                                    "name": "CommunityStructure",
+                                                                                                                    "size": 3812
+                                                                                                                },
+
+                                                                                                                {
+                                                                                                                    "name": "MergeEdge",
+                                                                                                                    "size": 743
+                                                                                                                }
+                                                                                                                ]
+                                                                                                            },
+                                                                                                            {
+                                                                                                                "name": "graph",
+                                                                                                                "children":
+                                                                                                                [
+                                                                                                                {
+                                                                                                                    "name": "BetweennessCentrality",
+                                                                                                                    "size": 3534
+                                                                                                                },
+
+                                                                                                                {
+                                                                                                                    "name": "LinkDistance",
+                                                                                                                    "size": 5731
+                                                                                                                }
+                                                                                                                ]
+                                                                                                            }
+                                                                                                            ]
+                                                                                                        }
+                                                                                                        ]
+                                                                                                    }
+                                                                                                    ]
+                                                                                                }
+                                                                                                ]
+                                                                                            }
+                                                                                            ]
+                                                                                        }
+                                                                                        ]
+                                                                                    }
+                                                                                    ]
+                                                                                }
+                                                                                ]
+                                                                            }
+                                                                            ]
+                                                                        }
+                                                                        ]
+                                                                    }
+                                                                    ]
+                                                                }
+                                                                ]
+                                                            },
+                                                            {
+                                                                "name": "graph",
+                                                                "children":
+                                                                [
+                                                                {
+                                                                    "name": "BetweennessCentrality",
+                                                                    "size": 3534
+                                                                },
+
+                                                                {
+                                                                    "name": "LinkDistance",
+                                                                    "children":
+                                                                    [
+                                                                    {
+                                                                        "name": "analytics",
+                                                                        "children":
+                                                                        [
+                                                                        {
+                                                                            "name": "cluster",
+                                                                            "children":
+                                                                            [
+                                                                            {
+                                                                                "name": "AgglomerativeCluster",
+                                                                                "size": 3938
+                                                                            },
+
+                                                                            {
+                                                                                "name": "CommunityStructure",
+                                                                                "size": 3812
+                                                                            },
+
+                                                                            {
+                                                                                "name": "MergeEdge",
+                                                                                "size": 743
+                                                                            }
+                                                                            ]
+                                                                        },
+                                                                        {
+                                                                            "name": "graph",
+                                                                            "children":
+                                                                            [
+                                                                            {
+                                                                                "name": "BetweennessCentrality",
+                                                                                "size": 3534
+                                                                            },
+
+                                                                            {
+                                                                                "name": "LinkDistance",
+                                                                                "children":
+                                                                                [
+                                                                                {
+                                                                                    "name": "analytics",
+                                                                                    "children":
+                                                                                    [
+                                                                                    {
+                                                                                        "name": "cluster",
+                                                                                        "children":
+                                                                                        [
+                                                                                        {
+                                                                                            "name": "AgglomerativeCluster",
+                                                                                            "size": 3938
+                                                                                        },
+
+                                                                                        {
+                                                                                            "name": "CommunityStructure",
+                                                                                            "size": 3812
+                                                                                        },
+
+                                                                                        {
+                                                                                            "name": "MergeEdge",
+                                                                                            "size": 743
+                                                                                        }
+                                                                                        ]
+                                                                                    },
+                                                                                    {
+                                                                                        "name": "graph",
+                                                                                        "children":
+                                                                                        [
+                                                                                        {
+                                                                                            "name": "BetweennessCentrality",
+                                                                                            "size": 3534
+                                                                                        },
+
+                                                                                        {
+                                                                                            "name": "LinkDistance",
+                                                                                            "size": 5731
+                                                                                        }
+                                                                                        ]
+                                                                                    }
+                                                                                    ]
+                                                                                }
+                                                                                ]
+                                                                            }
+                                                                            ]
+                                                                        }
+                                                                        ]
+                                                                    }
+                                                                    ]
+                                                                }
+                                                                ]
+                                                            }
+                                                            ]
+                                                        }
+                                                        ]
+                                                    }
+                                                    ]
+                                                }
+                                                ]
+                                            }
+                                            ]
+                                        },
+
+                                        {
+                                            "name": "CommunityStructure",
+                                            "size": 3812
+                                        },
+
+                                        {
+                                            "name": "MergeEdge",
+                                            "size": 743
+                                        }
+                                        ]
+                                    },
+                                    {
+                                        "name": "graph",
+                                        "children":
+                                        [
+                                        {
+                                            "name": "BetweennessCentrality",
+                                            "size": 3534
+                                        },
+
+                                        {
+                                            "name": "LinkDistance",
+                                            "children":
+                                            [
+                                            {
+                                                "name": "analytics",
+                                                "children":
+                                                [
+                                                {
+                                                    "name": "cluster",
+                                                    "children":
+                                                    [
+                                                    {
+                                                        "name": "AgglomerativeCluster",
+                                                        "size": 3938
+                                                    },
+
+                                                    {
+                                                        "name": "CommunityStructure",
+                                                        "size": 3812
+                                                    },
+
+                                                    {
+                                                        "name": "MergeEdge",
+                                                        "size": 743
+                                                    }
+                                                    ]
+                                                },
+                                                {
+                                                    "name": "graph",
+                                                    "children":
+                                                    [
+                                                    {
+                                                        "name": "BetweennessCentrality",
+                                                        "size": 3534
+                                                    },
+
+                                                    {
+                                                        "name": "LinkDistance",
+                                                        "size": 5731
+                                                    }
+                                                    ]
                                                 }
                                                 ]
                                             }

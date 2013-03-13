@@ -13,7 +13,6 @@
   * less the margin on the splitter itself.
 */
 #SplitterPane {
-    background: #def;
     border: 0px;
     /* No padding allowed */
 }

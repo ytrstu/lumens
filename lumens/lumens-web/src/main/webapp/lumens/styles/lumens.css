@@ -13,7 +13,6 @@
 
 body {
     overflow: hidden;
-    background-color: #fbfbfb;
 }
 
 /****************/
@@ -24,21 +23,54 @@ html,body {
 }
 
 .layout-header {
-    height: 49px;
+    position: fixed;
+    z-index: 1030;
+    height: 45px;
     width:100%;
     float: top;
-    background-color: #005699;
-    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0px -1px 0px rgba(255, 255, 255, 0.45), inset 1px 0px 0px rgba(255, 255, 255, 0.45), inset -1px 1px 0px rgba(255, 255, 255, 0.45);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0px -1px 0px rgba(255, 255, 255, 0.45), inset 1px 0px 0px rgba(255, 255, 255, 0.45), inset -1px 1px 0px rgba(255, 255, 255, 0.45);
+    background-color: rgb(190, 190, 190);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0, 0, 0, .2);
+    /*
+
+    -webkit-box-shadow:0px 0px 5px rgba(0, 0, 0, .8);
+    -moz-box-shadow:0px 0px 5px rgba(0, 0, 0, .8);
+    box-shadow:0px 0px 5px rgba(0, 0, 0, .8);*/
 }
 
 .header-logo {
-    margin-top: 3px;
-    margin-left: 10px;
     height: 45px;
-    width: 74px;
+    width: 150px;
     float: left;
-    background: url('../images/lumens.png');
+    background-color: #bcd5e6;
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-right-color: rgba(0, 0, 0, .3);
+}
+.logo-bag {
+    width: 135px;
+    height: 26px;
+    margin-top: -15px;
+    margin-left: -20px;
+    background-image: url(../images/ui/logo-bag.png);
+    background-repeat: no-repeat;
+}
+
+.header-log-text {
+    padding-top: 10px;
+    padding-left: 28px;
+    float: center;
+    font-size: 15px;
+    font-weight: bolder;
+    letter-spacing: 5px;
+    color: rgba(0,0,0,.5);
+    text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.splitter-pane-container {
+    display:block;
+    padding-top:46px;
 }
 
 .layout-content {
@@ -46,7 +78,6 @@ html,body {
     width:100%;
     height:100%;
 }
-
 
 /*Accordian*/
 .accordian {
@@ -68,7 +99,6 @@ html,body {
 .even, .odd {
     font-size: 14px;
     text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.25);
-    filter: dropshadow(color=rgba(255, 255, 255, 0.25), offx=1, offy=1); /* IE Proprietary Filter*/
     height: 26px;
     border-bottom-style: none;
     border-bottom-width: 1px;
@@ -109,7 +139,6 @@ html,body {
     text-indent: 20px;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
     text-decoration: none;
-    filter: dropshadow(color=rgba(0, 0, 0, 0.25), offx=1, offy=1); /* IE Proprietary Filter*/
     border-color: rgba(0, 0, 0, 0.28);
     background-color: #808081;
     background-position: 0 -15px;
@@ -125,18 +154,22 @@ html,body {
     /*Dumy*/
 }
 
-
 .node rect {
     fill: #fff;
-    fill-opacity: .3;
+    fill-opacity: .6;
     stroke: #3182bd;
     stroke-width: .2px;
     stroke-opacity: .3;
 }
 
 .node text {
-    font: 10px sans-serif;
+    font: 12px sans-serif;
     pointer-events: none;
+}
+
+.node-text-background {
+    fill: #9ecae1;
+    fill-opacity: .2;
 }
 
 path.link {
@@ -144,14 +177,23 @@ path.link {
     stroke: #9ecae1;
     stroke-width: .5px;
 }
-.edge {
-    fill: rgb(185, 181, 181);
-    fill-opacity: 1;
+
+path.linkhidden {
+    fill: none;
 }
-.grip {
-    fill: rgb(201, 201, 201);
-    fill-opacity: .7;
+
+.scrollbar-bag-normal {
+    fill: rgb(238, 238, 238);
 }
+
+.grip-normal {
+    fill: rgb(206, 206, 206);
+}
+
+.grip-active {
+    fill: rgb(184, 184, 184);
+}
+
 .table-style {
     display: table;
     border-spacing: 0;
