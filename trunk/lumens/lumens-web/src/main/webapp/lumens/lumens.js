@@ -1,8 +1,232 @@
 /*
  * Copyright Lumens Team, Inc. All Rights Reserved.
- */
+ * Author     : shaofeng wang (shaofeng.cjpw@gmail.com)
+*/
+var Lumens = {
+    version: 1.0
+};
+
+Lumens.create = function(parentId) {
+    var lumensApp = {};
+    var parent = $(parentId);
+
+    // Initialize the header class component first
+    var Header = {};
+    Header.create = function(parentObj) {
+        var parent = parentObj;
+        parent.append('<div class="layout-header"/>');
+        var headerDiv = parent.find('.layout-header');
+        headerDiv.append('<div class="header-logo"><div class="header-log-text">LUMENS<div class="logo-bag"/></div></div>');
+    }
+
+    // Initialize the body class component
+    var Accordian = {};
+    Accordian.create = function(parentObj, titleText, accordionIdText, itemObjList) {
+        var accordian = {};
+        var parent = parentObj;
+        var itemList = null;
+        var title = titleText;
+        var accordionId = accordionIdText;
+        var itemPrefix=accordionIdText + '-item';
+        var itemCount = itemObjList.length;
+
+        accordian.itemCount = function() {
+            return itemCount;
+        }
+
+        accordian.item = function(index) {
+            return itemList.find('#'+itemPrefix+index);
+        }
+
+        // Build container
+        parent.append('<div id="' + accordionId +'"><div class="accordian-item-title">' + title + '</div><ul style="margin: 0px; padding: 0px"/></div>');
+        var accordianElement = $('#'+accordionId);
+        accordianElement.addClass('accordian');
+        var ul = accordianElement.find('ul');
+        itemList = ul;
+        // Build all item of the accordian
+        for(var i = 0; i < itemObjList.length; ++i) {
+            var itemHtml = '<li><div style="padding-top: 5px; position: absolute;">' +itemObjList[i] + '</div></li>'
+            +'<li><div id="' + itemPrefix + i + '" style="width: 100%; height:100%"/></li>';
+            ul.append(itemHtml);
+        }
+        // Hide all the content except the first
+        var liodd = ul.find('li:odd');
+        var lieven = ul.find('li:even');
+        liodd.hide();
+
+        // Add a padding to the first link
+        var expand = ul.find('li:first-child');
+        expand.animate( {
+            paddingLeft:"30px"
+        });
+        expand.toggleClass('item-active');
+        expand.next().stop().slideToggle(300);
+
+        // Add the dimension class to all the content
+        liodd.addClass('dimension');
+
+        // Set the even links with an 'even' class
+        ul.find('li:even:even').addClass('even');
+
+        // Set the odd links with a 'odd' class
+        ul.find('li:even:odd').addClass('even');
+
+        // Show the correct cursor for the links
+        lieven.css({
+            'cursor':'pointer',
+            'padding-left': '10px'
+        });
+
+        // Handle the click event
+        lieven.click( function() {
+            // Get the content that needs to be shown
+            var cur_section = $(this);
+            var cur = cur_section.next();
+
+            // Get the content that needs to be hidden
+            var old_section = ul.find('li.item-active');
+            var old = old_section.next();
+
+            // Make sure the content that needs to be shown
+            // isn't already visible
+            if ( cur_section.is('.item-active') )
+                return;
+
+            old_section.toggleClass('item-active');
+            cur_section.toggleClass('item-active');
+
+            // Hide the old content
+            old.slideToggle(300);
+
+            // Show the new content
+            cur.stop().slideToggle(300);
+
+            // Animate (add) the padding in the new link
+            $(this).stop().animate( {
+                paddingLeft:"30px"
+            } );
+
+            // Animate (remove) the padding in the old link
+            old_section.stop().animate( {
+                paddingLeft:"10px"
+            } );
+        } );
+
+        return accordian;
+    }
+
+    var ComponentTree = {};
+    ComponentTree.create = function(parentObj, strTreeIdText) {
+        var componentTree = {};
+        var parent = parentObj;
+        var strTreeId = strTreeIdText;
+
+        parent.append('<div id="'+strTreeId+'"/>');
+        var dsTree = componentTree.dsTree = parent.find('#'+strTreeId);
+        _canLog = false;
+        dsTree.dynatree({
+            onCreate: function(node) {
+                if( !node.data.isFolder ) {
+                    $(node.span).draggable({
+                        appendTo: "#RightPane",
+                        helper: "clone"
+                    });
+                }
+            },
+            persist: true,
+            // TODO here Ajax request should be done !!!!!
+            children: [ // Pass an array of nodes.
+            {
+                title: "Protocol",
+                isFolder: true,
+                icon: "../../../lumens/images/component/protocol.png",
+                children: [
+                {
+                    title: "SOAP",
+                    icon: "../../../lumens/images/component/soap.png",
+                    addClass: "component-node"
+                },
+
+                {
+                    title: "REST",
+                    icon: "../../../lumens/images/component/rest.png",
+                    addClass: "component-node"
+                }
+                ]
+            },
+            {
+                title: "Application",
+                isFolder: true,
+                icon: "../../../lumens/images/component/apps.png",
+                children: [
+                {
+                    title: "Database",
+                    icon: "../../../lumens/images/component/database.png",
+                    addClass: "component-node"
+                }
+                ]
+            },
+            {
+                title: "File",
+                isFolder: true,
+                icon: "../../../lumens/images/component/file.png",
+                children: [
+                {
+                    title: "XML",
+                    icon: "../../../lumens/images/component/xml.png",
+                    addClass: "component-node"
+                },
+
+                {
+                    title: "Text",
+                    icon: "../../../lumens/images/component/text.png",
+                    addClass: "component-node"
+                }
+                ]
+            }
+            ],
+            debugLevel:0
+        });
+
+        componentTree.loadData = function() {
+        // TODO make the data loading as a json
+        }
+
+        return componentTree;
+    }
+
+    // Build the web header
+    var header = Header.create(parent);
+    // Initialize the splitter pane of the workspace
+    $(parent).append('<div id="SplitterPane" class="layout-content splitter-pane-container"></div>');
+    var splitterPane = $('#SplitterPane');
+    splitterPane.append('<div id="LeftPane" style="position: absolute; z-index: 1; overflow-x: hidden; overflow-y: auto; left: 0px; width: 300px; height: 100%;"/>');
+    splitterPane.append('<div id="RightPane" style="position: absolute; z-index: 1; width: 100%; height: 100%; overflow: hidden"/>');
+    splitterPane.splitter({
+        splitVertical: true,
+        sizeLeft: true,
+        accessKey: 'I'
+    });
+    // Load these settings from server ?
+    var accordian = Accordian.create(splitterPane.find("#LeftPane"), "Toolbox", "toolbar",
+        ["Datasource", "Processor", "Settings"]);
+    // Build compononet tree UI
+    var componentTree = ComponentTree.create(accordian.item(0), "componentTree");
+
+    lumensApp.run = function() {
+        // Load the mandory data from server first
+        // Do some settings on the web page, such status and so on
+        // Load the component tree by AJAX
+        componentTree.loadData();
+    }
+
+    return lumensApp;
+};
+
 (function($) {
-    var Lumens = { version: 1.0 };
+    // TODO
+    // ******************************************************************************************
     // Nav header
     function Header(container) {
         this.container = container;
@@ -32,10 +256,10 @@
             this.itemSize = itemList.length;
             // Build container
             var accordianHtml =
-                '<div id="' + myId +'">'
-                +'<div class="accordian-item-title">' + title + '</div>'
-                +'<ul style="margin: 0px; padding: 0px"/>'
-                +'</div>';
+            '<div id="' + myId +'">'
+            +'<div class="accordian-item-title">' + title + '</div>'
+            +'<ul style="margin: 0px; padding: 0px"/>'
+            +'</div>';
             this.parent.append(accordianHtml);
             var accordian = $('#'+myId);
             accordian.addClass('accordian');
@@ -43,9 +267,9 @@
             this.itemList = ul;
             // Build all item of the accordian
             for(var i = 0; i < itemList.length; ++i) {
-                var itemHtml = '<li><div style="padding-top: 5px; position: absolute">'
-                    +itemList[i] + '</div></li>'
-                    +'<li><div id="' + this.itemPrefix + i + '" style="width: 100%; height:100%"/></li>';
+                var itemHtml = '<li><div style="padding-top: 5px; position: absolute;">'
+                +itemList[i] + '</div></li>'
+                +'<li><div id="' + this.itemPrefix + i + '" style="width: 100%; height:100%"/></li>';
                 ul.append(itemHtml);
             }
             // Hide all the content except the first
@@ -132,54 +356,54 @@
                 persist: true,
                 // TODO here Ajax request should be done !!!!!
                 children: [ // Pass an array of nodes.
+                {
+                    title: "Protocol",
+                    isFolder: true,
+                    icon: "../../../lumens/images/component/protocol.png",
+                    children: [
                     {
-                        title: "Protocol",
-                        isFolder: true,
-                        icon: "../../../lumens/images/component/protocol.png",
-                        children: [
-                            {
-                                title: "SOAP",
-                                icon: "../../../lumens/images/component/soap.png",
-                                addClass: "component-node"
-                            },
-
-                            {
-                                title: "REST",
-                                icon: "../../../lumens/images/component/rest.png",
-                                addClass: "component-node"
-                            }
-                        ]
+                        title: "SOAP",
+                        icon: "../../../lumens/images/component/soap.png",
+                        addClass: "component-node"
                     },
-                    {
-                        title: "Application",
-                        isFolder: true,
-                        icon: "../../../lumens/images/component/apps.png",
-                        children: [
-                            {
-                                title: "Database",
-                                icon: "../../../lumens/images/component/database.png",
-                                addClass: "component-node"
-                            }
-                        ]
-                    },
-                    {
-                        title: "File",
-                        isFolder: true,
-                        icon: "../../../lumens/images/component/file.png",
-                        children: [
-                            {
-                                title: "XML",
-                                icon: "../../../lumens/images/component/xml.png",
-                                addClass: "component-node"
-                            },
 
-                            {
-                                title: "Text",
-                                icon: "../../../lumens/images/component/text.png",
-                                addClass: "component-node"
-                            }
-                        ]
+                    {
+                        title: "REST",
+                        icon: "../../../lumens/images/component/rest.png",
+                        addClass: "component-node"
                     }
+                    ]
+                },
+                {
+                    title: "Application",
+                    isFolder: true,
+                    icon: "../../../lumens/images/component/apps.png",
+                    children: [
+                    {
+                        title: "Database",
+                        icon: "../../../lumens/images/component/database.png",
+                        addClass: "component-node"
+                    }
+                    ]
+                },
+                {
+                    title: "File",
+                    isFolder: true,
+                    icon: "../../../lumens/images/component/file.png",
+                    children: [
+                    {
+                        title: "XML",
+                        icon: "../../../lumens/images/component/xml.png",
+                        addClass: "component-node"
+                    },
+
+                    {
+                        title: "Text",
+                        icon: "../../../lumens/images/component/text.png",
+                        addClass: "component-node"
+                    }
+                    ]
+                }
                 ],
                 debugLevel:0
             });
@@ -247,57 +471,117 @@
                         if (s_right < t_center_x &&
                             s_center_y > (t_bottom + delta)) {
                             // s_right --> t_bottom
-                            return [{ x: s_right, y:s_center_y     },
-                                    { x: t_center_x, y: s_center_y },
-                                    { x: t_center_x, y: t_bottom   }];
+                            return [{
+                                x: s_right,
+                                y:s_center_y
+                            },
+                            {
+                                x: t_center_x,
+                                y: s_center_y
+                            },
+                            {
+                                x: t_center_x,
+                                y: t_bottom
+                            }];
                         }
                         else if (s_right <= t_center_x &&
-                                s_center_y <= (t_bottom + delta) &&
-                                s_center_y >= (t_top - delta)) {
+                            s_center_y <= (t_bottom + delta) &&
+                            s_center_y >= (t_top - delta)) {
                             // s_right --> t_left
                             var ty = (s_center_y + t_center_y) / 2;
-                            return [{ x: s_right, y: ty },
-                                    { x: t_left, y: ty }];
+                            return [{
+                                x: s_right,
+                                y: ty
+                            },
+                            {
+                                x: t_left,
+                                y: ty
+                            }];
                         }
                         else if (s_right < t_center_x &&
-                                 s_center_y < t_top) {
+                            s_center_y < t_top) {
                             //s_right --> t_top
-                            return  [{ x: s_right, y:s_center_y },
-                                     { x: t_center_x, y: s_center_y },
-                                     { x: t_center_x, y: t_top }];
+                            return  [{
+                                x: s_right,
+                                y:s_center_y
+                            },
+                            {
+                                x: t_center_x,
+                                y: s_center_y
+                            },
+                            {
+                                x: t_center_x,
+                                y: t_top
+                            }];
                         } else if (s_bottom <= t_top &&
-                                   s_right >= t_center_x &&
-                                   s_left <= t_center_x) {
+                            s_right >= t_center_x &&
+                            s_left <= t_center_x) {
                             // s_bottom --> t_top
                             var tx = (s_center_x + t_center_x) / 2;
-                            return [{ x: tx, y: s_bottom },
-                                    { x: tx, y: t_top }];
+                            return [{
+                                x: tx,
+                                y: s_bottom
+                            },
+                            {
+                                x: tx,
+                                y: t_top
+                            }];
                         } else if (t_center_x < s_left &&
-                                   t_top > (s_center_y + delta)) {
+                            t_top > (s_center_y + delta)) {
                             // s_left --> t_top
-                            return [{ x: s_left, y:s_center_y },
-                                    { x: t_center_x, y: s_center_y },
-                                    { x: t_center_x, y: t_top }];
+                            return [{
+                                x: s_left,
+                                y:s_center_y
+                            },
+                            {
+                                x: t_center_x,
+                                y: s_center_y
+                            },
+                            {
+                                x: t_center_x,
+                                y: t_top
+                            }];
                         } else if (t_right <= s_left &&
-                                   s_center_y <= (t_bottom + delta) &&
-                                   s_center_y >= (t_top - delta)) {
+                            s_center_y <= (t_bottom + delta) &&
+                            s_center_y >= (t_top - delta)) {
                             // s_left --> out_right
                             ty = (s_center_y + t_center_y) / 2;
-                            return [{ x: s_left, y: ty },
-                                    { x: t_right, y: ty }];
+                            return [{
+                                x: s_left,
+                                y: ty
+                            },
+                            {
+                                x: t_right,
+                                y: ty
+                            }];
                         } else if (t_center_x < s_left &&
-                                   t_top < s_center_y) {
+                            t_top < s_center_y) {
                             // s_left --> t_bottom
-                            return [{ x: s_left, y:s_center_y },
-                                    { x: t_center_x, y: s_center_y },
-                                    { x: t_center_x, y: t_bottom }];
+                            return [{
+                                x: s_left,
+                                y:s_center_y
+                            },
+                            {
+                                x: t_center_x,
+                                y: s_center_y
+                            },
+                            {
+                                x: t_center_x,
+                                y: t_bottom
+                            }];
                         } else if (s_top >= t_bottom &&
-                                   t_center_x >= s_left &&
-                                   t_center_x <= s_right) {
+                            t_center_x >= s_left &&
+                            t_center_x <= s_right) {
                             // s_top --> t_bottom
                             tx = (s_center_x + t_center_x) / 2;
-                            return [{ x: tx, y: s_top },
-                                    { x: tx, y: t_bottom }];
+                            return [{
+                                x: tx,
+                                y: s_top
+                            },
+                            {
+                                x: tx,
+                                y: t_bottom
+                            }];
                         }
                         return [];
                     }
@@ -369,19 +653,19 @@
                     });
                     var draggable = false;
                     this.G.data([{
-                            x: cx,
-                            y: cy
-                        }]).attr("transform", function(d) {
+                        x: cx,
+                        y: cy
+                    }]).attr("transform", function(d) {
                         return "translate(" + d.x + "," + d.y + ")";
                     })
                     .call(d3.behavior.drag()
-                    .on("dragstart", function(d) {
-                        var y = d3.event.sourceEvent.layerY;
-                        if(y > (d.y+height_title_constant))
-                            draggable = false;
-                        else
-                            draggable = true;
-                    }).on("drag", dragmove));
+                        .on("dragstart", function(d) {
+                            var y = d3.event.sourceEvent.layerY;
+                            if(y > (d.y+height_title_constant))
+                                draggable = false;
+                            else
+                                draggable = true;
+                        }).on("drag", dragmove));
                     // Body
                     this.G.append('rect').attr({
                         "height": height_body_constant,
@@ -456,9 +740,8 @@
         navHeader.create();
 
         // Build spiltter pane
-        $(this).append('<div id="SplitterPane"></div>');
+        $(this).append('<div id="SplitterPane" class="layout-content splitter-pane-container"></div>');
         var splitterPane = $('#SplitterPane');
-        splitterPane.addClass('layout-content');
         splitterPane.append('<div id="LeftPane" style="position: absolute; z-index: 1; overflow-x: hidden; overflow-y: auto; left: 0px; width: 300px; height: 100%;"/>');
         splitterPane.append('<div id="RightPane" style="position: absolute; z-index: 1; width: 100%; height: 100%; overflow: hidden"/>');
         splitterPane.splitter({
@@ -491,7 +774,7 @@
                 var paneOffset = $(this).offset();
                 var offset = ui.helper.offset();
                 box.addComponent(ui.helper.find('a').html(), "Untitled 1",
-                offset.left - paneOffset.left, offset.top - paneOffset.top);
+                    offset.left - paneOffset.left, offset.top - paneOffset.top);
             }
         });
 

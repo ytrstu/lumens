@@ -27,441 +27,9 @@
                     width: 100%;
                     height: 100%;
                 }
-
-                .node rect {
-                    cursor: pointer;
-                    fill: #fff;
-                    fill-opacity: .5;
-                    stroke: #3182bd;
-                    stroke-width: .2px;
-                }
-
-                .node text {
-                    font: 10px sans-serif;
-                    pointer-events: none;
-                }
-
-                path.link {
-                    fill: none;
-                    stroke: #9ecae1;
-                    stroke-width: .1px;
-                }
-                .edge {
-                    fill: rgb(185, 181, 181);
-                    fill-opacity: 1;
-                }
             </style>
             <script type="text/javascript">
                 jQuery(function() {
-                    // TODO transform rule editor
-                    var duration = 400;
-                    var barHeight = 20,
-                    barWidth = 200;
-                    var RuleTreeEditorScrollBar = {};
-                    RuleTreeEditorScrollBar.create = function(scrollObj) {
-                        var scrollbar = {};
-                        scrollbar.pane_size = scrollObj.treeEditor.compute_pane_width();
-                        scrollbar.scrollObj = scrollObj;
-                        scrollbar.treeG = scrollObj.treeG;
-                        var paneG = scrollObj.paneG;
-                        var vBarG = paneG.append('svg:g');
-                        var vEdge1 = vBarG.append('svg:rect');
-                        var x = (scrollbar.scrollObj.isLeft ? 0 : scrollbar.pane_size.pane_width-5);
-                        vEdge1.attr({
-                            "class": "edge",
-                            "x": x,
-                            "y": (scrollbar.pane_size.pane_height/3),
-                            "width": "5px",
-                            "height": "3px"
-                        });
-                        var vEdge2 = vBarG.append('svg:rect');
-                        vEdge2.attr({
-                            "class": 'edge',
-                            "x": x,
-                            "y": (scrollbar.pane_size.pane_height*2/3),
-                            "width": "5px",
-                            "height": "3px"
-                        });
-                        var vGripG = vBarG.append('svg:g');
-                        var size_length = 60;
-                        var size_width = 5;
-                        // build a demo draggable rect
-                        function dragmove_vbar_grip(d) {
-                            var size = scrollbar.pane_size;
-                            var y = d.y + d3.event.dy;
-                            if( y <= (size.pane_height*2/3 - size_length/2)
-                                && y >= (size.pane_height/3 - size_length/2) ) {
-                                d.y = y;
-                                vGripG.attr("transform","translate(" + d.x + "," + d.y + ")");
-                                var deltaY = -(d3.event.dy*scrollbar.treeG.vStep);
-                                scrollbar.scrollObj.treeG
-                                .attr("transform", function(n) {
-                                    n.y += deltaY;
-                                    if(n.y > 0)
-                                        n.y = 0;
-                                    else if((n.y + scrollbar.treeG.height) < size.pane_height)
-                                        n.y = size.pane_height - scrollbar.treeG.height;
-                                    return "translate(" + n.x + "," + n.y + ")";
-                                });//*/
-                            }
-                        }
-                        vGripG.data([{
-                                x: x,
-                                y: (scrollbar.pane_size.pane_height/3 - size_length/2)
-                            }])
-                        .attr("transform","translate(" + x + "," + (scrollbar.pane_size.pane_height/3 - size_length/2) + ")")
-                        .call(d3.behavior.drag().on("drag", dragmove_vbar_grip));
-                        vGripG.append('rect')
-                        .attr({
-                            "width" : size_width+"px",
-                            "height" : size_length+"px"
-                        })
-                        .style({
-                            "fill": "rgb(201, 201, 201)",
-                            "fill-opacity": ".7"
-                        });
-
-                        var hBarG = paneG.append('svg:g');
-                        var hGripG = hBarG.append('svg:g');
-                        var hEdge1 = vBarG.append('svg:rect');
-                        hEdge1.attr({
-                            "class": "edge",
-                            "x": (scrollbar.pane_size.pane_width/3),
-                            "width": "3px",
-                            "height": "5px"
-                        });
-                        var hEdge2 = vBarG.append('svg:rect');
-                        hEdge2.attr({
-                            "class": 'edge',
-                            "x": (scrollbar.pane_size.pane_width*2/3),
-                            "width": "3px",
-                            "height": "5px"
-                        });
-                        function dragmove_hbar_grip(d) {
-                            var size = scrollbar.pane_size;
-                            var x = d.x + d3.event.dx;
-                            if( x <= (size.pane_width*2/3 - size_length/2)
-                                && x >= (size.pane_width/3 - size_length/2) ) {
-                                d.x = x;
-                                hGripG.attr("transform","translate(" + d.x + "," + d.y + ")");
-                                var deltaX = -(d3.event.dx*scrollbar.treeG.hStep);
-                                scrollbar.scrollObj.treeG
-                                .attr("transform", function(n) {
-                                    n.x += deltaX;
-                                    if(n.x > 0)
-                                        n.x = 0;
-                                    else if((n.x+scrollbar.treeG.width) < size.pane_width)
-                                        n.x = size.pane_width - scrollbar.treeG.width;
-                                    return "translate(" + n.x + "," + n.y + ")";
-                                });//*/
-                            }
-                        }
-                        hGripG.data([{
-                                x: (scrollbar.pane_size.pane_width/3 - size_length/2),
-                                y: 0
-                            }])
-                        .attr("transform","translate(" + (scrollbar.pane_size.pane_width/3 - size_length/2) + "," + 0 + ")")
-                        .call(d3.behavior.drag().on("drag", dragmove_hbar_grip));
-                        hGripG.append('rect')
-                        .attr({
-                            "width" : size_length+"px",
-                            "height" : size_width+"px"
-                        })
-                        .style({
-                            "fill": "rgb(201, 201, 201)",
-                            "fill-opacity": ".7"
-                        });
-
-                        scrollObj.treeEditor.onSizeChanged = function(hstep, vstep) {
-                            if(scrollbar.treeG.hStep == 0 ||
-                                scrollbar.treeG.vStep == 0 )
-                                return;
-                            var hscale = hstep/scrollbar.treeG.hStep;
-                            var vscale = vstep/scrollbar.treeG.vStep;
-                            scrollbar.scrollObj.treeG
-                            .attr("transform", function(n) {
-                                n.x = Math.floor(n.x * hscale);
-                                n.y = Math.floor(n.y * vscale);
-                                if(n.x >=0)
-                                    n.x = 0;
-                                if(n.y >= 0)
-                                    n.y = 0;
-                                return "translate(" + n.x + "," + n.y + ")";
-                            });
-                        }//*/
-                        return scrollbar;
-                    }
-
-                    var RuleTreeEditor = { version: 1.0 };
-                    RuleTreeEditor.create = function(holderId) {
-                        var ruleTreeEditor = {
-                            holderId : holderId,
-                            holder: d3.select('#'+holderId),
-                            domHolder: $('#'+holderId)
-                        };
-
-                        ruleTreeEditor.compute_pane_width = function() {
-                            var center_pane_width = 60;
-                            var tree_pane_width = (ruleTreeEditor.domHolder.width() - center_pane_width)/2 - 2;
-                            var tree_pane_height = ruleTreeEditor.domHolder.height() - 2;
-                            return {
-                                center_width: center_pane_width - 2,
-                                pane_width: tree_pane_width,
-                                pane_height: tree_pane_height,
-                                dom_pane_center_width: center_pane_width,
-                                dom_pane_width: (ruleTreeEditor.domHolder.width() - center_pane_width)/2,
-                                dom_pane_height: ruleTreeEditor.domHolder.height()
-                            }
-                        }
-
-                        var pane_size = ruleTreeEditor.compute_pane_width();
-
-                        ruleTreeEditor.domHolder.append('<div id="leftHolder"/>');
-                        ruleTreeEditor.leftHodler = d3.select('#leftHolder');
-                        ruleTreeEditor.leftHodler.style({
-                            "height": pane_size.dom_pane_height + 'px',
-                            "width": pane_size.dom_pane_width + 'px',
-                            "float": "left",
-                            "overflow": "hidden"
-                        });
-
-                        ruleTreeEditor.domHolder.append('<div id="centerHolder"/>');
-                        ruleTreeEditor.centerHolder = d3.select('#centerHolder');
-                        ruleTreeEditor.centerHolder.style({
-                            "height": pane_size.dom_pane_height + 'px',
-                            "width": pane_size.dom_pane_center_width + 'px',
-                            "float": "left",
-                            "overflow": "hidden"
-                        });
-
-                        ruleTreeEditor.domHolder.append('<div id="rightHolder"/>');
-                        ruleTreeEditor.rightHodler = d3.select('#rightHolder');
-                        ruleTreeEditor.rightHodler.style({
-                            "height": pane_size.dom_pane_height + 'px',
-                            "width": pane_size.dom_pane_width + 'px',
-                            "float": "left",
-                            "overflow": "hidden"
-                        });
-
-
-                        ruleTreeEditor.leftSVG = ruleTreeEditor.leftHodler.append('svg:svg');
-                        ruleTreeEditor.leftSVG.attr({
-                            "width": pane_size.dom_pane_width,
-                            "height": pane_size.pane_height
-                        })
-                        .style({
-                            "border-top-width": "1px",
-                            "border-top-color": "rgb(196, 196, 196)",
-                            "border-top-style": "solid",
-                            "border-bottom-width": "1px",
-                            "border-bottom-color": "rgb(196, 196, 196)",
-                            "border-bottom-style": "solid",
-                            "border-left-width": "1px",
-                            "border-left-color": "rgb(196, 196, 196)",
-                            "border-left-style": "solid"
-                        });
-                        ruleTreeEditor.centerSVG = ruleTreeEditor.centerHolder.append('svg:svg');
-                        ruleTreeEditor.centerSVG.attr({
-                            "width": pane_size.center_width,
-                            "height": pane_size.pane_height
-                        })
-                        .style({
-                            "border-width": "1px",
-                            "border-color": "rgb(196, 196, 196)",
-                            "border-style": "solid"
-                        });
-                        ruleTreeEditor.rightSVG = ruleTreeEditor.rightHodler.append('svg:svg');
-                        ruleTreeEditor.rightSVG.attr({
-                            "width": pane_size.pane_width,
-                            "height": pane_size.pane_height
-                        })
-                        .style({
-                            "border-top-width": "1px",
-                            "border-top-color": "rgb(196, 196, 196)",
-                            "border-top-style": "solid",
-                            "border-bottom-width": "1px",
-                            "border-bottom-color": "rgb(196, 196, 196)",
-                            "border-bottom-style": "solid",
-                            "border-right-width": "1px",
-                            "border-right-color": "rgb(196, 196, 196)",
-                            "border-right-style": "solid"
-                        });
-                        function dragmove(d) {
-                            var x = d.x, y = d.y;
-                            var pane_size = ruleTreeEditor.compute_pane_width();
-                            if(Math.abs(d3.event.dx) > Math.abs(d3.event.dy))
-                                x+= d3.event.dx;
-                            else
-                                y += d3.event.dy;
-                            if(x > 0)
-                                x = 0;
-                            else if((x + ruleTreeEditor.width) < pane_size.pane_width)
-                                x = pane_size.pane_width - ruleTreeEditor.width;
-                            if(y > 0)
-                                y = 0;
-                            else if((y + ruleTreeEditor.height) < pane_size.pane_height)
-                                y = pane_size.pane_height - ruleTreeEditor.height;
-                            d.x = x;
-                            d.y = y;
-                            ruleTreeEditor.treeG
-                            .attr("transform", function(n) {
-                                n.x = d.x;
-                                n.y = d.y;
-                                return "translate(" + n.x + "," + n.y + ")";
-                            });
-                        } //*/
-                        // Create the tree structure in a group(g) of SVG(svg)
-                        ruleTreeEditor.leftG = ruleTreeEditor.leftSVG.append('svg:g');
-                        ruleTreeEditor.leftTreeG =  ruleTreeEditor.leftG.append('svg:g');
-                        ruleTreeEditor.leftTreeG.data([{
-                                x: 0,
-                                y: 0
-                            }]);
-                        ruleTreeEditor.leftTreeG.width = 0;
-                        ruleTreeEditor.leftTreeG.height = 0;
-                        ruleTreeEditor.leftTreeG.vStep = 0;
-                        ruleTreeEditor.leftTreeG.hStep = 0;
-                        //.call(d3.behavior.drag().on("drag", dragmove))
-                        //.style("cursor","move");
-                        ruleTreeEditor.rightG = ruleTreeEditor.rightSVG.append('svg:g');
-                        ruleTreeEditor.rightTreeG =  ruleTreeEditor.rightG.append('svg:g');
-                        ruleTreeEditor.rightTreeG.data([{
-                                x: 0,
-                                y: 0
-                            }]);
-                        ruleTreeEditor.rightTreeG.width = 0;
-                        ruleTreeEditor.rightTreeG.height = 0;
-                        ruleTreeEditor.rightTreeG.vStep = 0;
-                        ruleTreeEditor.rightTreeG.hStep = 0;
-
-                        ruleTreeEditor.loadTree = function(treeG) {
-                            function node(i) {
-                                return i*node_size;
-                            }
-
-                            var tree = d3.layout.tree();
-                            var vis = treeG.attr("transform", "translate(0, 0)"),
-                            i = 0,
-                            root;
-                            function update(source) {
-                                // Compute the flattened node list. TODO use d3.layout.hierarchy.
-                                var nodes = tree.nodes(root);
-
-                                // Compute the "layout".
-                                nodes.forEach(function(n, i) {
-                                    n.x = i * barHeight;
-                                    n.y = n.depth * 20;
-                                });
-
-                                // Update the nodes…
-                                var node = vis.selectAll("g.node")
-                                .data(nodes, function(d) { return d.id || (d.id = ++i); });
-
-                                var nodeEnter = node.enter().append("svg:g")
-                                .attr("class", "node")
-                                .attr("transform", function(d) {
-                                    return "translate(" + source.y0 + "," + source.x0 + ")";
-                                })
-                                .style("opacity", 1e-6);
-
-                                // Enter any new nodes at the parent's previous position.
-                                nodeEnter.append("svg:rect")
-                                .attr("height", barHeight)
-                                .attr("width", barWidth)
-                                .style("fill", color)
-                                .on("click", click);
-
-                                nodeEnter.append("svg:text")
-                                .attr("dy", 12.5)
-                                .attr("dx", 5.5)
-                                .text(function(d) { return d.name; });
-
-                                // Transition nodes to their new position.
-                                nodeEnter.transition()
-                                .duration(duration)
-                                .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
-                                .style("opacity", 1);
-
-                                node.transition()
-                                .duration(duration)
-                                .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
-                                .style("opacity", 1)
-                                .select("rect")
-                                .style("fill", color);
-
-                                // Transition exiting nodes to the parent's new position.
-                                node.exit().transition()
-                                .duration(duration)
-                                .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
-                                .style("opacity", 1e-6)
-                                .remove();
-
-                                // Stash the old positions for transition.
-                                nodes.forEach(function(d) {
-                                    d.x0 = d.x;
-                                    d.y0 = d.y;
-                                });
-                                // Compute the right and bottom of data structure tree
-                                var tree_width  = treeG.width;
-                                var tree_height = treeG.height;
-                                treeG.width = 0;
-                                treeG.height = 0;
-                                nodes.forEach(function(n) {
-                                    if(treeG.width < (n.y + barWidth))
-                                        treeG.width = (n.y + barWidth);
-                                    if(treeG.height < (n.x + barHeight))
-                                        treeG.height = (n.x + barHeight);
-                                });
-                                var pane_size = ruleTreeEditor.compute_pane_width();
-                                var vStep = Math.round((treeG.height - pane_size.pane_height)/(pane_size.pane_height/3) + 0.5);
-                                var hStep = Math.round((treeG.width -  pane_size.pane_width)/(pane_size.pane_width/3) + 0.5);
-                                //ruleTreeEditor.onSizeChanged(ruleTreeEditor.width  - tree_width, ruleTreeEditor.height - tree_height);
-                                treeG.vStep = vStep;
-                                treeG.hStep = hStep;
-                            }
-
-                            // Toggle children on click.
-                            function click(d) {
-                                if (d.children) {
-                                    d._children = d.children;
-                                    d.children = null;
-                                } else {
-                                    d.children = d._children;
-                                    d._children = null;
-                                }
-                                update(d);
-                            }
-
-                            function color(d) {
-                                return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
-                            }
-
-                            d3.json("demo.json", function(json) {
-                                json.x0 = 0;
-                                json.y0 = 0;
-                                update(root = json);
-                            });
-                        }
-
-                        ruleTreeEditor.loadTree(ruleTreeEditor.leftTreeG, "demo.json");
-                        ruleTreeEditor.loadTree(ruleTreeEditor.rightTreeG, "demo.json");
-
-                        RuleTreeEditorScrollBar.create({
-                            treeEditor: ruleTreeEditor,
-                            treeG: ruleTreeEditor.leftTreeG,
-                            paneG: ruleTreeEditor.leftG,
-                            isLeft: true
-                        });//*/
-                        RuleTreeEditorScrollBar.create({
-                            treeEditor: ruleTreeEditor,
-                            treeG: ruleTreeEditor.rightTreeG,
-                            paneG: ruleTreeEditor.rightG,
-                            isLeft: false
-                        });//*/
-                        return ruleTreeEditor;
-                    };
-
-                    var rEditor = RuleTreeEditor.create("rule-editor");
                 });
             </script>
             <style>
@@ -480,22 +48,104 @@
                     margin-top: 20px;
                     margin-left: 20px;
                 }
+                .h-scroll-bar {
+                    height: 10px;
+                    width: 418px;
+                    border-top: 1px solid #dddddd;
+                    border-left: 1px solid #dddddd;
+                    border-right: 1px solid #dddddd;
+                }
+                .v-scroll-bar-left {
+                    height: 298px;
+                    width: 10px;
+                    border-top: 1px solid #dddddd;
+                    border-left: 1px solid #dddddd;
+                    border-bottom: 1px solid #dddddd;
+                }
+                .v-scroll-bar-right {
+                    height: 298px;
+                    width: 10px;
+                    border-top: 1px solid #dddddd;
+                    border-right: 1px solid #dddddd;
+                    border-bottom: 1px solid #dddddd;
+                }
+
+                table {
+                    width: 100%;
+                    height: 100%;
+                }
             </style>
+            <script type="text/javascript">
+                $(function(){
+                    var svg = d3.select("#test").append("svg").attr("transform", "translate(100, 100)");
+                    svg.attr({
+                        "xmlns": "http://www.w3.org/2000/svg",
+                        "version":"1.1"
+                    });
+                    svg.data([{x: 100, y: 100}]);
+                    var node = svg.node(); // DOM element
+                    $(node).click(function(e){alert("clicked")});// jQuery
+                    var x = svg.datum().x;
+                    svg.append("svg:foreignObject")
+                    .attr({
+                        "height": 50,
+                        "width": 200
+                    })
+                    .append("div")
+                    .style({
+                        "width": "100%",
+                        "height": "100%"
+                    }).text("test");
+
+
+                })
+            </script>
+            <style>
+                .s_edge {
+                    fill: rgba(224, 224, 224, .2);
+                    stroke: #3182bd;
+                    stroke-width: .2px;
+                    stroke-opacity: .3;
+                }
+                .s_grip {
+                    fill: rgba(197, 196, 196, .6);
+                }
+                .scb {
+                    border: 1px solid rgba(201, 201, 201, .3);
+                    width: 100px;
+                    height: 100px;
+                }
+            </style>
+            <script>
+                $(function() {
+                    var obj = $.parseJSON('[{"name": "james", "id": 1}, {"name" : "tom", "id": 2}]');
+                    var div = d3.select("body").selectAll("div");
+                    var divData = div.data([1, 2, 4, 8, 16, 32], function(d) { return d; });
+                    var divEnter = divData.enter();
+                    var node = divEnter.insert("div").text(function(d) {return d;});
+                    // divData.exit().remove();
+                    function assign(id, value) {
+                        var t = $(id);
+                        t.get(0).value != undefined ? t.val(value):t.text(value);
+                    }
+                    assign("#text", "text");
+                    assign("#text2", "text2");
+                    assign("#text3", "text3");
+                    assign("#text4", "test4");
+                });
+            </script>
     </head>
     <body>
-        <div id="test" style="height: 20px; width:100%"></div>
-        <div style="position: relative; width:900px; height:600px; left: 10px; top: 10px">
-            <div id="rule-editor" style="width:100%; height:100%; overflow: hidden"/>
+        <input id="text"/>
+        <textarea id="text2"></textarea>
+        <select id="text3">
+            <option value="text1">1</option>
+            <option value="text2">2</option>
+            <option value="text3">3</option>
+        </select>
+        <div id="text4" ></div>
+        <div style="position: relative; width: 900px; height:300px; left: 100px; top: 100px;">
+            <div id="test" class="scb"/>
         </div>
-        <div id="editor-pane">
-            <div id="left-pane" class="editor-item"></div>
-            <div id="cener-pane"  class="editor-item"></div>
-            <div id="right-pane"  class="editor-item"></div>
-        </div>
-        <script type="text/javascript">
-                $("#test").resize(function(e){
-                    alert("resized");
-                })
-        </script>
     </body>
 </html>
