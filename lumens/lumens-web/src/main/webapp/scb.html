@@ -4,26 +4,35 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script type="text/javascript" src="tool/jquery/jquery-ui-1.10.0/js/jquery-1.9.0.js"></script>
         <script type="text/javascript" src="tool/jquery/jquery-ui-1.10.0/js/jquery-ui-1.10.0.custom.js"></script>
-        <!-- Splitter plug-in -->
-        <link rel="stylesheet" type="text/css" href="tool/splitter/splitter.css"/>
-        <script type="text/javascript" src="tool/splitter/splitter.js"></script>
-        <!--tree-->
-        <link rel="stylesheet" href="tool/dynatree/skin-vista/ui.dynatree.css" type="text/css"/>
-        <script type="text/javascript" src="tool/dynatree/jquery.cookie.js"></script>
-        <script type="text/javascript" src="tool/dynatree/jquery.dynatree-1.2.2.js"></script>
         <!-- D3 -->
-        <script type="text/javascript" src="tool/d3/d3.v3.js"></script>
+        <script type="text/javascript" src="tool/d3/d3.js"></script>
         <!--lumens-->
         <link rel="stylesheet" type="text/css" href="lumens/styles/lumens.css"/>
         <script type="text/javascript" src="lumens/lumens.js"></script>
         <script type="text/javascript">
             jQuery(function() {
                 var RuleTreeEditor = { version: 1.0 };
-                RuleTreeEditor.create = function(holderId) {
+                RuleTreeEditor.create = function(args) {
                     var RuleTreeEditorScrollBar = {};
-                    var duration = 200;
-                    var barHeight = 20;
-                    var barWidth = 200;
+                    var _duration = 200;
+                    var _barHeight = 20;
+                    var _barWidth = 200;
+                    var _scrollbar_width = 10;
+                    /**
+                     * args = {
+                     *   _holderId: "#yourId",
+                     *   rightItemDropped: function(data_src, data_dst) {},
+                     *   rightItemSelected: function(data_dst) {},
+                     *   leftItemSelected: function(data_src) {}
+                     * }
+                     */
+                    var _rightItemDropped = args.rightItemDropped;
+                    var _rightItemSelected = args.rightItemSelected;
+                    var _leftItemSelected = args.leftItemSelected;
+                    var _holderId = args.holderId;
+                    var _d3Holder = d3.select(_holderId);
+                    var _domHolder = $(_d3Holder.node());
+
                     RuleTreeEditorScrollBar.create = function(scrollInfo) {
                         var scrollbar = {};
                         // private memeber of scrollbar class
@@ -44,14 +53,14 @@
                         var bHDragging = false;
                         var bOut = true;
                         var grip_w = 7;
-                        var gripbag_w = rtEditor.scrollbar_width;
+                        var gripbag_w = _scrollbar_width;
 
                         function scrollbarRemove() {
-                            if(!scb.has_scrollbar_v && vGripG != null) {
+                            if(!scb.have_scrollbar_v && vGripG != null) {
                                 vGripG.remove();
                                 vGripG = null;
                             }
-                            if(!scb.has_scrollbar_h && hGripG != null) {
+                            if(!scb.have_scrollbar_h && hGripG != null) {
                                 hGripG.remove();
                                 hGripG = null;
                             }
@@ -60,7 +69,7 @@
                         scrollbar.update = function() {
                             scb = scrollSize();
                             scrollbarRemove();
-                            if( scb.has_scrollbar_v && vGripG == null ) {
+                            if( scb.have_scrollbar_v && vGripG == null ) {
                                 vGripG = vBarG.append('svg:g');
                                 vGrip = vGripG.append('svg:rect');
                                 vGripG.call(d3.behavior.drag()
@@ -84,7 +93,7 @@
                                     bOut = true;
                                 });
                             }
-                            if( scb.has_scrollbar_h && hGripG == null ) {
+                            if( scb.have_scrollbar_h && hGripG == null ) {
                                 hGripG = hBarG.append('svg:g');
                                 hGrip = hGripG.append('svg:rect');
                                 hGripG.call(d3.behavior.drag()
@@ -144,6 +153,8 @@
                                             n.y = scb.view_origin_y - Math.round((y - scb.scroll_origin_v_y)*treeG.height/scb.scroll_v_range);
                                         return "translate(" + n.x + "," + n.y + ")";
                                     });
+                                    // Update the relation link if it has
+                                    editorUpdateRelationshipLinks();
                                 }
                             }
                             function check_in_scroll_range_x(x) {
@@ -173,7 +184,7 @@
                         }
 
                         function scrollSize() {
-                            var s = rtEditor.axisOrign();
+                            var s = editorAxisOrign();
                             var p = treeG.datum();
                             // frame
                             // v
@@ -183,10 +194,10 @@
                             s.scrollbag_h_x = 0;
                             s.scrollbag_h_y = 0;
                             // scrollbar
-                            s.has_scrollbar_v = treeG.height > s.height;
-                            s.has_scrollbar_h = treeG.width > s.width;
+                            s.have_scrollbar_v = treeG.height > s.height;
+                            s.have_scrollbar_h = treeG.width > s.width;
                             // v
-                            if( s.has_scrollbar_v ) {
+                            if( s.have_scrollbar_v ) {
                                 s.grip_v_l = Math.round(Math.pow(s.height-s.view_origin_y, 2)/treeG.height);
 
                                 s.scroll_v_x = scrollInfo.isLeft ? 1 : s.width-grip_w-1;
@@ -201,7 +212,7 @@
                                     s.scroll_v_y = Math.round(Math.abs(p.y)*s.height/treeG.height);
                             }
                             // h
-                            if( s.has_scrollbar_h ) {
+                            if( s.have_scrollbar_h ) {
                                 s.grip_h_l = Math.round(Math.pow(s.width-s.view_origin_left_x, 2)/treeG.width);
                                 // the scroll base range is the same between left and right, so use left_x for both
                                 s.scroll_origin_h_x = scrollInfo.isLeft? gripbag_w:(s.width-s.grip_h_l-gripbag_w);
@@ -223,38 +234,38 @@
                                 "class": "scrollbar-bag-normal",
                                 "x": scb.scrollbag_v_x,
                                 "y": scb.scrollbag_v_y,
-                                "width": gripbag_w + "px",
-                                "height": scb.height+"px"
+                                "width": gripbag_w,
+                                "height": scb.height
                             });
 
                             hGripBackground.attr({
                                 "class": "scrollbar-bag-normal",
                                 "x": scb.scrollbag_h_x,
                                 "y": scb.scrollbag_h_y,
-                                "width": scb.width + "px",
-                                "height": gripbag_w+"px"
+                                "width": scb.width,
+                                "height": gripbag_w
                             });
-                            if( scb.has_scrollbar_v ) {
+                            if( scb.have_scrollbar_v ) {
                                 vGripG.data([{
                                         x: scb.scroll_v_x,
                                         y: scb.scroll_v_y
                                     }])
                                 .attr("transform","translate(" + scb.scroll_v_x + "," + scb.scroll_v_y + ")");
                                 vGrip.attr({
-                                    "width" : grip_w+"px",
-                                    "height" : scb.grip_v_l+"px",
+                                    "width" : grip_w,
+                                    "height" : scb.grip_v_l,
                                     "class": "grip-normal"
                                 });
                             }
-                            if( scb.has_scrollbar_h ) {
+                            if( scb.have_scrollbar_h ) {
                                 hGripG.data([{
                                         x: scb.scroll_h_x,
                                         y: scb.scroll_h_y
                                     }])
                                 .attr("transform","translate(" + scb.scroll_h_x + "," + scb.scroll_h_y + ")")
                                 hGrip.attr({
-                                    "width" : scb.grip_h_l+"px",
-                                    "height" : grip_w+"px",
+                                    "width" : scb.grip_h_l,
+                                    "height" : grip_w,
                                     "class": "grip-normal"
                                 })
                             }
@@ -265,17 +276,12 @@
                         return scrollbar;
                     }
 
-                    var rtEditor = {
-                        holderId : holderId,
-                        d3Holder: d3.select(holderId),
-                        domHolder: $(holderId),
-                        scrollbar_width: 10
-                    };
+                    var rtEditor = {};
 
-                    rtEditor.paneSize = function() {
+                    function editorPaneSize() {
                         var center_width = 60;
-                        var width = (rtEditor.domHolder.width() - center_width)/2;
-                        var height = rtEditor.domHolder.height();
+                        var width = (_domHolder.width() - center_width)/2;
+                        var height = _domHolder.height();
                         return {
                             center_width: center_width,
                             width: width - 2,
@@ -283,15 +289,15 @@
                         }
                     };
 
-                    rtEditor.axisOrign = function() {
-                        var size = rtEditor.paneSize();
-                        size.view_origin_left_x = rtEditor.scrollbar_width + 2;
-                        size.view_origin_right_x = size.width -rtEditor.scrollbar_width - 2,
-                        size.view_origin_y = rtEditor.scrollbar_width + 2;
+                    function editorAxisOrign() {
+                        var size = editorPaneSize();
+                        size.view_origin_left_x = _scrollbar_width + 2;
+                        size.view_origin_right_x = size.width -_scrollbar_width - 2,
+                        size.view_origin_y = _scrollbar_width + 2;
                         return size;
                     };
 
-                    var d3DomTable = rtEditor.d3Holder.append('table');
+                    var d3DomTable = _d3Holder.append('table');
                     d3DomTable.attr({
                         "class": "table-style"
                     })
@@ -306,6 +312,7 @@
                     var leftTreeG = leftG.append('svg:g');
                     var rightG = rightSVG.append('svg:g');
                     var rightTreeG = rightG.append('svg:g');
+                    var centerG = centerSVG.append('svg:g');
                     leftTreeG.height = 0;
                     leftTreeG.width = 0;
                     rightTreeG.height = 0;
@@ -313,8 +320,8 @@
                     leftTreeG.scrollbar = null;
                     rightTreeG.scrollbar = null;
 
-                    rtEditor.layout = function() {
-                        var axis = this.axisOrign();
+                    function editorLayout() {
+                        var axis = editorAxisOrign();
                         leftDiv.attr({
                             "id": "leftDiv",
                             "class": "table-td table-td-border-side",
@@ -330,6 +337,25 @@
                             "class": "table-td table-td-border-side",
                             "style": "width:" + axis.width + "px; height:" + axis.height + "px"
                         });
+
+                        // SVG size settings here
+                        leftSVG.attr({
+                            "width": axis.width,
+                            "height":  axis.height
+                        });
+                        centerSVG.attr({
+                            "width": axis.center_width,
+                            "height": axis.height
+                        });
+                        rightSVG.attr({
+                            "width": axis.width,
+                            "height":  axis.height
+                        });
+
+                        centerG.data([{
+                                x: 0,
+                                y: 0
+                            }]);
 
                         leftTreeG.data([{
                                 x: axis.view_origin_left_x,
@@ -348,35 +374,163 @@
                             rightTreeG.scrollbar.update();
                     }
 
-                    rtEditor.layout();
-                    rtEditor.domHolder.on("resize", function(e) {
+                    editorLayout();
+                    _domHolder.on("resize", function(e) {
                         if(e.target != this) return;
-                        rtEditor.layout();
+                        editorLayout();
                     });
 
-                    rtEditor.loadTree = function(treeG, jsonData) {
-                        var size = this.axisOrign();
+                    var _currentDragElement = null;
+                    var line = d3.svg.line()
+                    .x(function(d) { return d.x; })
+                    .y(function(d) { return d.y; })
+                    .interpolate("basis");
+                    function editorShowRelationshipLinks(data) {
+                        if( data.path_array != undefined ) {
+                            var have_right_link = false;
+                            var r_y = null;
+                            var size = editorAxisOrign();
+                            for( var i =0; i < data.path_array.length; ++i ) {
+                                var path = data.path_array[i];
+                                var tokens = path.split('.');
+                                var cur = leftTreeG.root;
+                                for( var j = 0; j < tokens.length; ++j ) {
+                                    cur = cur.children_map[tokens[j]];
+                                }
+                                // Layout left tree relation links
+                                var l_y = cur.x + _barHeight/2;
+                                var end_x = cur.y + leftTreeG.width;
+                                if(Math.abs(end_x) < size.width)
+                                    end_x = size.width;
+                                leftTreeG.append("svg:path")
+                                .attr({
+                                    "class": "relation",
+                                    "d": line([
+                                        {
+                                            x: (cur.y+cur.bbox_width+_barHeight+2),
+                                            y: l_y
+                                        },
+                                        {
+                                            x: end_x,
+                                            y: l_y
+                                        }
+                                    ])
+                                });
+                                // Layout right tree relation links
+                                if( !have_right_link ) {
+                                    r_y = data.x + _barHeight/2;
+                                    end_x = -rightTreeG.width-2;
+                                    if(Math.abs(end_x) < size.width)
+                                        end_x = -size.width-2;
+                                    rightTreeG.append("svg:path")
+                                    .attr({
+                                        "class": "relation",
+                                        "d": line([
+                                            {
+                                                x: (data.y+_barWidth-data.bbox_width-_barHeight-4),
+                                                y: r_y
+                                            },
+                                            {
+                                                x: end_x,
+                                                y: r_y
+                                            }
+                                        ])
+                                    });
+                                    have_right_link = true;
+                                }
+
+                                // Layout the center links
+                                if( r_y != null ) {
+                                    var dat = [
+                                        {
+                                            x: 0,
+                                            y: (l_y+size.view_origin_y)
+                                        },
+                                        {
+                                            x: size.center_width,
+                                            y: (r_y+size.view_origin_y)
+                                        }
+                                    ];
+                                    centerG.append('svg:path')
+                                    .data([dat])
+                                    .attr({
+                                        "class": "relation",
+                                        "d": line(dat)
+                                    })
+                                    editorUpdateRelationshipLinks();
+                                }
+                            }
+                        }
+                    }
+
+                    function editorUpdateRelationshipLinks() {
+                        // TODO when collpase a node, its children link position should be updated
+                        var allCenterPaths = centerG.selectAll("path.relation");
+                        if(allCenterPaths[0].length == 0) return;
+                        var size = editorAxisOrign();
+                        var l_dat = leftTreeG.datum();
+                        var r_dat = rightTreeG.datum();
+                        allCenterPaths.attr("d", function(d) {
+                            var l_dy = l_dat.y - size.view_origin_y;
+                            var r_dy = r_dat.y - size.view_origin_y;
+                            return line([
+                                {
+                                    x: d[0].x,
+                                    y: d[0].y+l_dy
+                                },
+                                {
+                                    x: d[1].x,
+                                    y: d[1].y+r_dy
+                                }
+                            ])
+                        });
+
+                    }
+
+                    function editorRemoveRelationshipLinks() {
+                        var node = _d3Holder.selectAll("path.relation");
+                        node.remove();
+                    }
+
+                    var tree_item_selected = null;
+                    function loadTree(treeG, jsonData) {
+                        var size = editorAxisOrign();
                         var isLeft = (leftTreeG == treeG);
+                        var diagonal = d3.svg.diagonal()
+                        .projection(function(d) {
+                            return [(isLeft ? d.y : (d.y+_barWidth)), d.x+_barHeight];
+                        });
                         var tree = d3.layout.tree();
                         var x = isLeft ? size.view_origin_left_x : size.view_origin_right_x;
                         var vis = treeG.attr("transform", "translate(" + x +"," + size.view_origin_y +")"),
                         i = 0, btn_size = 8,
-                        root;
+                        root, to_map_children = true;
 
                         d3.json(jsonData, function(json) {
                             json.x0 = 0;
                             json.y0 = 0;
-                            layout(root = json);
+                            layout(treeG.root = root = json);
+                            to_map_children = false;
                         });
 
                         function layout(source) {
-                            size = rtEditor.axisOrign();
+                            //======================================================================
+                            // Build hash table for children of a json node, in order to search the
+                            // child node by its name value. Every node has a name field
+                            //======================================================================
+                            size = editorAxisOrign();
                             // Compute the flattened node list. TODO use d3.layout.hierarchy.
                             var nodes = tree.nodes(root);
                             // Compute the "layout".
                             nodes.forEach(function(n, i) {
-                                n.x = (i - 1) * barHeight;
-                                n.y = isLeft ?  (n.depth - 1) * barHeight : (-n.depth + 1) * barHeight - barWidth;
+                                n.x = (i - 1) * _barHeight;
+                                n.y = isLeft ?  (n.depth - 1) * _barHeight : (-n.depth + 1) * _barHeight - _barWidth;
+                                if(to_map_children) {
+                                    n.children_map = {};
+                                    for(var i = 0; (n.children != null && n.children != undefined
+                                        && i < n.children.length); ++i)
+                                        n.children_map[n.children[i].name] = n.children[i];
+                                }
                             });
 
                             // Update the nodes…
@@ -391,21 +545,24 @@
                             .style("opacity", 1e-6);
 
                             // Enter any new nodes at the parent's previous position.
-
                             nodeEnter.append("svg:rect")
                             .attr({
-                                "height": barHeight,
-                                "width": barHeight,
-                                "transform": "translate(" + (isLeft? 0:barWidth-barHeight) + ", 0)"
+                                "height": _barHeight,
+                                "width": _barHeight,
+                                "transform": "translate(" + (isLeft? 0:_barWidth-_barHeight) + ", 0)"
                             })
-                            .style("fill", color);
+                            .style({
+                                "fill": color,
+                                "cursor": "pointer"
+                            })
+                            .on("click", click);
 
                             nodeEnter.append("svg:rect")
                             .attr({
                                 "height": btn_size,
                                 "width": btn_size,
-                                "y": barHeight-btn_size,
-                                "x": isLeft ? 0:barWidth-btn_size
+                                "y": _barHeight-btn_size,
+                                "x": isLeft ? 0:_barWidth-btn_size
                             })
                             .style({
                                 "fill": "gray",
@@ -414,34 +571,112 @@
                             })
                             .on("click", click);
 
+                            // =====================================================================
                             // TODO need to display data format data type
-                            nodeEnter.append("svg:text")
-                            .attr("dy", 12.5)
-                            .text(function(d) {
-                                if( !d.children )
-                                    return isLeft ? "[string] "+d.name: d.name + " [string]";
-                                return d.name;
-                            }).attr("dx", function(d) {
-                                var t_w = this.getBBox().width;
-                                var t_x =  isLeft ? (barHeight+2) : (barWidth-t_w-barHeight-2);
-                                d3.select(this.parentNode).append("svg:rect")
-                                .attr({
-                                    "height": barHeight,
-                                    "width": t_w,
-                                    "y": d.dy,
-                                    "x": t_x
-                                })
-                                .style({
-                                    "fill": "rgb(209, 228, 238)",
-                                    "opacity": 1e-6,
-                                    "cursor": "pointer"
-                                }).on("mouseover", function(e) {
-                                    d3.select(this).style("opacity", .5);
-                                }).on("mouseout", function(e) {
+                            // Build data node and event
+                            nodeEnter.append("svg:rect")
+                            .style({
+                                "fill": "rgba(206, 206, 206, .4)",
+                                "opacity": 1e-6,
+                                "cursor": "pointer"
+                            })
+                            .attr({
+                                "height":_barHeight,
+                                "width": function(d) {
+                                    //------------------------------------------------------------------
+                                    var t_w = 0;
+                                    var bagNode = d3.select(this);
+                                    this.text = d3.select(this.parentNode).append("svg:text")
+                                    .attr({
+                                        "dy": 12.5,
+                                        "class": function(d) {
+                                            return d.script != undefined ? "item-text-used-style" : "item-text-normal-style";
+                                        }
+                                    })
+                                    .text(function(d) {
+                                        // TODO drop event triggered not good, some time not work, need to try serval times
+                                        if( !d.children )
+                                            return isLeft ? "[string] "+d.name: d.name + " [string]";
+                                        return d.name;
+                                    })
+                                    .attr("dx", function(d) {
+                                        t_w = d.bbox_width = this.getBBox().width+2;
+                                        var t_x =  isLeft ? (_barHeight+2) : (_barWidth-t_w-_barHeight-2);
+                                        bagNode.attr({
+                                            "x": isLeft ? t_x : t_x - 2
+                                        });
+                                        return t_x;
+                                    })
+                                    .node();
+
+                                    if( isLeft ) {
+                                        function item_clone() {
+                                            return $('<div id="draggable-item" style="width:'+(d.bbox_width+2)+'px;">'
+                                                +(!d.children ? "[string] "+d.name: d.name)+'</>');
+                                        }
+                                        $(this).draggable({
+                                            addClasses: false,
+                                            appendTo: _domHolder,
+                                            helper: item_clone,
+                                            stop: function(event, ui) {
+                                                _currentDragElement = {
+                                                    data: d3.select(event.target).datum(),
+                                                    text: this.text
+                                                }
+                                            }
+                                        });
+                                    }
+                                    //------------------------------------------------------------------
+                                    return t_w;
+                                }
+                            })
+                            .on("mouseover", function(n) {
+                                /** Note: It is a workaround, d3 doesn't support drop down event
+                                 * use _currentDragElement to save the drag stop information
+                                 **/
+                                if( _currentDragElement != null && !isLeft) {
+                                    d3.select(this.text)
+                                    .attr({
+                                        "class": "item-text-used-style"
+                                    });
+                                    d3.select(_currentDragElement.text)
+                                    .attr({
+                                        "class": "item-text-used-style"
+                                    });
+                                    if(_rightItemDropped != undefined) {
+                                        _rightItemDropped(_currentDragElement.data, n);
+                                    }
+
+                                    _currentDragElement = null;
+                                    tree_item_selected = null;
+                                    editorRemoveRelationshipLinks();
+                                }
+                                d3.select(this).style("opacity", 1);
+                            })
+                            .on("mouseout", function(n) {
+                                if(tree_item_selected != this)
                                     d3.select(this).style("opacity", 1e-6);
-                                });
-                                return t_x;
+                            })
+                            .on("click", function(n) {
+                                if(tree_item_selected != null) {
+                                    // cancel current selected
+                                    d3.select(tree_item_selected).style("opacity", 1e-6);
+                                    editorRemoveRelationshipLinks();
+                                }
+                                if(tree_item_selected != this) {
+                                    // set as selected status
+                                    tree_item_selected = this;
+                                    d3.select(tree_item_selected).style("opacity", 1);
+                                    // TODO need to display the links which are used by this item field
+                                    editorShowRelationshipLinks(n);
+                                }
+                                else {
+                                    // click twice, the cancel selected and set the selected flag as undefined
+                                    tree_item_selected = null;
+                                    editorRemoveRelationshipLinks();
+                                }
                             });
+                            // =====================================================================
 
                             function opacityFilter(d) {
                                 if(d.id > 1)
@@ -450,12 +685,12 @@
                             }
                             // Transition nodes to their new position.
                             nodeEnter.transition()
-                            .duration(duration)
+                            .duration(_duration)
                             .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
                             .style("opacity", opacityFilter);
 
                             node.transition()
-                            .duration(duration)
+                            .duration(_duration)
                             .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
                             .style("opacity",opacityFilter)
                             .select("rect")
@@ -463,7 +698,7 @@
 
                             // Transition exiting nodes to the parent's new position.
                             node.exit().transition()
-                            .duration(duration)
+                            .duration(_duration)
                             .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
                             .style("opacity", 1e-6)
                             .remove();
@@ -475,13 +710,6 @@
                             });
 
                             // Update the links
-                            var diagonal = d3.svg.diagonal()
-                            .projection(function(d) {
-                                return [
-                                    isLeft ? d.y : (d.y+barWidth),
-                                    d.x+barHeight];
-                            });
-
                             var link = vis.selectAll("path.link")
                             .data(tree.links(nodes), function(d) {
                                 return d.target.id;
@@ -499,45 +727,59 @@
                                 return diagonal({source: o, target: o});
                             })
                             .transition()
-                            .duration(duration)
+                            .duration(_duration)
                             .attr("d", diagonal);
 
                             // Transition links to their new position.
                             link.transition()
-                            .duration(duration)
+                            .duration(_duration)
                             .attr("d", diagonal);
 
                             // Transition exiting nodes to the parent's new position.
                             link.exit().transition()
-                            .duration(duration)
+                            .duration(_duration)
                             .attr("d", function(d) {
                                 var o = {x: source.x, y: source.y};
                                 return diagonal({source: o, target: o});
                             })
                             .remove();
-                            // Compute the right and bottom of data structure tree
+                            //= Compute tree bbox size =============================================
                             treeG.width = 0;
                             treeG.height = 0;
+                            var minx, miny, maxx, maxy;
+                            minx = miny = Number.MAX_VALUE;
+                            maxx = maxy = -Number.MAX_VALUE;
+                            var fx = isLeft ? function(n) { return (n.bbox_width + 2); }
+                            : function(n) { return -(n.bbox_width + 2);  };
                             if(isLeft) {
                                 nodes.forEach(function(n) {
-                                    if(treeG.width < n.y)
-                                        treeG.width = n.y;
-                                    if(treeG.height < n.x)
-                                        treeG.height = n.x;
+                                    var y = n.y + fx(n);
+                                    if(minx > n.y)
+                                        minx = n.y;
+                                    if(maxx < y)
+                                        maxx = y;
+                                    if(maxy < n.x)
+                                        maxy = n.x;
+                                    if(miny > n.x)
+                                        miny = n.x;
                                 });
-                                treeG.width += barWidth;
-                                treeG.height += barHeight;
-                            }
-                            else {
+                            } else {
                                 nodes.forEach(function(n) {
-                                    if(treeG.width > n.y)
-                                        treeG.width = n.y;
-                                    if(treeG.height < n.x)
-                                        treeG.height = n.x;
+                                    var y = n.y + fx(n);
+                                    if(minx > y)
+                                        minx = y;
+                                    if(maxx < n.y)
+                                        maxx = n.y;
+                                    if(maxy < n.x)
+                                        maxy = n.x;
+                                    if(miny > n.x)
+                                        miny = n.x;
                                 });
-                                treeG.width = -treeG.width;
-                                treeG.height += barHeight;
+
                             }
+                            treeG.width = (maxx - minx);
+                            treeG.height = (maxy - miny);
+                            //= Compute tree bbox size end =========================================
                             if(treeG.scrollbar != null)
                                 treeG.scrollbar.update();
                             else {
@@ -548,6 +790,12 @@
                                     isLeft: isLeft
                                 });
                                 treeG.scrollbar.update();
+                            } //*/
+                            if(tree_item_selected != null) {
+                                // cancel current selected
+                                d3.select(tree_item_selected).style("opacity", 1e-6);
+                                editorRemoveRelationshipLinks();
+                                tree_item_selected = null;
                             }
                         }
 
@@ -559,6 +807,9 @@
                             } else {
                                 d.children = d._children;
                                 d._children = null;
+                                // TODO need to read data format from server here if the current node
+                                // is a struct or struct array type
+                                // ------ here ----
                             }
                             layout(d);
                         }
@@ -569,24 +820,47 @@
                     }
 
                     rtEditor.loadData = function() {
-                        rtEditor.loadTree(leftTreeG, "demo_1.json");
-                        rtEditor.loadTree(rightTreeG, "demo.json");
+                        loadTree(leftTreeG, "demo_1.json");
+                        loadTree(rightTreeG, "demo.json");
                     }
 
                     // End
                     return rtEditor;
                 };
 
-                // TODO redesign the scrollbar style
+                // TODO ajax loading
+                // TODO When scroll to bottom and then copllase the nodes, behaviour not correct
                 // Tree is ok
-                var rt = RuleTreeEditor.create("#rule-editor");
+                var rt = RuleTreeEditor.create({
+                    holderId: "#rule-editor",
+                    rightItemDropped: function(a, b) {
+                        var path = a.name;
+                        while(a.parent != undefined && a.parent.id > 1) {
+                            path = a.parent.name + '.' + path;
+                            a = a.parent;
+                        }
+                        if(b.path_array == undefined)
+                            b.path_array = [];
+                        b.path_array.push(path);
+                        b.script = '@'+path;
+                        $("#script").text(b.script);
+                        $("#script").css("font-weight", "normal");
+                    },
+                    rightItemSelected: function(d) {
+
+                    }
+                });
                 rt.loadData();
 
                 $("#test").css({
                     "width": "100%",
                     "height": "100%"
-                }).find("#rule-editor").trigger(jQuery.Event("resize"));//*/
+                }).find("#rule-editor").trigger(jQuery.Event("resize"));
 
+                $("#test").css({
+                    "width": "900",
+                    "height": "300"
+                }).find("#rule-editor").trigger(jQuery.Event("resize"));
                 $(window).on("resize", function(e){
                     if(e.target != this) return;
                     $("#rule-editor").trigger(jQuery.Event("resize"));
@@ -594,54 +868,12 @@
 
             });
         </script>
-        <style>
-            .scb {
-                border: 1px solid rgb(201, 201, 201);
-            }
-            .scrollbar {
-                fill: rgb(247, 243, 243);
-                stroke: rgb(192, 192, 192);
-                stroke-width: .2px;
-            }
-            .s_edge {
-                fill: rgb(220, 220, 220);
-                stroke: rgb(192, 192, 192);
-                stroke-width: .2px;
-            }
-        </style>
-        <script type="text/javascript">
-            $(function(){
-                var scb = d3.select("#scb_id");
-                scb.data([{
-                        x : 0,
-                        y : 0
-                    }]);
-                function dragmove_vbar_grip(d) {
-                    d.y += d3.event.dy;
-                    scb.attr("transform","translate(" + d.x + "," + d.y + ")");
-                    scb.layoutEvent.layout("hello");
-                }
-                scb.call(d3.behavior.drag().on("drag", dragmove_vbar_grip));
-                scb.layoutEvent = d3.dispatch("layout");
-                scb.layoutEvent.on("layout", function(v) {
-                    alert(v);
-                })
-            })
-        </script>
     </head>
     <body>
-        <div id="test" style="position: relative; width:900px; height:300px;">
-            <div id="rule-editor" style="width:100%; height:100%; overflow: hidden"><!--
-                <div class="scb">
-                    <svg>
-                    <g id="scb_id" transform="translate(0, 0)">
-                    <rect class="scb s_edge" width="6" height="5" x="0" y="100"/>
-                    <rect class="scb s_edge" width="6" height="5" x="0" y="205"/>
-                    <rect class="scb scrollbar" width="6" height="100" x="0" y="105"/>
-                    </g>
-                    </svg>
-                </div>-->
+        <div id="test" style="position: relative; width: 900px; height:400px;">
+            <div id="rule-editor" style="width:100%; height:100%; overflow: hidden">
             </div>
         </div>
+        <div id="script"></div>
     </body>
 </html>

@@ -2,11 +2,11 @@
     "name" : "root",
     "children":
     [{
-        "name": "flare",
+        "name": "GrahpicWordDataFormat",
         "children":
         [
         {
-            "name": "analytics",
+            "name": "analyticsLongName",
             "children":
             [
             {
