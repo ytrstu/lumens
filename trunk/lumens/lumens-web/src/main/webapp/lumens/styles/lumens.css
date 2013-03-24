@@ -159,11 +159,11 @@ html,body {
     fill-opacity: .6;
     stroke: #3182bd;
     stroke-width: .2px;
-    stroke-opacity: .3;
+    stroke-opacity: .5;
 }
 
 .node text {
-    font: 12px sans-serif;
+    font-size: 12px;
     pointer-events: none;
 }
 
@@ -175,11 +175,17 @@ html,body {
 path.link {
     fill: none;
     stroke: #9ecae1;
-    stroke-width: .5px;
+    stroke-width: .6px;
 }
 
 path.linkhidden {
     fill: none;
+}
+
+path.relation {
+    fill: none;
+    stroke: rgb(50, 50, 50);
+    stroke-width: .2px;
 }
 
 .scrollbar-bag-normal {
@@ -214,4 +220,26 @@ path.linkhidden {
     float: left;
     border-top: 1px solid #dddddd;
     border-bottom: 1px solid #dddddd;
+}
+
+div#draggable-item {
+    font-size: 12px;
+    background-color: rgba(206, 206, 206, .4);
+    height: 20px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(200, 200, 200);
+    text-indent: 2px;
+    padding-top: 2px;
+    cursor: pointer;
+}
+
+text.item-text-used-style {
+    fill: rgb(0, 64, 165);
+    font-style: italic;
+}
+
+text.item-text-normal-style {
+    fill: rgb(0, 0, 0);
+    font-style: normal;
 }
